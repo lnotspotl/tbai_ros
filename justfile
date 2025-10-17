@@ -105,7 +105,7 @@ remove-tbai:
 # Clone tbai repository
 clone-tbai: remove-tbai
     #!/usr/bin/env bash
-    git clone git@github.com:lnotspotl/tbai.git --single-branch --branch=main dependencies/tbai
+    git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=main dependencies/tbai
 
 # Build tbai library
 build-tbai:
