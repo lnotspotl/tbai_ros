@@ -1,9 +1,9 @@
 [submodule "dependencies/ocs2"]
 	path = dependencies/ocs2
-	url = git@github.com:lnotspotl/ocs2.git
+	url = https://github.com/lnotspotl/ocs2.git
 [submodule "dependencies/ocs2_robotic_assets"]
 	path = dependencies/ocs2_robotic_assets
-	url = git@github.com:projectatctu/ocs2_robotic_assets.git
+	url = https://github.com/projectatctu/ocs2_robotic_assets.git
 [submodule "dependencies/elevation_mapping"]
 	path = dependencies/elevation_mapping
 	url = https://github.com/ANYbotics/elevation_mapping.git
@@ -15,25 +15,25 @@
 	url = https://github.com/ANYbotics/kindr_ros.git
 [submodule "dependencies/qpoases_catkin"]
 	path = dependencies/qpoases_catkin
-	url = git@github.com:wxmerkt/qpoases_catkin.git
+	url = https://github.com/wxmerkt/qpoases_catkin.git
 [submodule "dependencies/message_logger"]
 	path = dependencies/message_logger
-	url = git@github.com:ANYbotics/message_logger.git
+	url = https://github.com/ANYbotics/message_logger.git
 [submodule "dependencies/elevation_mapping_cupy"]
 	path = dependencies/elevation_mapping_cupy
-	url = git@github.com:lnotspotl/elevation_mapping_cupy.git
+	url = https://github.com/lnotspotl/elevation_mapping_cupy.git
 [submodule "dependencies/grid_map"]
 	path = dependencies/grid_map
-	url = git@github.com:lnotspotl/grid_map.git
+	url = https://github.com/lnotspotl/grid_map.git
 [submodule "dependencies/pybind11_catkin"]
 	path = dependencies/pybind11_catkin
-	url = git@github.com:wxmerkt/pybind11_catkin.git
+	url = https://github.com/wxmerkt/pybind11_catkin.git
 [submodule "dependencies/realsense-ros"]
 	path = dependencies/realsense-ros
-	url = git@github.com:IntelRealSense/realsense-ros.git
+	url = https://github.com/IntelRealSense/realsense-ros.git
 [submodule "dependencies/ddynamic_reconfigure"]
 	path = dependencies/ddynamic_reconfigure
-	url = git@github.com:pal-robotics/ddynamic_reconfigure.git
+	url = https://github.com/pal-robotics/ddynamic_reconfigure.git
 [submodule "dependencies/HesaiLidar_ROS_2.0"]
 	path = dependencies/HesaiLidar_ROS_2.0
-	url = git@github.com:lnotspotl/HesaiLidar_ROS_2.0.git
+	url = https://github.com/lnotspotl/HesaiLidar_ROS_2.0.git

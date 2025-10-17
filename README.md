@@ -29,7 +29,7 @@ curl -fsSL https://pixi.sh/install.sh | sh # You might have to source your confi
 
 # Install tbai_ros
 mkdir -p ros/src && cd ros/src
-git clone git@github.com:lnotspotl/tbai_ros.git --recursive && cd tbai_ros
+git clone https://github.com/lnotspotl/tbai_ros.git --recursive && cd tbai_ros
 pixi install && pixi shell --environment all-gpu-free
 just fresh-install-all-gpu-free
 ```
@@ -41,7 +41,7 @@ just fresh-install-all-gpu-free
 
 # Clone tbai_ros
 mkdir -p ros/src && cd ros/src
-git clone git@github.com:lnotspotl/tbai_ros.git --recursive && cd tbai_ros
+git clone https://github.com/lnotspotl/tbai_ros.git --recursive && cd tbai_ros
 
 # Create conda environment
 micromamba env create -f .conda/all-gpu-free.yaml
