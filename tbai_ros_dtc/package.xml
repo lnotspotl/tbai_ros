@@ -15,6 +15,7 @@
   <depend>tbai_ros_reference</depend>
   <depend>tbai_ros_static</depend>
   <depend>tbai_ros_gridmap</depend>
+  <depend>tbai_ros_mpc</depend>
   <depend>ocs2_core</depend>
   <depend>ocs2_msgs</depend>
   <depend>ocs2_mpc</depend>

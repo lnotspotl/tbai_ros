@@ -82,9 +82,14 @@ DtcController::DtcController(const std::shared_ptr<tbai::StateSubscriber> &state
     mpcRate_ = 30;   // TODO: Load from config
     pastAction_ = vector_t().setZero(12);
 
+    blind_ = tbai::fromGlobalConfig<bool>("dtc_controller/blind");
     if (!blind_) {
         TBAI_LOG_INFO(logger_, "Initializing gridmap interface");
         gridmap_ = tbai::gridmap::getGridmapInterfaceUnique();
+    } else {
+        TBAI_LOG_INFO(logger_, "Gridmap interface not initialized, DTC controller is blind");
+        TBAI_LOG_INFO(logger_, "Initializing local terrain estimator for blind mode");
+        localTerrainEstimator_ = std::make_unique<tbai::mpc::reference::LocalTerrainEstimator>();
     }
 
     TBAI_LOG_INFO(logger_, "Initializing quadruped interface");
@@ -211,9 +216,16 @@ vector_t DtcController::getTimeLeftInPhase(scalar_t currentTime, scalar_t dt) {
 
 TargetTrajectories DtcController::generateTargetTrajectories(scalar_t currentTime, scalar_t dt,
                                                              const vector3_t &command) {
-    switched_model::BaseReferenceTrajectory baseReferenceTrajectory =
-        generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
-                                          getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
+    switched_model::BaseReferenceTrajectory baseReferenceTrajectory;
+    if (!gridmap_) {
+        TerrainPlane terrainPlane = localTerrainEstimator_->getPlane();
+        baseReferenceTrajectory = generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
+                                                                    getBaseReferenceCommand(currentTime, command), terrainPlane);
+    } else {
+        baseReferenceTrajectory =
+            generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
+                                              getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
+    }
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
     constexpr size_t INPUT_DIM = 12 + 12;
@@ -718,8 +730,22 @@ vector_t DtcController::getHeightSamplesObservation(scalar_t currentTime, scalar
             vector3_t pos = currentFootPosition + diff * alpha;
             scalar_t x = pos(0);
             scalar_t y = pos(1);
-            scalar_t height = gridmap_->atPosition(x, y);
-            scalar_t height_diff = height - currentFootPosition(2);
+            scalar_t height_diff;
+            if(!blind_) {
+                scalar_t height = gridmap_->atPosition(x, y);
+                height_diff = height - currentFootPosition(2);
+            } else {
+                const auto& terrainPlane = localTerrainEstimator_->getPlane();
+                const vector3_t& planePos = terrainPlane.positionInWorld;
+                const matrix3_t& R_terrain_world = terrainPlane.orientationWorldToTerrain;
+                vector3_t normalInWorld = R_terrain_world.transpose().col(2);
+                scalar_t terrainHeight = planePos(2);
+                if (std::abs(normalInWorld(2)) > 1e-6) {
+                    terrainHeight = planePos(2) - (normalInWorld(0) * (x - planePos(0)) +
+                                                    normalInWorld(1) * (y - planePos(1))) / normalInWorld(2);
+                }
+                height_diff = terrainHeight - currentFootPosition(2);
+            }
             out(legidx * 10 + i) = height_diff;
         }
     }
@@ -823,7 +849,11 @@ void DtcController::resetMpc() {
 }
 
 void DtcController::setObservation() {
-    mrt_.setCurrentObservation(generateSystemObservation());
+    auto observation = generateSystemObservation();
+    mrt_.setCurrentObservation(observation);
+    if (blind_) {
+        localTerrainEstimator_->updateFootholds(observation);
+    }
 }
 
 torch::Tensor vector2torch(const vector_t &v) {

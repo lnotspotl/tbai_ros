@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
   ocs2_ros_interfaces
   tbai_ros_reference
   tbai_ros_gridmap
+  tbai_ros_mpc
   ocs2_quadruped_interface
   ocs2_anymal_mpc
   ocs2_switched_model_interface

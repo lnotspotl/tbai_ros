@@ -24,6 +24,7 @@ static_controller:
 dtc_controller:
   hf_repo: "kubjonai/tbai-models"
   hf_model: "dtc_02.pt" # dtc_02.pt trained in env with stepping stones, dtc_01.pt without them
+  blind: true
 
 anymal_d:
   joint_controller:

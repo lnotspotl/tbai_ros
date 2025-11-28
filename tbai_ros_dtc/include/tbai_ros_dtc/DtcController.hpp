@@ -40,6 +40,7 @@
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/control/Controllers.hpp>
+#include <tbai_ros_mpc/reference/ReferenceTrajectoryGenerator.hpp>
 
 namespace tbai {
 namespace dtc {
@@ -197,6 +198,7 @@ class DtcController final : public tbai::Controller {
 
     bool blind_ = false;
     std::unique_ptr<tbai::gridmap::GridmapInterface> gridmap_;
+    std::unique_ptr<tbai::mpc::reference::LocalTerrainEstimator> localTerrainEstimator_;
     std::unique_ptr<switched_model::QuadrupedInterface> quadrupedInterface_;
     std::unique_ptr<switched_model::ComModelBase<scalar_t>> comModel_;
     std::unique_ptr<switched_model::KinematicsModelBase<scalar_t>> kinematicsModel_;

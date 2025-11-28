@@ -1,0 +1,63 @@
+robot_name: 'anymal_d'
+
+joint_names: &jn ["LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE", "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"]
+base_name: "base"
+
+state_topic: "anymal_d/state"
+command_topic: "anymal_d/command"
+change_controller_topic: "anymal_d/change_controller"
+gridmap_topic: "/convex_plane_decomposition_ros/filtered_map"
+gridmap_layer: "smooth_planar"
+contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"] 
+
+
+static_controller:
+  stand_controller:
+    joint_angles: [0.0, 0.4, -0.8, 0.0, -0.4, 0.8, 0.0, 0.4, -0.8, 0.0, -0.4, 0.8] # LF, LH, RF, RH
+  sit_controller:
+    joint_angles: [0.0, 1.5, -2.6, 0.0, -1.5, 2.6, 0.0, 1.5, -2.6, 0.0, -1.5, 2.6] # LF, LH, RF, RH
+  kp: 400
+  kd: 5
+  interpolation_time: 1.0 # s
+  rate: 50 # Hz
+
+dtc_controller:
+  hf_repo: "kubjonai/tbai-models"
+  hf_model: "dtc_02.pt" # dtc_02.pt trained in env with stepping stones, dtc_01.pt without them
+  blind: false
+
+anymal_d:
+  joint_controller:
+      type: tbai_ros_gazebo/JointController
+      joints: *jn
+
+reference_generator:
+  type: "twist"
+
+  joystick:
+    topic: "joy"
+    ramped_velocity: 5.0
+    x_index: 1
+    y_index: 0
+    yaw_index: 3
+    x_scale: 1.5
+    y_scale: 1.5
+    yaw_scale: 1.5
+
+  twist:
+    topic: "cmd_vel"
+
+estimator_type: "ground_truth"
+
+gazebo:
+  contact_sensor:
+    enabled: false
+    update_rate: 1000 # Hz
+
+  ground_truth_state_publisher:
+    enabled: true
+    update_rate: 400 # Hz
+
+  muse_state_publisher:
+    enabled: false
+    update_rate: 1000 # Hz
