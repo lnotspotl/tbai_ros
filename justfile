@@ -7,20 +7,6 @@ help:
     #!/usr/bin/env bash
     just -l
 
-# List all pixi environments
-pixi-list-envs:
-    #!/usr/bin/env bash
-    pixi workspace environment list | grep -E '^- ' | cut -d':' -f1 | sed 's/^- //'
-
-# Generate conda environments for all pixi environments
-pixi-generate-conda-envs:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    all_envs=$(pixi workspace environment list | grep -E '^- ' | cut -d':' -f1 | sed 's/^- //')
-    for env in $all_envs; do
-        pixi workspace export conda-environment -e $env > .conda/$env.yaml
-    done
-
 # Format C++ code using clang-format, disabled for 'dependencies' folder
 format:
     #!/usr/bin/env bash
@@ -71,6 +57,20 @@ test:
     done
     echo "[TBAI] Running tests for ROS packages:$ros_packages"
     catkin test $ros_packages
+
+# List all pixi environments
+pixi-list-envs:
+    #!/usr/bin/env bash
+    pixi workspace environment list | grep -E '^- ' | cut -d':' -f1 | sed 's/^- //'
+
+# Generate conda environments for all pixi environments
+pixi-generate-conda-envs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    all_envs=$(pixi workspace environment list | grep -E '^- ' | cut -d':' -f1 | sed 's/^- //')
+    for env in $all_envs; do
+        pixi workspace export conda-environment -e $env > .conda/$env.yaml
+    done
 
 # Open documentation in browser
 open-docs:
