@@ -30,6 +30,8 @@ namespace tbai {
 
 namespace dtc {
 
+namespace LinearInterpolation = ocs2::LinearInterpolation;
+
 DtcController::DtcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriber)
     : stateSubscriberPtr_(stateSubscriber), mrt_("anymal") {
     // Load initial time - the epoch

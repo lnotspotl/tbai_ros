@@ -30,6 +30,8 @@ namespace tbai {
 
 namespace joe {
 
+namespace LinearInterpolation = ocs2::LinearInterpolation;
+
 JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriber)
     : stateSubscriberPtr_(stateSubscriber), mrt_("anymal") {
     // Load initial time - the epoch
