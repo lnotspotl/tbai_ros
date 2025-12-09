@@ -1,7 +1,6 @@
 #include <ros/ros.h>
-#include <tbai_ros_deploy_go2_safe/Go2Joystick.hpp>
-
 #include <tbai_core/Env.hpp>
+#include <tbai_ros_deploy_go2_safe/Go2Joystick.hpp>
 
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "go2_joystick_node");

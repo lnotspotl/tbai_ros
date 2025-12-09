@@ -12,10 +12,10 @@
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
 #include <tbai_core/control/CentralController.hpp>
+#include <tbai_deploy_go2/Go2RobotInterface.hpp>
 #include <tbai_ros_core/Publishers.hpp>
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
-#include <tbai_deploy_go2/Go2RobotInterface.hpp>
 #include <tbai_ros_deploy_go2_mpc/Go2Joystick.hpp>
 
 class Go2RobotInterfaceWithLidar : public tbai::Go2RobotInterface {

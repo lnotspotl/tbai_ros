@@ -2,8 +2,8 @@
 
 #include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
-#include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/String.h>
 #include <tbai_core/config/Config.hpp>
 #include <tbai_deploy_go2/Go2JoystickInterface.hpp>
 #include <tbai_reference/ReferenceVelocityGenerator.hpp>

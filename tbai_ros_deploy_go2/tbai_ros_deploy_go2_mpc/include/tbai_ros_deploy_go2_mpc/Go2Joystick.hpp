@@ -80,7 +80,6 @@ class Go2Joystick : public ::tbai::reference::ReferenceVelocityGenerator, public
     }
 
     virtual void onPressDown() override {
-    
         std_msgs::String msg;
         msg.data = "stance";
         gaitCommandPublisher_.publish(msg);

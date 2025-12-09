@@ -219,12 +219,13 @@ TargetTrajectories DtcController::generateTargetTrajectories(scalar_t currentTim
     switched_model::BaseReferenceTrajectory baseReferenceTrajectory;
     if (!gridmap_) {
         TerrainPlane terrainPlane = localTerrainEstimator_->getPlane();
-        baseReferenceTrajectory = generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
-                                                                    getBaseReferenceCommand(currentTime, command), terrainPlane);
-    } else {
         baseReferenceTrajectory =
             generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
-                                              getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
+                                              getBaseReferenceCommand(currentTime, command), terrainPlane);
+    } else {
+        baseReferenceTrajectory = generateExtrapolatedBaseReference(
+            getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
+            getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
     }
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
@@ -731,18 +732,19 @@ vector_t DtcController::getHeightSamplesObservation(scalar_t currentTime, scalar
             scalar_t x = pos(0);
             scalar_t y = pos(1);
             scalar_t height_diff;
-            if(!blind_) {
+            if (!blind_) {
                 scalar_t height = gridmap_->atPosition(x, y);
                 height_diff = height - currentFootPosition(2);
             } else {
-                const auto& terrainPlane = localTerrainEstimator_->getPlane();
-                const vector3_t& planePos = terrainPlane.positionInWorld;
-                const matrix3_t& R_terrain_world = terrainPlane.orientationWorldToTerrain;
+                const auto &terrainPlane = localTerrainEstimator_->getPlane();
+                const vector3_t &planePos = terrainPlane.positionInWorld;
+                const matrix3_t &R_terrain_world = terrainPlane.orientationWorldToTerrain;
                 vector3_t normalInWorld = R_terrain_world.transpose().col(2);
                 scalar_t terrainHeight = planePos(2);
                 if (std::abs(normalInWorld(2)) > 1e-6) {
-                    terrainHeight = planePos(2) - (normalInWorld(0) * (x - planePos(0)) +
-                                                    normalInWorld(1) * (y - planePos(1))) / normalInWorld(2);
+                    terrainHeight =
+                        planePos(2) - (normalInWorld(0) * (x - planePos(0)) + normalInWorld(1) * (y - planePos(1))) /
+                                          normalInWorld(2);
                 }
                 height_diff = terrainHeight - currentFootPosition(2);
             }
