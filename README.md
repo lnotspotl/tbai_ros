@@ -22,19 +22,7 @@
 
 To install `tbai_ros`, we recommend using `pixi`, though `tbai_ros` is a full-fledged ROS package and it can be integrated into your projects in using conventional tools and methods. We use `pixi` for reproducibility. Don't worry that ROS is past its end of life, pixi (or micromamba) will install everything for you (even on the newest Ubuntu release) 😮
 
-### Alternative 1: pixi
-```bash
-# Install pixi
-curl -fsSL https://pixi.sh/install.sh | sh # You might have to source your config again
-
-# Install tbai_ros
-mkdir -p ros/src && cd ros/src
-git clone https://github.com/lnotspotl/tbai_ros.git --recursive && cd tbai_ros
-pixi install && pixi shell --environment all-gpu-free
-just fresh-install-all-gpu-free
-```
-
-### Alternative 2: micromamba
+### Alternative 1: micromamba
 ```bash
 # Install micromamba
 "${SHELL}" <(curl -L micro.mamba.pm/install.sh) # You might have to source your config again
@@ -48,6 +36,33 @@ micromamba env create -f .conda/all-gpu-free.yaml
 micromamba activate all-gpu-free
 
 # Install tbai_ros
+just fresh-install-all-gpu-free
+```
+
+Once the installation is complete, you can run one of our many examples, for instance:
+
+```bash
+# Activate pixi environment
+micromamba activate all-gpu-free
+
+# Run NP3O example
+source $(catkin locate)/devel/setup.bash && roslaunch tbai_ros_np3o simple_go2.launch gui:=true
+
+# Try out other examples located under tbai_ros_mpc, tbai_ros_bob, tbai_ros_dtc, tbai_ros_joe and tbai_ros_np3o
+```
+
+---
+---
+
+### Alternative 2: pixi
+```bash
+# Install pixi
+curl -fsSL https://pixi.sh/install.sh | sh # You might have to source your config again
+
+# Install tbai_ros
+mkdir -p ros/src && cd ros/src
+git clone https://github.com/lnotspotl/tbai_ros.git --recursive && cd tbai_ros
+pixi install && pixi shell --environment all-gpu-free
 just fresh-install-all-gpu-free
 ```
 
