@@ -52,7 +52,7 @@
 
     <!-- Launch Gait command node -->
     <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="gnome-terminal --"/>
+          output="screen" launch-prefix="x-terminal-emulator -e "/>
 
     <arg name="rvizconfig" default="$(find tbai_ros_joe)/launch/rviz/joe.rviz" />
       <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen" /> 

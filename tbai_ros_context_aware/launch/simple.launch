@@ -56,7 +56,7 @@
     <node pkg="tbai_ros_mpc" type="anymal_mpc_node" name="anymal_mpc_node" output="screen"/>
 
     <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="gnome-terminal --"/>
+          output="screen" launch-prefix="x-terminal-emulator -e "/>
 
     <!-- Start Rviz visualizer -->
     <arg name="rvizconfig" default="$(find tbai_ros_context_aware)/launch/anymal_d.rviz" />
