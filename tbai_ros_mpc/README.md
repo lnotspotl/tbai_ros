@@ -28,6 +28,9 @@ roslaunch tbai_ros_mpc anymal_d_blind.launch gui:=true
 ```bash
 roslaunch tbai_ros_mpc anymal_d_perceptive.launch gui:=true
 ```
-
-
 [mpc_anymal_d_perceptive.webm](https://github.com/user-attachments/assets/0c359f31-1836-4569-9f6b-b531882a4375)
+
+## Example - Spot blind
+```bash
+roslaunch tbai_ros_mpc spot_blind.launch gui:=true
+```
