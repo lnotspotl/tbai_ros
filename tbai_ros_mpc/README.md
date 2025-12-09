@@ -7,6 +7,16 @@ roslaunch tbai_ros_mpc go2_blind.launch gui:=true
 [mpc_go2_blind.webm](https://github.com/user-attachments/assets/28f11d25-4ba0-4b7a-ae3d-e8b1c1a60de6)
 
 
+## Example - Anymal B blind
+```bash
+roslaunch tbai_ros_mpc anymal_b_blind.launch gui:=true
+```
+
+## Example - Anymal C blind
+```bash
+roslaunch tbai_ros_mpc anymal_c_blind.launch gui:=true
+```
+
 ## Example - Anymal D blind
 ```bash
 roslaunch tbai_ros_mpc anymal_d_blind.launch gui:=true

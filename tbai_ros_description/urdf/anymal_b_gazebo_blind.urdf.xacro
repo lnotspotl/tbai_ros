@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="anymal_b">
+
+<!-- Includes -->
+<xacro:include filename="utils.xacro" />
+
+<!-- Anymal D bare urdf -->
+<xacro:include filename="$(find ocs2_robotic_assets)/resources/anymal_b/urdf/anymal.urdf" />
+
+<!-- Transmissions LF -->
+<xacro:transmission name="transmission_LF_HAA" joint="LF_HAA" actuator="motor_LF_HAA"/>
+<xacro:transmission name="transmission_LF_HFE" joint="LF_HFE" actuator="motor_LF_HFE"/>
+<xacro:transmission name="transmission_LF_KFE" joint="LF_KFE" actuator="motor_LF_KFE"/>
+
+<!-- Transmissions LH -->
+<xacro:transmission name="transmission_LH_HAA" joint="LH_HAA" actuator="motor_LH_HAA"/>
+<xacro:transmission name="transmission_LH_HFE" joint="LH_HFE" actuator="motor_LH_HFE"/>
+<xacro:transmission name="transmission_LH_KFE" joint="LH_KFE" actuator="motor_LH_KFE"/>
+
+<!-- Transmissions RF -->
+<xacro:transmission name="transmission_RF_HAA" joint="RF_HAA" actuator="motor_RF_HAA"/>
+<xacro:transmission name="transmission_RF_HFE" joint="RF_HFE" actuator="motor_RF_HFE"/>
+<xacro:transmission name="transmission_RF_KFE" joint="RF_KFE" actuator="motor_RF_KFE"/>
+
+<!-- Transmissions RH -->
+<xacro:transmission name="transmission_RH_HAA" joint="RH_HAA" actuator="motor_RH_HAA"/>
+<xacro:transmission name="transmission_RH_HFE" joint="RH_HFE" actuator="motor_RH_HFE"/>
+<xacro:transmission name="transmission_RH_KFE" joint="RH_KFE" actuator="motor_RH_KFE"/>
+
+<!-- Joint controller -->
+<gazebo>
+  <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <robotNamespace>/anymal_d</robotNamespace>
+  </plugin>
+</gazebo>
+
+<!-- State publisher - enabled or disabled based on the config file -->
+<gazebo>
+  <plugin filename="libStatePublisher.so" name="StatePublisher"/>
+</gazebo>
+
+<gazebo>
+  <plugin filename="libRobotStatePublisher.so" name="RobotStatePublisher"/>
+</gazebo>
+
+
+<!-- Gazebo materials -->
+<gazebo reference="LF_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RF_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="LH_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RH_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+</robot>

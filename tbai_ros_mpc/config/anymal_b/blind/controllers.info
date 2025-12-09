@@ -1,0 +1,105 @@
+sqpWbc
+{
+  ; Task weights
+  weightBaseTracking            1.0
+  weightSwingLeg                200.0
+  weightContactForce            0.001
+
+  ; Friction cone parameters
+  frictionCoefficient     0.5
+
+  ; Swing leg kp and kd (in cartesian space - ee tracking)
+  swingKp                 550.0
+  swingKd                 50.0
+
+  ; Base position kp and kd 
+  baseKp                  1.0
+  baseKd                  0.0
+
+  ; Base orientation kp and kd
+  eulerKp                 0.0
+  eulerKd                 0.1
+
+  ; Joint swing leg kp and kd
+  jointSwingKp            50.0
+  jointSwingKd            5.0
+
+  ; Joint stance leg kp and kd
+  jointStanceKp            50.0
+  jointStanceKd            5.2
+
+  ; Joint torque limit
+  torqueLimit              80.0
+}
+
+hqpWbc
+{
+  ; Friction cone parameters
+  frictionCoefficient     0.5
+
+  ; Swing leg kp and kd (in cartesian space - ee tracking)
+  swingKp                 550.0
+  swingKd                 50.0
+
+  ; Base position kp and kd 
+  baseKp                  1.0
+  baseKd                  0.0
+
+  ; Base orientation kp and kd
+  eulerKp                 0.0
+  eulerKd                 0.1
+
+  ; Joint swing leg kp and kd
+  jointSwingKp            50.0
+  jointSwingKd            5.0
+
+  ; Joint stance leg kp and kd
+  jointStanceKp            50.0
+  jointStanceKd            5.2
+
+  ; Joint torque limit
+  torqueLimit              80.0
+}
+
+StaticController 
+{
+  ; Joint kp and kd and interpolation time
+  kp                 300
+  kd                 10
+  interpolationTime  1.0
+
+  ; Stand joint angles
+  standJointAngles
+  {
+    (0,0)  0.00  ; LF_HAA
+    (1,0)  0.4  ; LF_HFE
+    (2,0) -0.8  ; LF_KFE
+    (3,0)  0.00  ; RF_HAA
+    (4,0)  0.4  ; RF_HFE
+    (5,0) -0.8  ; RF_KFE
+    (6,0)  0.00  ; LH_HAA
+    (7,0)  -0.4  ; LH_HFE
+    (8,0)  0.8  ; LH_KFE
+    (9,0)  0.00  ; RH_HAA
+    (10,0)  -0.4  ; RH_HFE
+    (11,0) 0.8  ; RH_KFE
+  }
+
+  ; Sit joint angles
+  sitJointAngles
+  {
+    (0,0)  0.00  ; LF_HAA
+    (1,0)  1.5  ; LF_HFE
+    (2,0) -2.4  ; LF_KFE
+    (3,0)  0.00  ; RF_HAA
+    (4,0)  1.5  ; RF_HFE
+    (5,0) -2.4  ; RF_KFE
+    (6,0)  0.00  ; LH_HAA
+    (7,0)  -1.5  ; LH_HFE
+    (8,0) 2.4  ; LH_KFE
+    (9,0)  0.00  ; RH_HAA
+    (10,0)  -1.5  ; RH_HFE
+    (11,0) 2.4  ; RH_KFE
+  }
+
+}
