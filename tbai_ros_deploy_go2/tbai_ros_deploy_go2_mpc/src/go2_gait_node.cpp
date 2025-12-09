@@ -16,8 +16,12 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 
-using namespace ocs2;
-using namespace legged_robot;
+using ocs2::loadData;
+using ocs2::stringToWords;
+using ocs2::getCommandLineString;
+using legged_robot::ModeSequenceTemplate;
+using legged_robot::loadModeSequenceTemplate;
+using legged_robot::createModeSequenceTemplateMsg;
 
 class GaitKeyboardPublisher {
    public:

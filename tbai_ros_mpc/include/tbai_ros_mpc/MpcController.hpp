@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <vector>
 
 #include "ocs2_anymal_mpc/AnymalInterface.h"
 #include <ocs2_mpc/MPC_Settings.h>

@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
@@ -45,10 +47,13 @@
 namespace tbai {
 namespace dtc {
 
-using namespace ocs2;
-using namespace ocs2::legged_robot;
-using namespace tbai;
-using namespace switched_model;
+using ocs2::SystemObservation;
+using ocs2::TargetTrajectories;
+using ocs2::legged_robot::contact_flag_t;
+using switched_model::BaseReferenceCommand;
+using switched_model::BaseReferenceHorizon;
+using switched_model::BaseReferenceState;
+using switched_model::TerrainPlane;
 
 class DtcController final : public tbai::Controller {
    public:
@@ -168,7 +173,7 @@ class DtcController final : public tbai::Controller {
 
     const scalar_t ISAAC_SIM_DT = 1 / 50;
 
-    const long MODEL_INPUT_SIZE = 124;
+    const int64_t MODEL_INPUT_SIZE = 124;
 
     std::unique_ptr<TargetTrajectories> lastTargetTrajectories_;
 

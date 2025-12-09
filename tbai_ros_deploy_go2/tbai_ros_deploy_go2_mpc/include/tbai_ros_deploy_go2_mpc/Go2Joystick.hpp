@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -51,49 +53,49 @@ class Go2Joystick : public ::tbai::reference::ReferenceVelocityGenerator, public
         TBAI_LOG_WARN(logger_, "A pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressB() override {
+    void onPressB() override {
         std_msgs::String msg;
         msg.data = "WBC";
         changeControllerPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "B pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressX() override {
+    void onPressX() override {
         std_msgs::String msg;
         msg.data = "STAND";
         changeControllerPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "X pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressY() override {
+    void onPressY() override {
         std_msgs::String msg;
         msg.data = "NP3O";
         changeControllerPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "Y pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressUp() override {
+    void onPressUp() override {
         std_msgs::String msg;
         msg.data = "trot";
         gaitCommandPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "Up pressed: Changing gait to {}", msg.data);
     }
 
-    virtual void onPressDown() override {
+    void onPressDown() override {
         std_msgs::String msg;
         msg.data = "stance";
         gaitCommandPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "Down pressed: Changing gait to {}", msg.data);
     }
 
-    virtual void onPressRight() override {
+    void onPressRight() override {
         std_msgs::String msg;
         msg.data = "standing_trot";
         gaitCommandPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "Right pressed: Changing gait to {}", msg.data);
     }
 
-    virtual void onPressLeft() override {
+    void onPressLeft() override {
         std_msgs::String msg;
         msg.data = "static_walk";
         gaitCommandPublisher_.publish(msg);

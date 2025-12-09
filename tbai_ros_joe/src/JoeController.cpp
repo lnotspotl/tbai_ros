@@ -78,8 +78,8 @@ JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &state
     refVelGen_ = tbai::reference::getReferenceVelocityGeneratorUnique(nh);
     refPub_ = nh.advertise<ocs2_msgs::mpc_target_trajectories>("anymal_mpc_target", 1, false);
 
-    horizon_ = 1.0;  // TODO:  Load this parameter from the config file
-    mpcRate_ = 30;   // TODO:  Load this parameter from the config file
+    horizon_ = 1.0;  // TODO(lnotspotl): Load this parameter from the config file
+    mpcRate_ = 30;   // TODO(lnotspotl): Load this parameter from the config file
     pastAction_ = vector_t().setZero(12);
 
     if (!blind_) {
@@ -196,7 +196,7 @@ std::vector<MotorCommand> JoeController::getMotorCommands(scalar_t currentTime, 
         auto reference = generateTargetTrajectories(currentTime, dt, commandObservation);
         // lastTargetTrajectories_.reset(
         //     new TargetTrajectories(reference.timeTrajectory, reference.stateTrajectory, reference.inputTrajectory));
-        // TODO: Put this into its own thread
+        // TODO(lnotspotl): Put this into its own thread
         publishReference(generateTargetTrajectories(currentTime, dt, commandObservation));
     }
 
@@ -323,7 +323,7 @@ std::vector<vector3_t> JoeController::getDesiredFeetVelocities(scalar_t currentT
     auto basePoseOcs2 = switched_model::getBasePose(optimizedState);
     auto baseTwistOcs2 = switched_model::getBaseLocalVelocities(optimizedState);
     auto jointAnglesOcs2 = switched_model::getJointPositions(optimizedState);
-    auto jointVelocitiesOcs2 = switched_model::getJointVelocities(optimizedInput);  // TODO: Bug, this should be input
+    auto jointVelocitiesOcs2 = switched_model::getJointVelocities(optimizedInput);  // TODO(lnotspotl): Bug, this should be input
     std::vector<vector3_t> feetVelocities(4);
     for (int legidx = 0; legidx < 4; ++legidx) {
         auto footVelocity =
@@ -845,7 +845,7 @@ void JoeController::setObservation() {
 }
 
 torch::Tensor vector2torch(const vector_t &v) {
-    const long rows = static_cast<long>(v.rows());
+    const int64_t rows = static_cast<int64_t>(v.rows());
     auto out = torch::empty({rows});
     float *data = out.data_ptr<float>();
 
@@ -856,8 +856,8 @@ torch::Tensor vector2torch(const vector_t &v) {
 }
 
 torch::Tensor matrix2torch(const matrix_t &m) {
-    const long rows = static_cast<long>(m.rows());
-    const long cols = static_cast<long>(m.cols());
+    const int64_t rows = static_cast<int64_t>(m.rows());
+    const int64_t cols = static_cast<int64_t>(m.cols());
     auto out = torch::empty({rows, cols});
     float *data = out.data_ptr<float>();
 

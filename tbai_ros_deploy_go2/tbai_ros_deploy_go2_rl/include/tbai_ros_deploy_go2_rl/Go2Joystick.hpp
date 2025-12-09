@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -50,21 +52,21 @@ class Go2Joystick : public ::tbai::reference::ReferenceVelocityGenerator, public
         TBAI_LOG_WARN(logger_, "A pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressB() override {
+    void onPressB() override {
         std_msgs::String msg;
         msg.data = "BOB";
         changeControllerPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "B pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressX() override {
+    void onPressX() override {
         std_msgs::String msg;
         msg.data = "STAND";
         changeControllerPublisher_.publish(msg);
         TBAI_LOG_WARN(logger_, "X pressed: Changing controller to {}", msg.data);
     }
 
-    virtual void onPressY() override {
+    void onPressY() override {
         std_msgs::String msg;
         msg.data = "NP3O";
         changeControllerPublisher_.publish(msg);

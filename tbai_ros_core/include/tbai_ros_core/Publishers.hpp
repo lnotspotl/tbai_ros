@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <tbai_core/control/Publishers.hpp>
 #include <tbai_ros_msgs/JointCommandArray.h>
 
@@ -11,7 +14,7 @@ class RosCommandPublisher : public tbai::CommandPublisher {
         commandPublisher_ = nh.advertise<tbai_ros_msgs::JointCommandArray>(commandTopic, 1);
     }
 
-    virtual void publish(std::vector<MotorCommand> commands) override {
+    void publish(std::vector<MotorCommand> commands) override {
         // Message to be sent to the motor controller
         tbai_ros_msgs::JointCommandArray commandArray;
         commandArray.joint_commands.resize(commands.size());
