@@ -15,6 +15,7 @@
     <arg name="gait_command_file" default="$(find tbai_ros_deploy_go2_mpc)/config/gait.info"/>
 
     <arg name="network_interface"           default="eth0"/>
+    <arg name="unitree_channel"             default="0"/>
     <arg name="run_rviz"                    default="false"/>
     <arg name="run_virtual_joystick"        default="false"/>
     <arg name="run_go2_joystick"            default="true"/>
@@ -42,6 +43,8 @@
     
     <!-- Set environment variable for network interface -->
     <env name="TBAI_GO2_NETWORK_INTERFACE" value="$(arg network_interface)"/>
+
+    <env name="TBAI_GO2_UNITREE_CHANNEL" value="$(arg unitree_channel)"/>
 
     <env name="TBAI_GO2_PUBLISH_LIDAR" value="$(arg publish_pointcloud)"/>
 

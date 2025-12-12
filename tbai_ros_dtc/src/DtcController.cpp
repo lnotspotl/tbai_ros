@@ -326,7 +326,8 @@ std::vector<vector3_t> DtcController::getDesiredFeetVelocities(scalar_t currentT
     auto basePoseOcs2 = switched_model::getBasePose(optimizedState);
     auto baseTwistOcs2 = switched_model::getBaseLocalVelocities(optimizedState);
     auto jointAnglesOcs2 = switched_model::getJointPositions(optimizedState);
-    auto jointVelocitiesOcs2 = switched_model::getJointVelocities(optimizedInput);  // TODO(lnotspotl): Bug, this should be input
+    auto jointVelocitiesOcs2 =
+        switched_model::getJointVelocities(optimizedInput);  // TODO(lnotspotl): Bug, this should be input
     std::vector<vector3_t> feetVelocities(4);
     for (int legidx = 0; legidx < 4; ++legidx) {
         auto footVelocity =

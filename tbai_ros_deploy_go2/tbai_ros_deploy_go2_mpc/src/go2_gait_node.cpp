@@ -17,11 +17,11 @@
 #include <std_msgs/String.h>
 
 namespace loadData = ocs2::loadData;
-using ocs2::stringToWords;
 using ocs2::getCommandLineString;
-using ocs2::legged_robot::ModeSequenceTemplate;
-using ocs2::legged_robot::loadModeSequenceTemplate;
+using ocs2::stringToWords;
 using ocs2::legged_robot::createModeSequenceTemplateMsg;
+using ocs2::legged_robot::loadModeSequenceTemplate;
+using ocs2::legged_robot::ModeSequenceTemplate;
 
 class GaitKeyboardPublisher {
    public:

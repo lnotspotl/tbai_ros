@@ -76,7 +76,8 @@ int main(int argc, char *argv[]) {
         std::shared_ptr<tbai::Go2RobotInterface>(new Go2RobotInterfaceWithLidar(
             tbai::Go2RobotInterfaceArgs()
                 .networkInterface(tbai::getEnvAs<std::string>("TBAI_GO2_NETWORK_INTERFACE", true, "eth0"))
-                .subscribeLidar(tbai::getEnvAs<bool>("TBAI_GO2_PUBLISH_LIDAR", true, false))));
+                .subscribeLidar(tbai::getEnvAs<bool>("TBAI_GO2_PUBLISH_LIDAR", true, false))
+                .unitreeChannel(tbai::getEnvAs<int>("TBAI_GO2_UNITREE_CHANNEL", true, 0))));
 
     std::shared_ptr<tbai::StateSubscriber> stateSubscriber = go2RobotInterface;
     std::shared_ptr<tbai::CommandPublisher> commandPublisher = go2RobotInterface;

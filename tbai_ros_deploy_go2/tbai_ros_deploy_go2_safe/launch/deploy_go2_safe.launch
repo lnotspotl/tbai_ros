@@ -7,6 +7,7 @@
     <arg name="description_name"            default="robot_description"/>
     <arg name="description_file"            default="$(find ocs2_robotic_assets)/resources/go2/urdf/go2_description.urdf"/>
     <arg name="network_interface"           default="eth0"/>
+    <arg name="unitree_channel"             default="0"/>
     <arg name="run_rviz"                    default="false"/>
     <arg name="run_virtual_joystick"        default="false"/>
     <arg name="run_go2_joystick"            default="true"/>
@@ -24,6 +25,8 @@
     
     <!-- Set environment variable for network interface -->
     <env name="TBAI_GO2_NETWORK_INTERFACE" value="$(arg network_interface)"/>
+
+    <env name="TBAI_GO2_UNITREE_CHANNEL" value="$(arg unitree_channel)"/>
 
     <param name="$(arg description_name)" command="$(find xacro)/xacro --inorder $(arg description_file)" />
 
