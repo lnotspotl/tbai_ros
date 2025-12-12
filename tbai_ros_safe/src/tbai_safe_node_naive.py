@@ -10,17 +10,17 @@ import rospy
 from geometry_msgs.msg import Point, Twist
 from scipy.spatial.transform import Rotation as R
 from std_msgs.msg import Bool
-from tbai_safe.cbf import ControlBarrierFunctionFactory, visualize_cbfs
-from tbai_safe.control import VanillaSafetyFilterNew
-from tbai_safe.mppi import (
+from tbai_cbf_mppi.cbf import ControlBarrierFunctionFactory, visualize_cbfs
+from tbai_cbf_mppi.control import VanillaSafetyFilterNew
+from tbai_cbf_mppi.mppi import (
   AcceleratedSafetyMPPI,
   MppiCbfCost,
   MppiCbfCostInputs,
   cost_fn,
   get_cost_function_parameterized,
 )
-from tbai_safe.symperf import jit_expr
-from tbai_safe.systems import SimpleSingleIntegrator2D
+from tbai_cbf_mppi.symperf import jit_expr
+from tbai_cbf_mppi.systems import SimpleSingleIntegrator2D
 from visualization_msgs.msg import Marker, MarkerArray
 
 from tbai_ros_msgs.msg import EstimatedState
