@@ -95,17 +95,21 @@ clean:
     echo "Cleaning ROS workspace: $CURRENT_DIR"
     cd $CURRENT_DIR
     catkin clean -y
-    rm -rf dependencies/tbai
+    rm -rf ${tbai_build_dir}
 
 # Remove tbai dependencies
 remove-tbai:
     #!/usr/bin/env bash
     rm -rf dependencies/tbai && rm -rf ${tbai_build_dir}
 
-# Clone tbai repository
-clone-tbai: remove-tbai
+# Clone tbai repository (skips if already exists)
+clone-tbai:
     #!/usr/bin/env bash
-    git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=develop dependencies/tbai
+    if [[ ! -d dependencies/tbai ]]; then
+        git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=develop dependencies/tbai
+    else
+        echo "[TBAI] dependencies/tbai already exists, skipping clone"
+    fi
 
 # Build tbai library
 build-tbai:
