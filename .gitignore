@@ -1,6 +1,7 @@
 .vscode
 __pycache__/
 tbai/
+mujoco_robotic_assets/
 pixi.lock
 
 *.mp4

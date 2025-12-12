@@ -29,6 +29,13 @@
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>
     <param name="gait_command_file" type="string" value="$(arg gait_command_file)"/>
 
+    <arg name="mujoco_simulation"            default="false"/>
+    <arg name="mujoco_config_file"          default="$(find mujoco_robotic_assets)/resources/go2/config.yaml"/>
+    <group if="$(arg mujoco_simulation)">
+        <node name="dsa" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
+        args="unitree_mujoco $(arg mujoco_config_file)"/>
+    </group>
+
     <!-- Load gazebo description -->
 	<param name="$(arg description_name)" command="$(find xacro)/xacro --inorder $(arg description_file)" />
 

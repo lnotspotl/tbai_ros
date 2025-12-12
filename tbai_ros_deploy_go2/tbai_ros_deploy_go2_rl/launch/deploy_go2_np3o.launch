@@ -13,6 +13,13 @@
     <arg name="run_go2_joystick"            default="true"/>
     <arg name="publish_pointcloud"          default="false"/>
     <arg name="mapping_device"              default="none"/>
+    
+    <arg name="mujoco_simulation"            default="false"/>
+    <arg name="mujoco_config_file"          default="$(find mujoco_robotic_assets)/resources/go2/config.yaml"/>
+    <group if="$(arg mujoco_simulation)">
+        <node name="dsa" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
+        args="unitree_mujoco $(arg mujoco_config_file)"/>
+    </group>
 
     <!-- Upload config path to ROS param server -->
     <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>

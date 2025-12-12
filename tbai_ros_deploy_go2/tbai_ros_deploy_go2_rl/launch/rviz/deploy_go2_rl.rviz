@@ -305,7 +305,7 @@ Visualization Manager:
       Marker Topic: /ocs2_anymal/swing_planner/trajectory_LF
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -401,8 +401,12 @@ Visualization Manager:
           Value: false
         base:
           Value: true
+        camera_link:
+          Value: true
         front_camera:
           Value: false
+        hesai_lidar:
+          Value: true
         imu:
           Value: false
         odom:
@@ -478,6 +482,9 @@ Visualization Manager:
             RR_hip_rotor:
               {}
             front_camera:
+              camera_link:
+                {}
+            hesai_lidar:
               {}
             imu:
               {}
@@ -574,7 +581,7 @@ Visualization Manager:
       Marker Topic: /ocs2_anymal/swing_planner/trajectory_LH
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -582,7 +589,7 @@ Visualization Manager:
       Marker Topic: /ocs2_anymal/swing_planner/trajectory_RF
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -590,7 +597,7 @@ Visualization Manager:
       Marker Topic: /ocs2_anymal/swing_planner/trajectory_RH
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -621,7 +628,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 4.407567024230957
+      Distance: 3.5668044090270996
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -629,8 +636,8 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -3.5459353923797607
-        Y: -1.591742753982544
+        X: 0.5078185200691223
+        Y: -1.6961662769317627
         Z: -1.0728836059570312e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
