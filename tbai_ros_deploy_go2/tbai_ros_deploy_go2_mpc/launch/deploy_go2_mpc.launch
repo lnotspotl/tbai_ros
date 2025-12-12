@@ -5,7 +5,7 @@
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_deploy_go2_mpc)/config/deploy_go2_mpc.yaml"/>
     <arg name="description_name"    default="robot_description"/>
-    <arg name="description_file"    default="$(find ocs2_robotic_assets)/resources/go2/urdf/go2_description.urdf"/>
+    <arg name="description_file"    default="$(find gazebo_robotic_assets)/resources/go2/urdf/go2_description.urdf"/>
 
     <arg name="sqp_settings_file" default="$(find tbai_ros_deploy_go2_mpc)/config/sqp.info"/>
     <arg name="frame_declaration_file" default="$(find tbai_ros_deploy_go2_mpc)/config/frame_declarations.info"/>

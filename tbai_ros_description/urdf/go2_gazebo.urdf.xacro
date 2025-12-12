@@ -5,7 +5,7 @@
 <xacro:include filename="utils.xacro" />
 
 <!-- Go2 bare urdf -->
-<xacro:include filename="$(find ocs2_robotic_assets)/resources/go2/urdf/go2_description.urdf" />
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/go2/urdf/go2_description.urdf" />
 
 <!-- Transmissions LF -->
 <xacro:transmission name="transmission_LF_HAA" joint="LF_HAA" actuator="motor_LF_HAA"/>

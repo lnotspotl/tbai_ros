@@ -5,7 +5,7 @@
     <arg name="controllers_args"            default="joint_controller"/>
     <arg name="tbai_config_path"            default="$(find tbai_ros_deploy_go2_rl)/config/deploy_go2_rl.yaml"/>
     <arg name="description_name"            default="robot_description"/>
-    <arg name="description_file"            default="$(find ocs2_robotic_assets)/resources/go2/urdf/go2_description.urdf"/>
+    <arg name="description_file"            default="$(find gazebo_robotic_assets)/resources/go2/urdf/go2_description.urdf"/>
     <arg name="network_interface"           default="eth0"/>
     <arg name="run_rviz"                    default="true"/>
     <arg name="run_virtual_joystick"        default="false"/>

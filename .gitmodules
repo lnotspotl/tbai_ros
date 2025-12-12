@@ -1,9 +1,9 @@
 [submodule "dependencies/ocs2"]
 	path = dependencies/ocs2
 	url = https://github.com/lnotspotl/ocs2.git
-[submodule "dependencies/ocs2_robotic_assets"]
-	path = dependencies/ocs2_robotic_assets
-	url = https://github.com/projectatctu/ocs2_robotic_assets.git
+[submodule "dependencies/gazebo_robotic_assets"]
+	path = dependencies/gazebo_robotic_assets
+	url = https://github.com/lnotspotl/gazebo_robotic_assets.git
 [submodule "dependencies/elevation_mapping"]
 	path = dependencies/elevation_mapping
 	url = https://github.com/ANYbotics/elevation_mapping.git

@@ -48,7 +48,7 @@
     <param name="referenceFile"     value="$(find tbai_ros_joe)/config/reference.info" />
     <param name="gaitCommandFile"   value="$(find tbai_ros_joe)/config/gait.info"/>
     <param name="joeModelFile"      value="$(find tbai_ros_joe)/models/sjoe.pt"/>
-    <param name="urdfFile"          value="$(find ocs2_robotic_assets)/resources/anymal_d/urdf/anymal.urdf" />
+    <param name="urdfFile"          value="$(find gazebo_robotic_assets)/resources/anymal_d/urdf/anymal.urdf" />
 
     <!-- Launch Gait command node -->
     <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"

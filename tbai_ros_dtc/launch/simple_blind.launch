@@ -47,7 +47,7 @@
     <param name="taskFile"          value="$(find tbai_ros_dtc)/config/task.info" />
     <param name="referenceFile"     value="$(find tbai_ros_dtc)/config/reference.info" />
     <param name="gaitCommandFile"   value="$(find tbai_ros_dtc)/config/gait.info"/>
-    <param name="urdfFile"          value="$(find ocs2_robotic_assets)/resources/anymal_d/urdf/anymal.urdf" />
+    <param name="urdfFile"          value="$(find gazebo_robotic_assets)/resources/anymal_d/urdf/anymal.urdf" />
 
     <!-- Launch Gait command node -->
     <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"

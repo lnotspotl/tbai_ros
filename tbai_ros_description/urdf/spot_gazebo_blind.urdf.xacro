@@ -5,7 +5,7 @@
 <xacro:include filename="utils.xacro" />
 
 <!-- Anymal D bare urdf -->
-<xacro:include filename="$(find ocs2_robotic_assets)/resources/spot/urdf/spot.urdf" />
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/spot/urdf/spot.urdf" />
 
 <!-- Transmissions LF -->
 <xacro:transmission name="transmission_LF_HAA" joint="LF_HAA" actuator="motor_LF_HAA"/>
