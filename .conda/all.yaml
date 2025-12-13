@@ -40,6 +40,8 @@ dependencies:
 - ros-noetic-octomap-server *
 - librealsense >=2.55.1,<3
 - cupy *
+- libgl-devel *
+- glfw *
 - cudatoolkit *
 - ros-noetic-image-transport >=1.12.0,<2
 - ros-noetic-image-transport-plugins >=1.14.0,<2
