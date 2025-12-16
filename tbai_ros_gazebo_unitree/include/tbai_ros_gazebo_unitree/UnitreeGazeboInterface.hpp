@@ -14,7 +14,6 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/sensors/sensors.hh>
-
 #include <unitree/common/thread/thread.hpp>
 #include <unitree/idl/go2/LowCmd_.hpp>
 #include <unitree/idl/go2/LowState_.hpp>
@@ -35,7 +34,7 @@ class UnitreeGazeboInterface : public ModelPlugin {
 
    private:
     void OnUpdate();
-    void LowCmdCallback(const void* message);
+    void LowCmdCallback(const void *message);
 
     // Gazebo model and physics
     physics::ModelPtr model_;
@@ -62,7 +61,7 @@ class UnitreeGazeboInterface : public ModelPlugin {
     unitree_go::msg::dds_::LowState_ lowState_{};
 
     // Configuration
-    int domainId_ = 1;          // Default to simulation domain
+    int domainId_ = 1;              // Default to simulation domain
     std::string interface_ = "lo";  // Default to loopback for simulation
     double updateRate_ = 1000.0;    // Hz
     double updatePeriod_ = 0.001;   // seconds

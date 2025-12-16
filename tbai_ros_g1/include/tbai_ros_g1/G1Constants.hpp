@@ -21,8 +21,8 @@ constexpr int OBS_JOINT_VEL = G1_NUM_JOINTS;
 constexpr int OBS_LAST_ACTION = G1_NUM_JOINTS;
 
 // Total observation size with history
-constexpr int OBS_SIZE_PER_STEP = OBS_BASE_ANG_VEL + OBS_PROJECTED_GRAVITY + OBS_VELOCITY_CMD +
-                                   OBS_JOINT_POS + OBS_JOINT_VEL + OBS_LAST_ACTION;
+constexpr int OBS_SIZE_PER_STEP =
+    OBS_BASE_ANG_VEL + OBS_PROJECTED_GRAVITY + OBS_VELOCITY_CMD + OBS_JOINT_POS + OBS_JOINT_VEL + OBS_LAST_ACTION;
 constexpr int TOTAL_OBS_SIZE = OBS_SIZE_PER_STEP * HISTORY_LENGTH;
 
 }  // namespace g1

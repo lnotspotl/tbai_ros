@@ -1,20 +1,17 @@
 #include "tbai_ros_g1/G1MimicController.hpp"
 
 #include <algorithm>
+
 #include <ros/ros.h>
-#include <tbai_core/config/Config.hpp>
 #include <tbai_core/Rotations.hpp>
+#include <tbai_core/config/Config.hpp>
 
 namespace tbai {
 namespace g1 {
 
 G1MimicController::G1MimicController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
-                                     const std::string &policyPath,
-                                     const std::string &motionFilePath,
-                                     float motionFps,
-                                     float timeStart,
-                                     float timeEnd,
-                                     const std::string &controllerName)
+                                     const std::string &policyPath, const std::string &motionFilePath, float motionFps,
+                                     float timeStart, float timeEnd, const std::string &controllerName)
     : stateSubscriberPtr_(stateSubscriberPtr),
       timeStart_(timeStart),
       currentMotionTime_(0.0f),
@@ -25,8 +22,8 @@ G1MimicController::G1MimicController(const std::shared_ptr<tbai::StateSubscriber
 
     // Load motion data
     motionLoader_ = std::make_unique<MotionLoader>(motionFilePath, motionFps);
-    TBAI_LOG_INFO(logger_, "Loaded motion file with {} frames, duration: {:.2f}s",
-                  motionLoader_->numFrames(), motionLoader_->duration());
+    TBAI_LOG_INFO(logger_, "Loaded motion file with {} frames, duration: {:.2f}s", motionLoader_->numFrames(),
+                  motionLoader_->duration());
 
     // Set time end (use full duration if -1)
     timeEnd_ = (timeEnd < 0) ? motionLoader_->duration() : timeEnd;
@@ -63,17 +60,16 @@ G1MimicController::G1MimicController(const std::shared_ptr<tbai::StateSubscriber
     }
 
     // Initialize joint names (in DDS order)
-    jointNames_ = {
-        "left_hip_pitch_joint", "left_hip_roll_joint", "left_hip_yaw_joint",
-        "left_knee_joint", "left_ankle_pitch_joint", "left_ankle_roll_joint",
-        "right_hip_pitch_joint", "right_hip_roll_joint", "right_hip_yaw_joint",
-        "right_knee_joint", "right_ankle_pitch_joint", "right_ankle_roll_joint",
-        "waist_yaw_joint", "waist_roll_joint", "waist_pitch_joint",
-        "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint",
-        "left_elbow_joint", "left_wrist_roll_joint", "left_wrist_pitch_joint", "left_wrist_yaw_joint",
-        "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint",
-        "right_elbow_joint", "right_wrist_roll_joint", "right_wrist_pitch_joint", "right_wrist_yaw_joint"
-    };
+    jointNames_ = {"left_hip_pitch_joint",      "left_hip_roll_joint",        "left_hip_yaw_joint",
+                   "left_knee_joint",           "left_ankle_pitch_joint",     "left_ankle_roll_joint",
+                   "right_hip_pitch_joint",     "right_hip_roll_joint",       "right_hip_yaw_joint",
+                   "right_knee_joint",          "right_ankle_pitch_joint",    "right_ankle_roll_joint",
+                   "waist_yaw_joint",           "waist_roll_joint",           "waist_pitch_joint",
+                   "left_shoulder_pitch_joint", "left_shoulder_roll_joint",   "left_shoulder_yaw_joint",
+                   "left_elbow_joint",          "left_wrist_roll_joint",      "left_wrist_pitch_joint",
+                   "left_wrist_yaw_joint",      "right_shoulder_pitch_joint", "right_shoulder_roll_joint",
+                   "right_shoulder_yaw_joint",  "right_elbow_joint",          "right_wrist_roll_joint",
+                   "right_wrist_pitch_joint",   "right_wrist_yaw_joint"};
 
     initOnnxRuntime(policyPath);
     initQuat_ = quaternion_t::Identity();
@@ -96,8 +92,7 @@ void G1MimicController::initOnnxRuntime(const std::string &policyPath) {
     sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
 
     ortSession_ = std::make_unique<Ort::Session>(*ortEnv_, policyPath.c_str(), sessionOptions);
-    memoryInfo_ = std::make_unique<Ort::MemoryInfo>(
-        Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault));
+    memoryInfo_ = std::make_unique<Ort::MemoryInfo>(Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault));
 
     // Get input/output names
     Ort::AllocatorWithDefaultOptions allocator;
@@ -123,21 +118,18 @@ void G1MimicController::preStep(scalar_t currentTime, scalar_t dt) {
     }
 }
 
-quaternion_t G1MimicController::computeTorsoOrientation(const quaternion_t &rootQuat,
-                                                         const vector_t &jointPos) const {
+quaternion_t G1MimicController::computeTorsoOrientation(const quaternion_t &rootQuat, const vector_t &jointPos) const {
     // Torso orientation includes waist motors (indices 12, 13, 14 in DDS order)
     // waist_yaw (12), waist_roll (13), waist_pitch (14)
-    quaternion_t torsoQuat = rootQuat
-        * quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[12], vector3_t::UnitZ()))
-        * quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[13], vector3_t::UnitX()))
-        * quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[14], vector3_t::UnitY()));
+    quaternion_t torsoQuat = rootQuat * quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[12], vector3_t::UnitZ())) *
+                             quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[13], vector3_t::UnitX())) *
+                             quaternion_t(Eigen::AngleAxis<scalar_t>(jointPos[14], vector3_t::UnitY()));
 
     return torsoQuat;
 }
 
-Eigen::Matrix<scalar_t, 6, 1> G1MimicController::computeOrientationError(
-    const quaternion_t &targetQuat,
-    const quaternion_t &actualQuat) const {
+Eigen::Matrix<scalar_t, 6, 1> G1MimicController::computeOrientationError(const quaternion_t &targetQuat,
+                                                                         const quaternion_t &actualQuat) const {
     // Compute relative rotation: (initQuat * targetQuat)^-1 * actualQuat
     quaternion_t relQuat = (initQuat_ * targetQuat).conjugate() * actualQuat;
     matrix3_t rot = relQuat.toRotationMatrix().transpose();
@@ -172,8 +164,7 @@ void G1MimicController::buildObservation(scalar_t currentTime, scalar_t dt) {
 
     // Compute torso orientations
     quaternion_t robotTorsoQuat = computeTorsoOrientation(rootQuat, jointPos);
-    quaternion_t motionTorsoQuat = computeTorsoOrientation(
-        motionLoader_->rootQuaternion(), motionJointPosDfs);
+    quaternion_t motionTorsoQuat = computeTorsoOrientation(motionLoader_->rootQuaternion(), motionJointPosDfs);
 
     // Build observation vector (154 dimensions total)
     int idx = 0;
@@ -221,12 +212,12 @@ void G1MimicController::runInference() {
         inputData[i] = static_cast<float>(observation_[i]);
     }
 
-    Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
-        *memoryInfo_, inputData.data(), inputData.size(), inputShape.data(), inputShape.size());
+    Ort::Value inputTensor = Ort::Value::CreateTensor<float>(*memoryInfo_, inputData.data(), inputData.size(),
+                                                             inputShape.data(), inputShape.size());
 
     // Run inference
-    auto outputTensors = ortSession_->Run(
-        Ort::RunOptions{nullptr}, inputNames_.data(), &inputTensor, 1, outputNames_.data(), 1);
+    auto outputTensors =
+        ortSession_->Run(Ort::RunOptions{nullptr}, inputNames_.data(), &inputTensor, 1, outputNames_.data(), 1);
 
     // Get output
     float *outputData = outputTensors[0].GetTensorMutableData<float>();
@@ -268,9 +259,7 @@ std::vector<tbai::MotorCommand> G1MimicController::getMotorCommands(scalar_t cur
 
 bool G1MimicController::isSupported(const std::string &controllerType) {
     // Support the controller's specific name and generic mimic names
-    return controllerType == controllerName_ ||
-           controllerType == "G1MimicController" ||
-           controllerType == "g1_mimic" ||
+    return controllerType == controllerName_ || controllerType == "G1MimicController" || controllerType == "g1_mimic" ||
            controllerType == "mimic";
 }
 
@@ -322,8 +311,7 @@ void G1MimicController::changeController(const std::string &controllerType, scal
 
     // Get motion torso orientation at start
     vector_t motionJointPos = motionLoader_->jointPos();
-    quaternion_t motionTorsoQuat = computeTorsoOrientation(
-        motionLoader_->rootQuaternion(), motionJointPos);
+    quaternion_t motionTorsoQuat = computeTorsoOrientation(motionLoader_->rootQuaternion(), motionJointPos);
 
     // Compute initial yaw alignment between robot and motion
     matrix3_t refYaw = MotionLoader::yawQuaternion(motionTorsoQuat).toRotationMatrix();

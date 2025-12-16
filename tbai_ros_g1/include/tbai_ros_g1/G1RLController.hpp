@@ -1,18 +1,18 @@
 #pragma once
 
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
-#include <deque>
 
 #include <Eigen/Dense>
+#include <onnxruntime_cxx_api.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Types.hpp>
 #include <tbai_core/control/Controllers.hpp>
 #include <tbai_core/control/Subscribers.hpp>
 #include <tbai_reference/ReferenceVelocityGenerator.hpp>
 #include <tbai_ros_g1/G1Constants.hpp>
-#include <onnxruntime_cxx_api.h>
 
 namespace tbai {
 namespace g1 {
@@ -61,8 +61,8 @@ class G1RLController : public tbai::Controller {
     std::unique_ptr<Ort::Env> ortEnv_;
     std::unique_ptr<Ort::Session> ortSession_;
     std::unique_ptr<Ort::MemoryInfo> memoryInfo_;
-    std::vector<const char*> inputNames_;
-    std::vector<const char*> outputNames_;
+    std::vector<const char *> inputNames_;
+    std::vector<const char *> outputNames_;
 
     // State
     tbai::State state_;
@@ -70,12 +70,12 @@ class G1RLController : public tbai::Controller {
 
     // Observation term histories (each term has its own history buffer)
     // This matches UNITREE's format: [term0_h0..h4, term1_h0..h4, ...]
-    std::deque<vector3_t> angVelHistory_;       // 3 values * 5 history
-    std::deque<vector3_t> projGravHistory_;     // 3 values * 5 history
-    std::deque<vector3_t> velCmdHistory_;       // 3 values * 5 history
-    std::deque<vector_t> jointPosRelHistory_;   // 29 values * 5 history
-    std::deque<vector_t> jointVelRelHistory_;   // 29 values * 5 history
-    std::deque<vector_t> lastActionHistory_;    // 29 values * 5 history
+    std::deque<vector3_t> angVelHistory_;      // 3 values * 5 history
+    std::deque<vector3_t> projGravHistory_;    // 3 values * 5 history
+    std::deque<vector3_t> velCmdHistory_;      // 3 values * 5 history
+    std::deque<vector_t> jointPosRelHistory_;  // 29 values * 5 history
+    std::deque<vector_t> jointVelRelHistory_;  // 29 values * 5 history
+    std::deque<vector_t> lastActionHistory_;   // 29 values * 5 history
     vector_t fullObservation_;
 
     // Action output

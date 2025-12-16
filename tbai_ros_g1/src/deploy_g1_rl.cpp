@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 
+#include <ros/package.h>
 #include <ros/ros.h>
 #include <tbai_core/Env.hpp>
 #include <tbai_core/Logging.hpp>
@@ -9,11 +10,10 @@
 #include <tbai_core/control/CentralController.hpp>
 #include <tbai_deploy_g1/G1RobotInterface.hpp>
 #include <tbai_ros_core/Rate.hpp>
-#include <tbai_ros_g1/G1RLController.hpp>
 #include <tbai_ros_g1/G1MimicController.hpp>
+#include <tbai_ros_g1/G1RLController.hpp>
 #include <tbai_ros_g1/G1StaticController.hpp>
 #include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
-#include <ros/package.h>
 
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "tbai_ros_deploy_g1_rl");
@@ -26,11 +26,10 @@ int main(int argc, char *argv[]) {
     tbai::writeInitTime(tbai::RosTime::rightNow());
 
     // Initialize G1RobotInterface
-    std::shared_ptr<tbai::G1RobotInterface> g1RobotInterface =
-        std::make_shared<tbai::G1RobotInterface>(
-            tbai::G1RobotInterfaceArgs()
-                .networkInterface(tbai::getEnvAs<std::string>("TBAI_G1_NETWORK_INTERFACE", true, "lo"))
-                .unitreeChannel(tbai::getEnvAs<int>("TBAI_G1_UNITREE_CHANNEL", true, 1)));
+    std::shared_ptr<tbai::G1RobotInterface> g1RobotInterface = std::make_shared<tbai::G1RobotInterface>(
+        tbai::G1RobotInterfaceArgs()
+            .networkInterface(tbai::getEnvAs<std::string>("TBAI_G1_NETWORK_INTERFACE", true, "lo"))
+            .unitreeChannel(tbai::getEnvAs<int>("TBAI_G1_UNITREE_CHANNEL", true, 1)));
 
     std::shared_ptr<tbai::StateSubscriber> stateSubscriber = g1RobotInterface;
     std::shared_ptr<tbai::CommandPublisher> commandPublisher = g1RobotInterface;
@@ -76,8 +75,8 @@ int main(int argc, char *argv[]) {
     auto modelPathDance102 = tbai::downloadFromHuggingFace(hfRepo3, hfModel3);
     auto dance102MotionFilePath = tbai::downloadFromHuggingFace(hfRepo3, dance102MotionFile);
     TBAI_LOG_INFO(logger, "Loading HF model: {}/{}", hfRepo3, hfModel3);
-    controller.addController(
-        std::make_unique<tbai::g1::G1MimicController>(stateSubscriber, modelPathDance102, dance102MotionFilePath, motionFps, timeStart, timeEnd, "G1MimicDance102"));
+    controller.addController(std::make_unique<tbai::g1::G1MimicController>(
+        stateSubscriber, modelPathDance102, dance102MotionFilePath, motionFps, timeStart, timeEnd, "G1MimicDance102"));
 
     // Load G1 mimic gangnam style controller
     auto hfRepo2 = tbai::fromGlobalConfig<std::string>("g1_mimic_gangnam/hf_repo");
@@ -89,9 +88,9 @@ int main(int argc, char *argv[]) {
     auto modelPathGangnam = tbai::downloadFromHuggingFace(hfRepo2, hfModel2);
     auto gangnamMotionFilePath = tbai::downloadFromHuggingFace(hfRepo2, gangnamMotionFile2);
     TBAI_LOG_INFO(logger, "Loading HF model: {}/{}", hfRepo2, hfModel2);
-    controller.addController(
-            std::make_unique<tbai::g1::G1MimicController>(stateSubscriber, modelPathGangnam, gangnamMotionFilePath, motionFps2, timeStart2, timeEnd2, "G1MimicGangnam"));
-        
+    controller.addController(std::make_unique<tbai::g1::G1MimicController>(
+        stateSubscriber, modelPathGangnam, gangnamMotionFilePath, motionFps2, timeStart2, timeEnd2, "G1MimicGangnam"));
+
     TBAI_LOG_INFO(logger, "Controllers initialized. Starting main loop...");
 
     // Start controller loop

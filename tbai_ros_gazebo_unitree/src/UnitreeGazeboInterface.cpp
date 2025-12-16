@@ -65,7 +65,7 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
     if (numMotors_ == 0) {
         // If no joints specified in SDF, get all joints from model
         auto allJoints = model_->GetJoints();
-        for (const auto& joint : allJoints) {
+        for (const auto &joint : allJoints) {
             // Skip fixed joints
             if (joint->GetType() != physics::Joint::FIXED_JOINT) {
                 jointNames_.push_back(joint->GetName());
@@ -90,7 +90,7 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
 
     // Get IMU sensor
     if (!imuSensorName_.empty()) {
-        sensors::SensorManager* sensorManager = sensors::SensorManager::Instance();
+        sensors::SensorManager *sensorManager = sensors::SensorManager::Instance();
         sensors::SensorPtr sensor = sensorManager->GetSensor(imuSensorName_);
         if (sensor) {
             imuSensor_ = std::dynamic_pointer_cast<sensors::ImuSensor>(sensor);
@@ -106,15 +106,15 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
 
     // Get foot contact sensors (optional)
     if (hasFootSensors_) {
-        sensors::SensorManager* sensorManager = sensors::SensorManager::Instance();
+        sensors::SensorManager *sensorManager = sensors::SensorManager::Instance();
         for (int i = 0; i < 4; ++i) {
             if (!footContactSensorNames_[i].empty()) {
                 sensors::SensorPtr sensor = sensorManager->GetSensor(footContactSensorNames_[i]);
                 if (sensor) {
                     footContactSensors_[i] = std::dynamic_pointer_cast<sensors::ContactSensor>(sensor);
                     if (footContactSensors_[i]) {
-                        gzerr << "[UnitreeGazeboInterface] Foot sensor " << i << " found: "
-                              << footContactSensorNames_[i] << std::endl;
+                        gzerr << "[UnitreeGazeboInterface] Foot sensor " << i
+                              << " found: " << footContactSensorNames_[i] << std::endl;
                     }
                 }
             }
@@ -126,16 +126,13 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
     unitree::robot::ChannelFactory::Instance()->Init(domainId_, interface_);
 
     // Create publisher for LowState
-    lowstatePublisher_.reset(
-        new unitree::robot::ChannelPublisher<unitree_go::msg::dds_::LowState_>("rt/lowstate"));
+    lowstatePublisher_.reset(new unitree::robot::ChannelPublisher<unitree_go::msg::dds_::LowState_>("rt/lowstate"));
     lowstatePublisher_->InitChannel();
     gzerr << "[UnitreeGazeboInterface] LowState publisher initialized" << std::endl;
 
     // Create subscriber for LowCmd
-    lowcmdSubscriber_.reset(
-        new unitree::robot::ChannelSubscriber<unitree_go::msg::dds_::LowCmd_>("rt/lowcmd"));
-    lowcmdSubscriber_->InitChannel(
-        std::bind(&UnitreeGazeboInterface::LowCmdCallback, this, std::placeholders::_1), 1);
+    lowcmdSubscriber_.reset(new unitree::robot::ChannelSubscriber<unitree_go::msg::dds_::LowCmd_>("rt/lowcmd"));
+    lowcmdSubscriber_->InitChannel(std::bind(&UnitreeGazeboInterface::LowCmdCallback, this, std::placeholders::_1), 1);
     gzerr << "[UnitreeGazeboInterface] LowCmd subscriber initialized" << std::endl;
 
     // Initialize low command with safe defaults
@@ -149,8 +146,7 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
     }
 
     // Connect to Gazebo update event
-    updateConnection_ = event::Events::ConnectWorldUpdateBegin(
-        std::bind(&UnitreeGazeboInterface::OnUpdate, this));
+    updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&UnitreeGazeboInterface::OnUpdate, this));
 
     // Initialize timing
     lastUpdateTime_ = model_->GetWorld()->SimTime();
@@ -162,9 +158,9 @@ void UnitreeGazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) 
     gzerr << "[UnitreeGazeboInterface] Plugin loaded successfully" << std::endl;
 }
 
-void UnitreeGazeboInterface::LowCmdCallback(const void* message) {
+void UnitreeGazeboInterface::LowCmdCallback(const void *message) {
     std::lock_guard<std::mutex> lock(lowCmdMutex_);
-    lowCmd_ = *(unitree_go::msg::dds_::LowCmd_*)message;
+    lowCmd_ = *(unitree_go::msg::dds_::LowCmd_ *)message;
 }
 
 void UnitreeGazeboInterface::OnUpdate() {
@@ -172,7 +168,7 @@ void UnitreeGazeboInterface::OnUpdate() {
     std::lock_guard<std::mutex> lock(lowCmdMutex_);
 
     for (int i = 0; i < numMotors_ && i < 20; ++i) {
-        const auto& cmd = lowCmd_.motor_cmd()[i];
+        const auto &cmd = lowCmd_.motor_cmd()[i];
 
         // Only apply commands if motor is in servo mode
         if (cmd.mode() != 0x01) {
@@ -282,9 +278,9 @@ void UnitreeGazeboInterface::UpdateLowState() {
                 msgs::Contacts contacts = footContactSensors_[i]->Contacts();
                 double totalForce = 0.0;
                 for (int j = 0; j < contacts.contact_size(); ++j) {
-                    const msgs::Contact& contact = contacts.contact(j);
+                    const msgs::Contact &contact = contacts.contact(j);
                     for (int k = 0; k < contact.wrench_size(); ++k) {
-                        const msgs::JointWrench& wrench = contact.wrench(k);
+                        const msgs::JointWrench &wrench = contact.wrench(k);
                         ignition::math::Vector3d force(wrench.body_1_wrench().force().x(),
                                                        wrench.body_1_wrench().force().y(),
                                                        wrench.body_1_wrench().force().z());

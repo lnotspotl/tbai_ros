@@ -11,7 +11,6 @@ namespace g1 {
 
 class MotionLoader {
    public:
-    
     MotionLoader(const std::string &motionFile, float fps);
 
     void update(float time);

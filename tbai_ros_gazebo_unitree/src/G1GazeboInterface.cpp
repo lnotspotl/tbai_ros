@@ -52,7 +52,7 @@ void G1GazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) {
     numMotors_ = jointNames_.size();
     if (numMotors_ == 0) {
         auto allJoints = model_->GetJoints();
-        for (const auto& joint : allJoints) {
+        for (const auto &joint : allJoints) {
             if (joint->GetType() != physics::Joint::FIXED_JOINT) {
                 jointNames_.push_back(joint->GetName());
             }
@@ -79,16 +79,13 @@ void G1GazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) {
     unitree::robot::ChannelFactory::Instance()->Init(domainId_, interface_);
 
     // Create publisher for LowState
-    lowstatePublisher_.reset(
-        new unitree::robot::ChannelPublisher<unitree_hg::msg::dds_::LowState_>("rt/lowstate"));
+    lowstatePublisher_.reset(new unitree::robot::ChannelPublisher<unitree_hg::msg::dds_::LowState_>("rt/lowstate"));
     lowstatePublisher_->InitChannel();
     gzerr << "[G1GazeboInterface] LowState publisher initialized" << std::endl;
 
     // Create subscriber for LowCmd
-    lowcmdSubscriber_.reset(
-        new unitree::robot::ChannelSubscriber<unitree_hg::msg::dds_::LowCmd_>("rt/lowcmd"));
-    lowcmdSubscriber_->InitChannel(
-        std::bind(&G1GazeboInterface::LowCmdCallback, this, std::placeholders::_1), 1);
+    lowcmdSubscriber_.reset(new unitree::robot::ChannelSubscriber<unitree_hg::msg::dds_::LowCmd_>("rt/lowcmd"));
+    lowcmdSubscriber_->InitChannel(std::bind(&G1GazeboInterface::LowCmdCallback, this, std::placeholders::_1), 1);
     gzerr << "[G1GazeboInterface] LowCmd subscriber initialized" << std::endl;
 
     // Initialize low command with safe defaults
@@ -102,8 +99,7 @@ void G1GazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) {
     }
 
     // Connect to Gazebo update event
-    updateConnection_ = event::Events::ConnectWorldUpdateBegin(
-        std::bind(&G1GazeboInterface::OnUpdate, this));
+    updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&G1GazeboInterface::OnUpdate, this));
 
     // Initialize timing
     lastUpdateTime_ = model_->GetWorld()->SimTime();
@@ -115,9 +111,9 @@ void G1GazeboInterface::Load(physics::ModelPtr model, sdf::ElementPtr sdf) {
     gzerr << "[G1GazeboInterface] Plugin loaded successfully" << std::endl;
 }
 
-void G1GazeboInterface::LowCmdCallback(const void* message) {
+void G1GazeboInterface::LowCmdCallback(const void *message) {
     std::lock_guard<std::mutex> lock(lowCmdMutex_);
-    lowCmd_ = *(unitree_hg::msg::dds_::LowCmd_*)message;
+    lowCmd_ = *(unitree_hg::msg::dds_::LowCmd_ *)message;
 }
 
 void G1GazeboInterface::OnUpdate() {
@@ -132,7 +128,7 @@ void G1GazeboInterface::OnUpdate() {
     constexpr double kd_default = 10.0;
 
     for (int i = 0; i < numMotors_ && i < 29; ++i) {
-        const auto& cmd = lowCmd_.motor_cmd()[i];
+        const auto &cmd = lowCmd_.motor_cmd()[i];
 
         double q_actual = joints_[i]->Position(0);
 

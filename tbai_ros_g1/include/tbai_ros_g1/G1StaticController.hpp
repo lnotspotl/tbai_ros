@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tbai_ros_static/StaticController.hpp>
 #include <tbai_ros_g1/G1Constants.hpp>
+#include <tbai_ros_static/StaticController.hpp>
 
 namespace tbai {
 namespace g1 {

@@ -14,7 +14,6 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/sensors/sensors.hh>
-
 #include <unitree/common/thread/thread.hpp>
 #include <unitree/idl/hg/LowCmd_.hpp>
 #include <unitree/idl/hg/LowState_.hpp>
@@ -26,16 +25,14 @@ namespace gazebo {
 
 class G1GazeboInterface : public ModelPlugin {
    public:
-    G1GazeboInterface() {
-        std::cerr << "[G1GazeboInterface] Constructor called" << std::endl;
-    }
+    G1GazeboInterface() { std::cerr << "[G1GazeboInterface] Constructor called" << std::endl; }
     ~G1GazeboInterface() override;
 
     void Load(physics::ModelPtr model, sdf::ElementPtr sdf) override;
 
    private:
     void OnUpdate();
-    void LowCmdCallback(const void* message);
+    void LowCmdCallback(const void *message);
 
     // Gazebo model and physics
     physics::ModelPtr model_;
