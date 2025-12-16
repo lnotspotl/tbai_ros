@@ -8,12 +8,9 @@
     <arg name="run_virtual_joystick" default="true"/>
     <arg name="run_rviz" default="false"/>
 
-    <!-- MuJoCo simulation -->
-    <arg name="mujoco_simulation" default="true"/>
-    <arg name="mujoco_config_file" default="$(find mujoco_robotic_assets)/resources/go2w/config.yaml"/>
-    <group if="$(arg mujoco_simulation)">
-        <node name="mujoco_sim" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
-              args="unitree_mujoco $(arg mujoco_config_file)"/>
+    <arg name="gazebo_simulation" default="true"/>
+    <group if="$(arg gazebo_simulation)">
+        <include file="$(find tbai_ros_gazebo_unitree)/launch/go2w_gazebo_unitree.launch" />
     </group>
 
     <!-- Configure TBAI -->
