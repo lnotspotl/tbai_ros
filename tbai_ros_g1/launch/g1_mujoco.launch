@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <!-- Arguments -->
+    <arg name="controllers_ns" default="g1"/>
+    <arg name="tbai_config_path" default="$(find tbai_ros_g1)/config/g1_rl.yaml"/>
+    <arg name="network_interface" default="lo"/>
+    <arg name="unitree_channel" default="1"/>
+    <arg name="run_virtual_joystick" default="true"/>
+    <arg name="run_rviz" default="false"/>
+
+
+    <!-- Gangnam Style Mimic controller arguments -->
+    <arg name="gangnam_policy_path" default="$(find tbai_ros_g1)/config/mimic/gangnam_style/policy.onnx"/>
+    <arg name="gangnam_motion_file" default="$(find tbai_ros_g1)/config/mimic/gangnam_style/G1_gangnam_style_V01.bvh_60hz.csv"/>
+    <arg name="gangnam_fps" default="60.0"/>
+    <arg name="gangnam_time_start" default="5.2"/>
+    <arg name="gangnam_time_end" default="25.5"/>
+
+    <!-- MuJoCo simulation -->
+    <arg name="mujoco_simulation" default="false"/>
+    <arg name="mujoco_config_file" default="$(find mujoco_robotic_assets)/resources/g1/config.yaml"/>
+    <group if="$(arg mujoco_simulation)">
+        <node name="mujoco_sim" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
+              args="unitree_mujoco $(arg mujoco_config_file)"/>
+    </group>
+
+    <!-- Configure TBAI -->
+    <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
+    <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
+    <env name="TBAI_G1_NETWORK_INTERFACE" value="$(arg network_interface)"/>
+    <env name="TBAI_G1_UNITREE_CHANNEL" value="$(arg unitree_channel)"/>
+
+    <!-- Load robot description -->
+    <param name="robot_description"
+           command="cat $(find gazebo_robotic_assets)/resources/g1/urdf/g1_29dof.urdf"/>
+
+    <!-- Launch G1 RL controller node -->
+    <node name="deploy_g1_rl" pkg="tbai_ros_g1" type="deploy_g1_rl" output="screen">
+        <remap from="cmd_vel" to="/cmd_vel"/>
+    </node>
+
+    <!-- Launch G1 virtual joystick for velocity commands and controller switching -->
+    <group if="$(arg run_virtual_joystick)">
+        <node name="g1_virtual_joystick" pkg="tbai_ros_g1" type="g1_virtual_joystick.py" output="screen"/>
+    </group>
+
+    <!-- Start Rviz visualizer -->
+    <group if="$(arg run_rviz)">
+        <arg name="rvizconfig" default="$(find tbai_ros_g1)/launch/rviz/g1_rl.rviz"/>
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen"/>
+    </group>
+
+</launch>
