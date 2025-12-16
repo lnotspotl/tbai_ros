@@ -9,6 +9,7 @@
  ┣ 📂tbai_ros_bob                  # RL walking controller, based on the wild-Anymal paper (both perceptive and blind versions) [2]
  ┣ 📂tbai_ros_dtc                  # DTC controller (perceptive) [3]
  ┣ 📂tbai_ros_joe                  # Perceptive NMPC controller with NN-based tracking controller [1], [3]
+ ┣ ... (many more, this list is to be updated)
 
  [1] Perceptive Locomotion through Nonlinear Model Predictive Control
      https://arxiv.org/abs/2208.08373
@@ -45,8 +46,14 @@ Once the installation is complete, you can run one of our many examples, for ins
 # Activate pixi environment
 micromamba activate all-gpu-free
 
-# Run NP3O example
-source $(catkin locate)/devel/setup.bash && roslaunch tbai_ros_np3o simple_go2.launch gui:=true
+# Run `just help` to see many available demos (subset of all)
+$ just help
+[2. demos]
+    anymal_b_mpc_gazebo            # ANYmal B blind MPC in Gazebo
+    anymal_c_mpc_gazebo            # ANYmal C blind MPC in Gazebo
+    g1_mujoco                      # G1 humanoid in MuJoCo
+    go2w_drive_mujoco              # Go2W (wheeled) drive in MuJoCo
+    ....
 
 # Try out other examples located under tbai_ros_mpc, tbai_ros_bob, tbai_ros_dtc, tbai_ros_joe and tbai_ros_np3o
 ```
@@ -72,15 +79,41 @@ Once the installation is complete, you can run one of our many examples, for ins
 # Activate pixi environment
 pixi shell --environment all-gpu-free
 
-# Run NP3O example
-source $(catkin locate)/devel/setup.bash && roslaunch tbai_ros_np3o simple_go2.launch gui:=true
+# Run `just help` to see many available demos (subset of all)
+$ just help
+[2. demos]
+    anymal_b_mpc_gazebo            # ANYmal B blind MPC in Gazebo
+    anymal_c_mpc_gazebo            # ANYmal C blind MPC in Gazebo
+    g1_mujoco                      # G1 humanoid in MuJoCo
+    go2w_drive_mujoco              # Go2W (wheeled) drive in MuJoCo
+    ....
 
 # Try out other examples located under tbai_ros_mpc, tbai_ros_bob, tbai_ros_dtc, tbai_ros_joe and tbai_ros_np3o
 ```
 
 ### Go2 deployment
 
+
+https://github.com/user-attachments/assets/b424cec3-14c2-477c-bf13-06d57f93b8e6
+
+
 Check out the [**tbai_ros_deploy_go2_rl**](./tbai_ros_deploy_go2/tbai_ros_deploy_go2_rl) folder for deployment-related documentation, pictures and videos 🤗
+
+### G1 Dancing
+
+
+https://github.com/user-attachments/assets/9800f52a-a25b-4aad-a526-606bdf1556b6
+
+
+### Go2W handstand
+
+https://github.com/user-attachments/assets/21dd7b1c-717b-46a5-bc86-c6228875caa0
+
+
+### Go2W drive
+
+https://github.com/user-attachments/assets/9144913f-0973-4293-87e6-a60e7bfbb3d7
+
 
 
 ### Perceptive MPC
@@ -88,7 +121,6 @@ Check out the [**tbai_ros_deploy_go2_rl**](./tbai_ros_deploy_go2/tbai_ros_deploy
 
 
 https://github.com/lnotspotl/tbai_ros/assets/82883398/f451c12d-7525-4606-b722-726f63d852ca
-
 
 
 
@@ -109,24 +141,10 @@ https://github.com/lnotspotl/tbai_ros/assets/82883398/7f6bdefa-4299-454b-a0ef-55
 
 
 
-
-### Blind Bob
-
-
-https://github.com/lnotspotl/tbai_ros/assets/82883398/ebc2d90d-5c03-4207-a868-2e9436c140d4
-
-
-
 ### DTC: Deep Tracking Control
 
 
 https://github.com/lnotspotl/tbai_ros/assets/82883398/6cf672db-b737-4724-a6da-afa0c8dd19d5
-
-
-### Joe
-
-
-https://github.com/lnotspotl/tbai_ros/assets/82883398/e3455dd3-10e8-41da-bb02-87fbdf3de041
 
 
 ### System architecture
@@ -173,6 +191,8 @@ Here are a couple that most inspiration was drawn from and that were instrumenta
 - https://github.com/dfki-ric-underactuated-lab/dfki-quad
 - https://github.com/iit-DLSLab/muse
 - https://github.com/zeonsunlightyu/LocomotionWithNP3O
+- https://github.com/letaicodeit/DreamWaQ_Go2W
+- https://cmp.felk.cvut.cz/~peckama2/ (supervision, access to a DGX station)
 - http://www.michaelsebek.cz/cs
 - hundreds of others ...
 
