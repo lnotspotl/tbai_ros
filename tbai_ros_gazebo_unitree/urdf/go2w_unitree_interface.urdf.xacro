@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="go2w">
+
+<!-- Go2W bare urdf -->
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/go2w/urdf/go2w_description.urdf" />
+
+<gazebo>
+  <plugin filename="libUnitreeGazeboInterface.so" name="UnitreeGazeboInterface">
+    <domain_id>1</domain_id>
+    <interface>lo</interface>
+    <update_rate>400</update_rate>
+
+    <!-- Joint mapping (must match Unitree SDK motor indices for Go2W) -->
+    <!-- FR: 0,1,2,3  FL: 4,5,6,7  RR: 8,9,10,11  RL: 12,13,14,15 -->
+    <!-- Each leg: hip, thigh, calf, foot (foot joints come last: all leg joints, then all feet) -->
+    <joints>
+      <joint>FR_hip_joint</joint>
+      <joint>FR_thigh_joint</joint>
+      <joint>FR_calf_joint</joint>
+      <joint>FL_hip_joint</joint>
+      <joint>FL_thigh_joint</joint>
+      <joint>FL_calf_joint</joint>
+      <joint>RR_hip_joint</joint>
+      <joint>RR_thigh_joint</joint>
+      <joint>RR_calf_joint</joint>
+      <joint>RL_hip_joint</joint>
+      <joint>RL_thigh_joint</joint>
+      <joint>RL_calf_joint</joint>
+      <joint>FR_foot_joint</joint>
+      <joint>FL_foot_joint</joint>
+      <joint>RR_foot_joint</joint>
+      <joint>RL_foot_joint</joint>
+    </joints>
+
+    <!-- Foot force sensors (FR, FL, RR, RL order) -->
+    <foot_sensors>
+      <FR>fr_foot_contact</FR>
+      <FL>fl_foot_contact</FL>
+      <RR>rr_foot_contact</RR>
+      <RL>rl_foot_contact</RL>
+    </foot_sensors>
+  </plugin>
+</gazebo>
+
+<!-- Add contact sensors for wheel/foot force measurement -->
+<gazebo reference="FL_foot">
+    <sensor name="fl_foot_contact" type="contact">
+    <contact>
+        <collision>FL_foot_collision</collision>
+    </contact>
+    <update_rate>1000</update_rate>
+    </sensor>
+</gazebo>
+
+<gazebo reference="FR_foot">
+    <sensor name="fr_foot_contact" type="contact">
+    <contact>
+        <collision>FR_foot_collision</collision>
+    </contact>
+    <update_rate>1000</update_rate>
+    </sensor>
+</gazebo>
+
+<gazebo reference="RL_foot">
+    <sensor name="rl_foot_contact" type="contact">
+    <contact>
+        <collision>RL_foot_collision</collision>
+    </contact>
+    <update_rate>1000</update_rate>
+    </sensor>
+</gazebo>
+
+<gazebo reference="RR_foot">
+    <sensor name="rr_foot_contact" type="contact">
+    <contact>
+        <collision>RR_foot_collision</collision>
+    </contact>
+    <update_rate>1000</update_rate>
+    </sensor>
+</gazebo>
+
+<!-- Gazebo materials for wheels -->
+<gazebo reference="FL_foot">
+  <mu1>1.5</mu1>
+  <mu2>1.5</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="FR_foot">
+  <mu1>1.5</mu1>
+  <mu2>1.5</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RL_foot">
+  <mu1>1.5</mu1>
+  <mu2>1.5</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RR_foot">
+  <mu1>1.5</mu1>
+  <mu2>1.5</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+</robot>

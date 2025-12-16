@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="g1">
+
+<!-- G1 29DOF bare urdf -->
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/g1/urdf/g1_29dof.urdf" />
+
+<!-- G1 Gazebo Interface Plugin (uses unitree_hg messages for 29 DOF humanoid) -->
+<gazebo>
+  <plugin filename="libG1GazeboInterface.so" name="G1GazeboInterface">
+    <domain_id>1</domain_id>
+    <interface>lo</interface>
+    <update_rate>400</update_rate>
+
+    <!-- Joint mapping for G1 29DOF -->
+    <joints>
+      <!-- Left leg (0-5) -->
+      <joint>left_hip_pitch_joint</joint>
+      <joint>left_hip_roll_joint</joint>
+      <joint>left_hip_yaw_joint</joint>
+      <joint>left_knee_joint</joint>
+      <joint>left_ankle_pitch_joint</joint>
+      <joint>left_ankle_roll_joint</joint>
+
+      <!-- Right leg (6-11) -->
+      <joint>right_hip_pitch_joint</joint>
+      <joint>right_hip_roll_joint</joint>
+      <joint>right_hip_yaw_joint</joint>
+      <joint>right_knee_joint</joint>
+      <joint>right_ankle_pitch_joint</joint>
+      <joint>right_ankle_roll_joint</joint>
+
+      <!-- Waist (12-14) -->
+      <joint>waist_yaw_joint</joint>
+      <joint>waist_roll_joint</joint>
+      <joint>waist_pitch_joint</joint>
+
+      <!-- Left arm (15-21) -->
+      <joint>left_shoulder_pitch_joint</joint>
+      <joint>left_shoulder_roll_joint</joint>
+      <joint>left_shoulder_yaw_joint</joint>
+      <joint>left_elbow_joint</joint>
+      <joint>left_wrist_roll_joint</joint>
+      <joint>left_wrist_pitch_joint</joint>
+      <joint>left_wrist_yaw_joint</joint>
+
+      <!-- Right arm (22-28) -->
+      <joint>right_shoulder_pitch_joint</joint>
+      <joint>right_shoulder_roll_joint</joint>
+      <joint>right_shoulder_yaw_joint</joint>
+      <joint>right_elbow_joint</joint>
+      <joint>right_wrist_roll_joint</joint>
+      <joint>right_wrist_pitch_joint</joint>
+      <joint>right_wrist_yaw_joint</joint>
+    </joints>
+  </plugin>
+</gazebo>
+
+<!-- Disable self-collision to prevent physics instability -->
+<gazebo>
+  <self_collide>false</self_collide>
+</gazebo>
+
+<!-- Joint dynamics with higher damping for Gazebo stability -->
+<xacro:macro name="gz_joint" params="name damping:=5.0">
+  <gazebo reference="${name}">
+    <implicitSpringDamper>true</implicitSpringDamper>
+    <provideFeedback>true</provideFeedback>
+    <stopCfm>0.0</stopCfm>
+    <stopErp>0.2</stopErp>
+  </gazebo>
+</xacro:macro>
+
+<!-- Leg joints need higher damping for stability -->
+<xacro:macro name="gz_leg_joint" params="name">
+  <gazebo reference="${name}">
+    <implicitSpringDamper>true</implicitSpringDamper>
+    <provideFeedback>true</provideFeedback>
+    <stopCfm>0.0</stopCfm>
+    <stopErp>0.2</stopErp>
+  </gazebo>
+</xacro:macro>
+
+<xacro:gz_joint name="left_hip_pitch_joint"/>
+<xacro:gz_joint name="left_hip_roll_joint"/>
+<xacro:gz_joint name="left_hip_yaw_joint"/>
+<xacro:gz_joint name="left_knee_joint"/>
+<xacro:gz_joint name="left_ankle_pitch_joint"/>
+<xacro:gz_joint name="left_ankle_roll_joint"/>
+<xacro:gz_joint name="right_hip_pitch_joint"/>
+<xacro:gz_joint name="right_hip_roll_joint"/>
+<xacro:gz_joint name="right_hip_yaw_joint"/>
+<xacro:gz_joint name="right_knee_joint"/>
+<xacro:gz_joint name="right_ankle_pitch_joint"/>
+<xacro:gz_joint name="right_ankle_roll_joint"/>
+<xacro:gz_joint name="waist_yaw_joint"/>
+<xacro:gz_joint name="waist_roll_joint"/>
+<xacro:gz_joint name="waist_pitch_joint"/>
+<xacro:gz_joint name="left_shoulder_pitch_joint"/>
+<xacro:gz_joint name="left_shoulder_roll_joint"/>
+<xacro:gz_joint name="left_shoulder_yaw_joint"/>
+<xacro:gz_joint name="left_elbow_joint"/>
+<xacro:gz_joint name="left_wrist_roll_joint"/>
+<xacro:gz_joint name="left_wrist_pitch_joint"/>
+<xacro:gz_joint name="left_wrist_yaw_joint"/>
+<xacro:gz_joint name="right_shoulder_pitch_joint"/>
+<xacro:gz_joint name="right_shoulder_roll_joint"/>
+<xacro:gz_joint name="right_shoulder_yaw_joint"/>
+<xacro:gz_joint name="right_elbow_joint"/>
+<xacro:gz_joint name="right_wrist_roll_joint"/>
+<xacro:gz_joint name="right_wrist_pitch_joint"/>
+<xacro:gz_joint name="right_wrist_yaw_joint"/>
+
+</robot>

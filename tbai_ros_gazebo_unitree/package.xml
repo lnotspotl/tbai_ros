@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tbai_ros_gazebo_unitree</name>
+  <version>0.0.1</version>
+  <description>Gazebo plugins that provide a Unitree SDK2-compatible DDS interface for the G1, Go2, and Go2W robots. </description>
+
+  <maintainer email="lnotspotl@gmail.com">lnotspotl</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>gazebo_ros</depend>
+  <depend>pluginlib</depend>
+  <depend>tbai</depend>
+
+  <export>
+    <gazebo_ros plugin="${prefix}/controller_plugins.xml"/>
+  </export>
+</package>

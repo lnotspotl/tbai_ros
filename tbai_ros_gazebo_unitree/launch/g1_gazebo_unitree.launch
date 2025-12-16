@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <!-- Gazebo arguments -->
+    <arg name="gui" default="true"/>
+    <arg name="paused" default="true"/>
+    <arg name="use_sim_time" default="true"/>
+
+    <!-- Robot spawn position -->
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="0.793"/>
+
+    <!-- Robot description -->
+    <arg name="description_name" default="robot_description"/>
+    <arg name="description_file" default="$(find tbai_ros_gazebo_unitree)/urdf/g1_unitree_interface.urdf.xacro"/>
+
+    <!-- Launch Gazebo with custom world tuned for humanoid stability -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find tbai_ros_gazebo_unitree)/worlds/g1_humanoid.world"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+    </include>
+
+    <!-- Load robot description -->
+    <param name="$(arg description_name)"
+           command="$(find xacro)/xacro $(arg description_file)"/>
+
+    <!-- Spawn robot in Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+          args="-param $(arg description_name) -urdf -x $(arg x) -y $(arg y) -z $(arg z) -model g1"
+          output="screen"/>
+
+</launch>
