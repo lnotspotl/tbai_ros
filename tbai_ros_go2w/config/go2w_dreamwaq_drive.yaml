@@ -1,0 +1,85 @@
+# Go2W DreamWaQ Controller Configuration
+
+robot_name: 'go2w'
+base_name: "base"
+
+# ROS Topics
+state_topic: "go2w/state"
+command_topic: "go2w/command"
+change_controller_topic: "go2w/change_controller"
+
+# Reference velocity generator
+reference_generator:
+  type: "twist"
+  twist:
+    topic: "/cmd_vel"
+  joystick:
+    topic: "joy"
+    ramped_velocity: 5.0
+    x_index: 1
+    y_index: 0
+    yaw_index: 3
+    x_scale: 1.0
+    y_scale: 1.0
+    yaw_scale: 1.0
+
+go2w_controller:
+  hf_repo: "kubjonai/tbai-models"
+  hf_model_folder: "go2w_dreamwaq_drive/" # make sure to include / at the end, it's a folder
+  rate: 50.0
+  ang_vel_scale: 0.25
+  cmd_scale_x: 2.0
+  cmd_scale_y: 2.0
+  cmd_scale_yaw: 0.25
+  dof_err_scale: 1.0
+  dof_vel_scale: 0.05
+
+  action_scale: 0.25
+  kps: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0]
+  kds: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5]
+
+  default_real_angles: [0.0, 0.67, -1.3, 0.0, 0.67, -1.3, 0.0, 0.67, -1.3, 0.0, 0.67, -1.3, 0.0, 0.0, 0.0, 0.0]
+  default_sim_angles: [0.0, 0.67, -1.3, 0.0, 0.0, 0.67, -1.3, 0.0, 0.0, 0.67, -1.3, 0.0, 0.0, 0.67, -1.3, 0.0]
+
+  wheel_sim_indices: [3, 7, 11, 15]
+  wheel_real_indices: [12, 13, 14, 15]
+
+static_controller:
+  stand_controller:
+    joint_angles: [
+      0.0, 0.67, -1.3,   # FR: hip, thigh, calf
+      0.0, 0.67, -1.3,   # FL: hip, thigh, calf
+      0.0, 0.67, -1.3,   # RR: hip, thigh, calf
+      0.0, 0.67, -1.3,   # RL: hip, thigh, calf
+      0.0, 0.0, 0.0, 0.0 # Wheels: FR, FL, RR, RL
+    ]
+  sit_controller:
+    joint_angles: [
+      0.0, 1.2, -2.0,
+      0.0, 1.2, -2.0,
+      0.0, 1.2, -2.0,
+      0.0, 1.2, -2.0,
+      0.0, 0.0, 0.0, 0.0
+    ]
+  kp: 50
+  kd: 1
+  interpolation_time: 2.0
+  rate: 50
+
+joint_names:
+  - "FR_hip_joint"
+  - "FR_thigh_joint"
+  - "FR_calf_joint"
+  - "FL_hip_joint"
+  - "FL_thigh_joint"
+  - "FL_calf_joint"
+  - "RR_hip_joint"
+  - "RR_thigh_joint"
+  - "RR_calf_joint"
+  - "RL_hip_joint"
+  - "RL_thigh_joint"
+  - "RL_calf_joint"
+  - "FR_foot_joint"
+  - "FL_foot_joint"
+  - "RR_foot_joint"
+  - "RL_foot_joint"

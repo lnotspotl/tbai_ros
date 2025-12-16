@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <!-- Arguments -->
+    <arg name="controllers_ns" default="go2w"/>
+    <arg name="tbai_config_path" default="$(find tbai_ros_go2w)/config/go2w_dreamwaq_drive.yaml"/>
+    <arg name="model_dir" default="$(find tbai_ros_go2w)/config/models_drive"/>
+    <arg name="network_interface" default="lo"/>
+    <arg name="unitree_channel" default="1"/>
+    <arg name="run_virtual_joystick" default="true"/>
+    <arg name="run_rviz" default="false"/>
+
+    <!-- MuJoCo simulation -->
+    <arg name="mujoco_simulation" default="true"/>
+    <arg name="mujoco_config_file" default="$(find mujoco_robotic_assets)/resources/go2w/config.yaml"/>
+    <group if="$(arg mujoco_simulation)">
+        <node name="mujoco_sim" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
+              args="unitree_mujoco $(arg mujoco_config_file)"/>
+    </group>
+
+    <!-- Configure TBAI -->
+    <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
+    <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
+    <env name="TBAI_GO2W_NETWORK_INTERFACE" value="$(arg network_interface)"/>
+    <env name="TBAI_GO2W_UNITREE_CHANNEL" value="$(arg unitree_channel)"/>
+
+    <!-- Load robot description -->
+    <param name="robot_description"
+           command="cat $(find gazebo_robotic_assets)/resources/go2w/urdf/go2w_description.urdf"/>
+
+    <!-- Launch Go2W DreamWaQ controller node -->
+    <node name="deploy_go2w_dreamwaq" pkg="tbai_ros_go2w" type="deploy_go2w_dreamwaq" output="screen">
+        <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
+        <env name="TBAI_GO2W_NETWORK_INTERFACE" value="$(arg network_interface)"/>
+        <env name="TBAI_GO2W_UNITREE_CHANNEL" value="$(arg unitree_channel)"/>
+        <remap from="cmd_vel" to="/cmd_vel"/>
+    </node>
+
+    <!-- Launch Go2W virtual joystick for velocity commands and controller switching -->
+    <group if="$(arg run_virtual_joystick)">
+        <node name="go2w_virtual_joystick" pkg="tbai_ros_go2w" type="go2w_virtual_joystick.py" output="screen"/>
+    </group>
+
+    <!-- Start Rviz visualizer -->
+    <group if="$(arg run_rviz)">
+        <arg name="rvizconfig" default="$(find tbai_ros_go2w)/launch/rviz/go2w.rviz"/>
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen"/>
+    </group>
+
+</launch>

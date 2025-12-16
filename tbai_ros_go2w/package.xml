@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tbai_ros_go2w</name>
+  <version>0.1.0</version>
+  <description>
+    TBAI ROS package for Unitree Go2W.
+  </description>
+  <maintainer email="lnotspotl@gmail.com">lnotspotl</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tbai_ros_core</depend>
+  <depend>tbai_ros_msgs</depend>
+  <depend>tbai_ros_static</depend>
+  <depend>tbai_ros_reference</depend>
+  <depend>tbai</depend>
+  <depend>eigen</depend>
+  <depend>kdl_parser</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>orocos_kdl</depend>
+
+  <export>
+  </export>
+</package>
