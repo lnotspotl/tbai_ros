@@ -12,24 +12,16 @@
   <depend>roscpp</depend>
   <depend>tbai_ros_core</depend>
   <depend>tbai_ros_msgs</depend>
-  <depend>ocs2_core</depend>
-  <depend>ocs2_mpc</depend>
-  <depend>ocs2_msgs</depend>
-  <depend>ocs2_ros_interfaces</depend>
-  <depend>ocs2_anymal_commands</depend>
+  <depend>tbai_ros_ocs2</depend>
   <depend>grid_map_ros</depend>
   <depend>grid_map_core</depend>
 
-  <depend>ocs2_anymal_mpc</depend>
-  <depend>ocs2_ros_interface</depend>
-  <depend>ocs2_pinocchio_interface</depend>
-  <depend>ocs2_quadruped_interface</depend>
-  <depend>ocs2_switched_model_interface</depend>
   <depend>std_msgs</depend>
   <depend>tbai_ros_static</depend>
   <depend>tbai_ros_reference</depend>
   <depend>qpoases_catkin</depend>
   <depend>tbai</depend>
+  <depend>convex_plane_decomposition</depend>
 
   <export>
   </export>

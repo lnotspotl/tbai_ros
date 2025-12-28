@@ -4,8 +4,9 @@
 
 #include <memory>
 
-#include "tbai_ros_mpc/MpcController.hpp"
+#include "tbai_ros_mpc/RosMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
+#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Utils.hpp>
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
     controller.addController(std::make_unique<tbai::static_::RosStaticController>(stateSubscriber));
 
     // Add MPC controller
-    controller.addController(std::make_unique<tbai::mpc::MpcController>(
+    controller.addController(std::make_unique<tbai::mpc::RosMpcController>(
         stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
 
     // Start controller loop

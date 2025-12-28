@@ -1,12 +1,42 @@
-#include <ocs2_anymal_mpc/AnymalInterface.h>
 #include <ocs2_ddp/DDP_Settings.h>
+#include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ocs2_mpc/MPC_Settings.h>
-#include <ocs2_quadruped_interface/QuadrupedMpc.h>
-#include <ocs2_quadruped_interface/QuadrupedMpcNode.h>
+#include <ocs2_sqp/SqpMpc.h>
 #include <ros/init.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/config/Config.hpp>
+#include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
+#include <tbai_mpc/quadruped_mpc/anymal_interface/Interface.h>
+#include <tbai_ros_mpc/QuadrupedMpcNode.h>
+
+
+namespace switched_model {
+
+std::unique_ptr<ocs2::MPC_BASE> getDdpMpc(const QuadrupedInterface &quadrupedInterface,
+                                          const ocs2::mpc::Settings &mpcSettings,
+                                          const ocs2::ddp::Settings &ddpSettings) {
+    std::unique_ptr<ocs2::MPC_BASE> mpcPtr(new ocs2::GaussNewtonDDP_MPC(
+        mpcSettings, ddpSettings, quadrupedInterface.getRollout(), quadrupedInterface.getOptimalControlProblem(),
+        quadrupedInterface.getInitializer()));
+    mpcPtr->getSolverPtr()->setReferenceManager(quadrupedInterface.getReferenceManagerPtr());
+    mpcPtr->getSolverPtr()->setSynchronizedModules(quadrupedInterface.getSynchronizedModules());
+    return mpcPtr;
+}
+
+std::unique_ptr<ocs2::MPC_BASE> getSqpMpc(const QuadrupedInterface &quadrupedInterface,
+                                          const ocs2::mpc::Settings &mpcSettings,
+                                          const ocs2::sqp::Settings &sqpSettings) {
+    std::unique_ptr<ocs2::MPC_BASE> mpcPtr(new ocs2::SqpMpc(
+        mpcSettings, sqpSettings, quadrupedInterface.getOptimalControlProblem(), quadrupedInterface.getInitializer()));
+    mpcPtr->getSolverPtr()->setReferenceManager(quadrupedInterface.getReferenceManagerPtr());
+    mpcPtr->getSolverPtr()->setSynchronizedModules(quadrupedInterface.getSynchronizedModules());
+    return mpcPtr;
+}
+
+}  // namespace switched_model
+
+using namespace switched_model;
 
 int main(int argc, char *argv[]) {
     // Initialize ros node
@@ -34,10 +64,10 @@ int main(int argc, char *argv[]) {
         quadrupedInterface =
             anymal::getAnymalInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
                                        anymal::frameDeclarationFromFile(frameDeclarationFile));
-    } else if (robotName == "go2") {
-        quadrupedInterface =
-            anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                    anymal::frameDeclarationFromFile(frameDeclarationFile));
+        // } else if (robotName == "go2") {
+        //     quadrupedInterface =
+        //         anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
+        //                                 anymal::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }
