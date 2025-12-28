@@ -18,8 +18,23 @@
 #include <tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp>
 #include <visualization_msgs/MarkerArray.h>
 
+#include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
+#include <tbai_ros_ocs2/RosReferenceManager.hpp>
+
+#include <tbai_ros_ocs2/logic/GaitReceiver.h>
+#include <tbai_ros_ocs2/terrain/TerrainPlane.h>
+
+#include <tbai_ros_ocs2/quadruped_interface/SwingPlanningVisualizer.h>
+#include <tbai_ros_ocs2/quadruped_interface/TerrainPlaneVisualizer.h>
+#include <tbai_ros_ocs2/quadruped_interface/TerrainReceiver.h>
+#include <tbai_ros_ocs2/quadruped_interface/LocalTerrainReceiver.h>
+
+#include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
+
 namespace tbai {
 namespace mpc {
+
+using namespace switched_model;
 
 /**
  * Visualizes contact points using ROS markers.
@@ -64,6 +79,62 @@ class RosMpcController : public MpcController {
      */
     std::unique_ptr<ocs2::MRT_BASE> createMrtInterface() override;
 
+    std::unique_ptr<ocs2::MPC_BASE> createMpcInterface() override {
+
+        ros::NodeHandle nodeHandle;
+
+        // Prepare robot interface
+        // const std::string taskSettingsFile = "/home/kb/Documents/ros/src/tbai_ros/tbai_ros_mpc/config/anymal_d/perceptive/task.info";
+        const std::string taskSettingsFile = "/home/kb/Documents/ros/src/tbai_ros/tbai_ros_mpc/config/go2/blind/task.info";
+        const auto mpcSettings = ocs2::mpc::loadSettings(taskSettingsFile);
+
+        // const std::string sqpSettingsFile = "/home/kb/Documents/ros/src/tbai_ros/tbai_ros_mpc/config/anymal_d/perceptive/sqp.info";
+        const std::string sqpSettingsFile = "/home/kb/Documents/ros/src/tbai_ros/tbai_ros_mpc/config/go2/blind/sqp.info";
+        const auto sqpSettings = ocs2::sqp::loadSettings(sqpSettingsFile);
+        auto mpcPtr = switched_model::getSqpMpc(*quadrupedInterfacePtr_, mpcSettings, sqpSettings);
+
+        const std::string robotName = "anymal";
+
+        QuadrupedInterface& quadrupedInterface = *quadrupedInterfacePtr_;
+
+        auto solverModules = quadrupedInterface.getSynchronizedModules();
+      
+        // Gait
+        auto gaitReceiver =
+            std::make_shared<GaitReceiver>(nodeHandle, quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getGaitSchedule(), robotName);
+        solverModules.push_back(gaitReceiver);
+      
+        // Terrain Receiver
+        auto terrainReceiver = std::make_shared<TerrainReceiverSynchronizedModule>(
+            quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getTerrainModel(), nodeHandle);
+        solverModules.push_back(terrainReceiver);
+      
+        // Local Terrain Receiver
+        auto localTerrainReceiver = std::make_shared<LocalTerrainReceiverSynchronizedModule>(
+            quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getTerrainModel(), nodeHandle);
+        solverModules.push_back(localTerrainReceiver);
+      
+        // Terrain plane visualization
+        auto terrainVisualizer = std::make_shared<TerrainPlaneVisualizerSynchronizedModule>(
+            quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getSwingTrajectoryPlanner(), nodeHandle);
+        solverModules.push_back(terrainVisualizer);
+      
+        // Swing planner
+        auto swingPlanningVisualizer = std::make_shared<SwingPlanningVisualizer>(
+            quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getSwingTrajectoryPlanner(), nodeHandle);
+        solverModules.push_back(swingPlanningVisualizer);
+      
+        // reference manager
+        auto rosReferenceManagerPtr = std::make_shared<ocs2::RosReferenceManager>(robotName, quadrupedInterface.getReferenceManagerPtr());
+        rosReferenceManagerPtr->subscribe(nodeHandle);
+        mpcPtr->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+      
+        // MPC
+        mpcPtr->getSolverPtr()->setSynchronizedModules(solverModules);
+
+        return mpcPtr;
+    }
+
     /**
      * Sets whether to use MRT_ROS_Interface (for distributed MPC) or MPC_MRT_Interface (for local MPC).
      * @param useRos: If true, uses MRT_ROS_Interface; otherwise uses MPC_MRT_Interface
@@ -86,7 +157,7 @@ class RosMpcController : public MpcController {
     ros::CallbackQueue referenceThreadCallbackQueue_;
 
     // Whether to use MRT_ROS_Interface (true) or MPC_MRT_Interface (false)
-    bool useRosInterface_ = true;
+    bool useRosInterface_ = false;
 };
 
 }  // namespace mpc
