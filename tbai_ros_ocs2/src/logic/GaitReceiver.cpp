@@ -19,8 +19,7 @@ inline ModeSequenceTemplate readModeSequenceTemplateMsg(const tbai_ros_ocs2::mod
 
 GaitReceiver::GaitReceiver(ros::NodeHandle nodeHandle, ocs2::Synchronized<GaitSchedule>& gaitSchedule, const std::string& robotName)
     : gaitSchedulePtr_(&gaitSchedule), gaitUpdated_(false) {
-  mpcModeSequenceSubscriber_ = nodeHandle.subscribe(robotName + "_mpc_mode_schedule", 1, &GaitReceiver::mpcModeSequenceCallback, this,
-                                                    ::ros::TransportHints().udp());
+  mpcModeSequenceSubscriber_ = nodeHandle.subscribe(robotName + "_mpc_mode_schedule", 1, &GaitReceiver::mpcModeSequenceCallback, this);
   mpcScheduledModeSequenceSubscriber_ = nodeHandle.subscribe(
       robotName + "_mpc_scheduled_mode_schedule", 1, &GaitReceiver::mpcModeScheduledGaitCallback, this, ::ros::TransportHints().udp());
   mpcGaitSequenceSubscriber_ = nodeHandle.subscribe(robotName + "_mpc_gait_schedule", 1, &GaitReceiver::mpcGaitSequenceCallback, this,

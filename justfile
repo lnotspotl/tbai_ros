@@ -282,7 +282,9 @@ build:
             folder=${folder%/}
             if [[ -f "$folder/CMakeLists.txt" ]] && [[ -f "$folder/package.xml" ]]; then
                 package=$(basename "$folder")
-                ros_packages+=" $package"
+                if [[ "$package" != "tbai_ros_dtc" && "$package" != "tbai_ros_joe" && "$package" != tbai_ros_deploy_go2* && "$package" != "tbai_ros_context_aware" ]]; then
+                    ros_packages+=" $package"
+                fi
             fi
         done
     done

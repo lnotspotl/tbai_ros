@@ -42,68 +42,68 @@ void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory& baseRef) {
 static BaseReferenceTrajectory generateExtrapolatedBaseReference(const BaseReferenceHorizon& horizon, const BaseReferenceState& initialState,
     const BaseReferenceCommand& command, const grid_map::GridMap& gridMap,
     double nominalStanceWidthInHeading, double nominalStanceWidthLateral) {
-const auto& baseReferenceLayer = gridMap.get("smooth_planar");
+    const auto& baseReferenceLayer = gridMap.get("smooth_planar");
 
-// Helper to get a projected heading frame derived from the terrain.
-auto getLocalHeadingFrame = [&](const vector2_t& baseXYPosition, scalar_t yaw) {
-vector2_t lfOffset(nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
-vector2_t rfOffset(nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
-vector2_t lhOffset(-nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
-vector2_t rhOffset(-nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
-// Rotate from heading to world frame
-rotateInPlace2d(lfOffset, yaw);
-rotateInPlace2d(rfOffset, yaw);
-rotateInPlace2d(lhOffset, yaw);
-rotateInPlace2d(rhOffset, yaw);
-// shift by base center
-lfOffset += baseXYPosition;
-rfOffset += baseXYPosition;
-lhOffset += baseXYPosition;
-rhOffset += baseXYPosition;
+    // Helper to get a projected heading frame derived from the terrain.
+    auto getLocalHeadingFrame = [&](const vector2_t& baseXYPosition, scalar_t yaw) {
+    vector2_t lfOffset(nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+    vector2_t rfOffset(nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+    vector2_t lhOffset(-nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+    vector2_t rhOffset(-nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+    // Rotate from heading to world frame
+    rotateInPlace2d(lfOffset, yaw);
+    rotateInPlace2d(rfOffset, yaw);
+    rotateInPlace2d(lhOffset, yaw);
+    rotateInPlace2d(rhOffset, yaw);
+    // shift by base center
+    lfOffset += baseXYPosition;
+    rfOffset += baseXYPosition;
+    lhOffset += baseXYPosition;
+    rhOffset += baseXYPosition;
 
-auto interp = [&](const vector2_t& offset) -> vector3_t {
-auto projection = grid_map::lookup::projectToMapWithMargin(gridMap, grid_map::Position(offset.x(), offset.y()));
+    auto interp = [&](const vector2_t& offset) -> vector3_t {
+    auto projection = grid_map::lookup::projectToMapWithMargin(gridMap, grid_map::Position(offset.x(), offset.y()));
 
-try {
-auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
-return vector3_t(offset.x(), offset.y(), z);
-} catch (std::out_of_range& e) {
-double interp = gridMap.getResolution() / (projection - gridMap.getPosition()).norm();
-projection = (1.0 - interp) * projection + interp * gridMap.getPosition();
-auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
-return vector3_t(offset.x(), offset.y(), z);
-}
-};
+    try {
+    auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+    return vector3_t(offset.x(), offset.y(), z);
+    } catch (std::out_of_range& e) {
+    double interp = gridMap.getResolution() / (projection - gridMap.getPosition()).norm();
+    projection = (1.0 - interp) * projection + interp * gridMap.getPosition();
+    auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+    return vector3_t(offset.x(), offset.y(), z);
+    }
+    };
 
-vector3_t lfVerticalProjection = interp(lfOffset);
-vector3_t rfVerticalProjection = interp(rfOffset);
-vector3_t lhVerticalProjection = interp(lhOffset);
-vector3_t rhVerticalProjection = interp(rhOffset);
+    vector3_t lfVerticalProjection = interp(lfOffset);
+    vector3_t rfVerticalProjection = interp(rfOffset);
+    vector3_t lhVerticalProjection = interp(lhOffset);
+    vector3_t rhVerticalProjection = interp(rhOffset);
 
-const auto normalAndPosition = estimatePlane({lfVerticalProjection, rfVerticalProjection, lhVerticalProjection, rhVerticalProjection});
+    const auto normalAndPosition = estimatePlane({lfVerticalProjection, rfVerticalProjection, lhVerticalProjection, rhVerticalProjection});
 
-TerrainPlane terrainPlane(normalAndPosition.position, orientationWorldToTerrainFromSurfaceNormalInWorld(normalAndPosition.normal));
-return getProjectedHeadingFrame({0.0, 0.0, yaw}, terrainPlane);
-};
+    TerrainPlane terrainPlane(normalAndPosition.position, orientationWorldToTerrainFromSurfaceNormalInWorld(normalAndPosition.normal));
+    return getProjectedHeadingFrame({0.0, 0.0, yaw}, terrainPlane);
+    };
 
-auto reference2d = generate2DExtrapolatedBaseReference(horizon, initialState, command);
+    auto reference2d = generate2DExtrapolatedBaseReference(horizon, initialState, command);
 
-BaseReferenceTrajectory baseRef;
-baseRef.time = std::move(reference2d.time);
-baseRef.eulerXyz.reserve(horizon.N);
-baseRef.positionInWorld.reserve(horizon.N);
+    BaseReferenceTrajectory baseRef;
+    baseRef.time = std::move(reference2d.time);
+    baseRef.eulerXyz.reserve(horizon.N);
+    baseRef.positionInWorld.reserve(horizon.N);
 
-// Adapt poses
-for (int k = 0; k < horizon.N; ++k) {
-const auto projectedHeadingFrame = getLocalHeadingFrame(reference2d.positionInWorld[k], reference2d.yaw[k]);
+    // Adapt poses
+    for (int k = 0; k < horizon.N; ++k) {
+    const auto projectedHeadingFrame = getLocalHeadingFrame(reference2d.positionInWorld[k], reference2d.yaw[k]);
 
-baseRef.positionInWorld.push_back(
-adaptDesiredPositionHeightToTerrain(reference2d.positionInWorld[k], projectedHeadingFrame, command.baseHeight));
-baseRef.eulerXyz.emplace_back(alignDesiredOrientationToTerrain({0.0, 0.0, reference2d.yaw[k]}, projectedHeadingFrame));
-}
+    baseRef.positionInWorld.push_back(
+    adaptDesiredPositionHeightToTerrain(reference2d.positionInWorld[k], projectedHeadingFrame, command.baseHeight));
+    baseRef.eulerXyz.emplace_back(alignDesiredOrientationToTerrain({0.0, 0.0, reference2d.yaw[k]}, projectedHeadingFrame));
+    }
 
-addVelocitiesFromFiniteDifference(baseRef);
-return baseRef;
+    addVelocitiesFromFiniteDifference(baseRef);
+    return baseRef;
 }
 
 
