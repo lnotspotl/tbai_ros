@@ -125,6 +125,7 @@ GridmapReferenceTrajectoryGenerator::GridmapReferenceTrajectoryGenerator(
     if (!blind_) {
         terrainSubscriber_ = nh.subscribe(terrainTopic, 1, &GridmapReferenceTrajectoryGenerator::terrainCallback, this);
     }
+    localTerrainPublisher_ = nh.advertise<tbai_ros_ocs2::local_terrain>("local_terrain", 1);
 }
 
 /*********************************************************************************************************************/
@@ -183,8 +184,39 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
         desiredStateTrajectory[i] = std::move(state);
     }
 
+    // Publish local terrain
+    publishLocalTerrain(getTerrainPlane());
+
     return ocs2::TargetTrajectories(std::move(desiredTimeTrajectory), std::move(desiredStateTrajectory),
                                     std::move(desiredInputTrajectory));
+}
+
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const switched_model::TerrainPlane& terrainPlane) {
+    tbai_ros_ocs2::local_terrain msg;
+
+    // Position (3 elements)
+    msg.position.resize(3);
+    msg.position[0] = static_cast<float>(terrainPlane.positionInWorld.x());
+    msg.position[1] = static_cast<float>(terrainPlane.positionInWorld.y());
+    msg.position[2] = static_cast<float>(terrainPlane.positionInWorld.z());
+
+    // Rotation matrix (9 elements, row-major)
+    msg.rotation.resize(9);
+    const auto& R = terrainPlane.orientationWorldToTerrain;
+    msg.rotation[0] = static_cast<float>(R(0, 0));
+    msg.rotation[1] = static_cast<float>(R(0, 1));
+    msg.rotation[2] = static_cast<float>(R(0, 2));
+    msg.rotation[3] = static_cast<float>(R(1, 0));
+    msg.rotation[4] = static_cast<float>(R(1, 1));
+    msg.rotation[5] = static_cast<float>(R(1, 2));
+    msg.rotation[6] = static_cast<float>(R(2, 0));
+    msg.rotation[7] = static_cast<float>(R(2, 1));
+    msg.rotation[8] = static_cast<float>(R(2, 2));
+
+    localTerrainPublisher_.publish(msg);
 }
 
 /*********************************************************************************************************************/

@@ -8,6 +8,7 @@
 #include <grid_map_msgs/GridMap.h>
 #include <ros/ros.h>
 #include <tbai_mpc/reference/ReferenceTrajectoryGenerator.hpp>
+#include <tbai_ros_ocs2/local_terrain.h>
 
 namespace tbai {
 namespace mpc {
@@ -57,8 +58,10 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
 
    private:
     void terrainCallback(const grid_map_msgs::GridMap& msg);
+    void publishLocalTerrain(const switched_model::TerrainPlane& terrainPlane);
 
     ros::Subscriber terrainSubscriber_;
+    ros::Publisher localTerrainPublisher_;
     std::unique_ptr<grid_map::GridMap> terrainMapPtr_;
     mutable std::mutex terrainMutex_;
     bool blind_;

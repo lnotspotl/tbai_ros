@@ -60,7 +60,6 @@
     <!-- Launch Gait command node -->
     <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
           output="screen" launch-prefix="x-terminal-emulator -e">
-        <param name="gait_file" value="$(find ocs2_anymal_commands)/config/gait.info"/>
         <param name="robot_name" value="anymal"/>
     </node>
 

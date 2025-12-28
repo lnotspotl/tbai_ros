@@ -191,10 +191,7 @@ void RosMpcController::spinOnceReferenceThread() {
 /*********************************************************************************************************************/
 void RosMpcController::referenceThreadLoop() {
     referenceTrajectoryGeneratorPtr_->reset();
-
     stateSubscriberPtr_->waitTillInitialized();
-    ocs2::SystemObservation observation = generateSystemObservation();
-    referenceTrajectoryGeneratorPtr_->updateObservation(observation);
 
     // Reference loop
     ros::Rate rate(referenceThreadRate_);
@@ -203,14 +200,13 @@ void RosMpcController::referenceThreadLoop() {
 
         // Generate and publish reference trajectory
         auto observation = generateSystemObservation();
+        referenceTrajectoryGeneratorPtr_->updateObservation(observation);
         auto targetTrajectories =
             referenceTrajectoryGeneratorPtr_->generateReferenceTrajectory(tNow_, observation);
         mrtPtr_->setTargetTrajectories(targetTrajectories);
 
         TBAI_LOG_INFO_THROTTLE(logger_, 5.0, "Publishing reference");
         rate.sleep();
-        observation = generateSystemObservation();
-        referenceTrajectoryGeneratorPtr_->updateObservation(observation);
     }
 }
 

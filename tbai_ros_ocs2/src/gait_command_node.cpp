@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     ROS_WARN_STREAM("gait_file parameter not set, using default: " << gaitFile);
   }
   gaitFile = "/home/kb/Documents/ros/src/tbai_ros/tbai_ros_deploy_go2/tbai_ros_deploy_go2_mpc/config/gait.info";
+  gaitFile = "/home/kb/Documents/ros/src/tbai_ros/dependencies/ocs2/ocs2_robotic_examples/ocs2_perceptive_anymal/ocs2_anymal_commands/config/gait.info";
 
   // Get robot name from parameter server
   // nodeHandle.getParam("robot_name", robotName);
