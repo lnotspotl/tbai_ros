@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   grid_map_filters_rsl
 )
 
+find_package(fmt REQUIRED)
+
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
@@ -90,6 +92,7 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  fmt::fmt
 )
 
 # Gait command node executable

@@ -45,7 +45,6 @@ add_library(${PROJECT_NAME}
     src/RosMpcController.cpp
     src/visualization/QuadrupedTfPublisher.cpp
     src/visualization/QuadrupedVisualizer.cpp
-    src/QuadrupedMpcNode.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
@@ -54,13 +53,13 @@ target_link_libraries(${PROJECT_NAME}
 )
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
-add_executable(anymal_mpc_node
+add_executable(mpc_node
   src/MpcNode.cpp
 )
-target_link_libraries(anymal_mpc_node
+target_link_libraries(mpc_node
   ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${PROJECT_NAME}
 )
-target_compile_options(anymal_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(mpc_node PRIVATE ${OCS2_CXX_FLAGS})
 
 add_executable(simple_blind
     src/simple_blind.cpp

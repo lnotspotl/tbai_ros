@@ -93,7 +93,7 @@ class RosMpcController : public MpcController {
         const auto sqpSettings = ocs2::sqp::loadSettings(sqpSettingsFile);
         auto mpcPtr = switched_model::getSqpMpc(*quadrupedInterfacePtr_, mpcSettings, sqpSettings);
 
-        const std::string robotName = "anymal";
+        const std::string robotName = "go2";
 
         QuadrupedInterface& quadrupedInterface = *quadrupedInterfacePtr_;
 
