@@ -6,7 +6,6 @@
 
 #include "tbai_ros_mpc/RosMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
-#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Utils.hpp>
@@ -15,6 +14,7 @@
 #include <tbai_ros_core/Publishers.hpp>
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
+#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "tbai_ros_static");

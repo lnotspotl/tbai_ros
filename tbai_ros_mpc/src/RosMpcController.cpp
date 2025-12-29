@@ -40,7 +40,7 @@ ContactVisualizer::ContactVisualizer() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void ContactVisualizer::visualize(const vector_t& currentState, const std::vector<bool>& contacts) {
+void ContactVisualizer::visualize(const vector_t &currentState, const std::vector<bool> &contacts) {
     ros::Time timeStamp = ros::Time::now();
 
     vector_t q = vector_t::Zero(model_.nq);
@@ -80,7 +80,7 @@ void ContactVisualizer::visualize(const vector_t& currentState, const std::vecto
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-RosMpcController::RosMpcController(const std::shared_ptr<tbai::StateSubscriber>& stateSubscriberPtr,
+RosMpcController::RosMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                                    std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr)
     : MpcController(stateSubscriberPtr, std::move(velocityGeneratorPtr)) {
     using tbai::fromGlobalConfig;
@@ -153,12 +153,78 @@ std::unique_ptr<ocs2::MRT_BASE> RosMpcController::createMrtInterface() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
+std::unique_ptr<ocs2::MPC_BASE> RosMpcController::createMpcInterface() {
+    ros::NodeHandle nodeHandle;
+
+    // Load task.info file
+    std::string taskSettingsFile;
+    TBAI_THROW_UNLESS(nodeHandle.getParam("/task_settings_file", taskSettingsFile),
+                      "Failed to get parameter /task_settings_file");
+
+    // Load sqp.info file
+    std::string sqpSettingsFile;
+    TBAI_THROW_UNLESS(nodeHandle.getParam("/sqp_settings_file", sqpSettingsFile),
+                      "Failed to get parameter /sqp_settings_file");
+
+    // Load robot name
+    std::string robotName;
+    TBAI_THROW_UNLESS(nodeHandle.getParam("/robot_name", robotName), "Failed to get parameter /robot_name");
+
+    // Load settings
+    const auto mpcSettings = ocs2::mpc::loadSettings(taskSettingsFile);
+    const auto sqpSettings = ocs2::sqp::loadSettings(sqpSettingsFile);
+    auto mpcPtr = switched_model::getSqpMpc(*quadrupedInterfacePtr_, mpcSettings, sqpSettings);
+
+    // Convenience
+    QuadrupedInterface &quadrupedInterface = *quadrupedInterfacePtr_;
+    auto solverModules = quadrupedInterface.getSynchronizedModules();
+
+    // Gait
+    auto gaitReceiver = std::make_shared<GaitReceiver>(
+        nodeHandle, quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getGaitSchedule(), robotName);
+    solverModules.push_back(gaitReceiver);
+
+    // Terrain Receiver
+    auto terrainReceiver = std::make_shared<TerrainReceiverSynchronizedModule>(
+        quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getTerrainModel(), nodeHandle);
+    solverModules.push_back(terrainReceiver);
+
+    // Local Terrain Receiver
+    auto localTerrainReceiver = std::make_shared<LocalTerrainReceiverSynchronizedModule>(
+        quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getTerrainModel(), nodeHandle);
+    solverModules.push_back(localTerrainReceiver);
+
+    // Terrain plane visualization
+    auto terrainVisualizer = std::make_shared<TerrainPlaneVisualizerSynchronizedModule>(
+        quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getSwingTrajectoryPlanner(), nodeHandle);
+    solverModules.push_back(terrainVisualizer);
+
+    // Swing planner
+    auto swingPlanningVisualizer = std::make_shared<SwingPlanningVisualizer>(
+        quadrupedInterface.getSwitchedModelModeScheduleManagerPtr()->getSwingTrajectoryPlanner(), nodeHandle);
+    solverModules.push_back(swingPlanningVisualizer);
+
+    // reference manager
+    auto rosReferenceManagerPtr =
+        std::make_shared<ocs2::RosReferenceManager>(robotName, quadrupedInterface.getReferenceManagerPtr());
+    rosReferenceManagerPtr->subscribe(nodeHandle);
+    mpcPtr->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+
+    // MPC
+    mpcPtr->getSolverPtr()->setSynchronizedModules(solverModules);
+
+    return mpcPtr;
+}
+
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
+/*********************************************************************************************************************/
 void RosMpcController::preStep(scalar_t currentTime, scalar_t dt) {
     ros::spinOnce();
 
     // For MRT_ROS_Interface, also spin the MRT callback queue
     if (useRosInterface_) {
-        auto* mrtRos = dynamic_cast<tbai::ocs2_ros::MRT_ROS_Interface*>(mrtPtr_.get());
+        auto *mrtRos = dynamic_cast<tbai::ocs2_ros::MRT_ROS_Interface *>(mrtPtr_.get());
         if (mrtRos != nullptr) {
             mrtRos->spinMRT();
         }
@@ -201,8 +267,7 @@ void RosMpcController::referenceThreadLoop() {
         // Generate and publish reference trajectory
         auto observation = generateSystemObservation();
         referenceTrajectoryGeneratorPtr_->updateObservation(observation);
-        auto targetTrajectories =
-            referenceTrajectoryGeneratorPtr_->generateReferenceTrajectory(tNow_, observation);
+        auto targetTrajectories = referenceTrajectoryGeneratorPtr_->generateReferenceTrajectory(tNow_, observation);
         mrtPtr_->setTargetTrajectories(targetTrajectories);
 
         TBAI_LOG_INFO_THROTTLE(logger_, 5.0, "Publishing reference");

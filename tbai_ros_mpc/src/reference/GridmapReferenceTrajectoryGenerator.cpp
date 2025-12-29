@@ -1,13 +1,13 @@
 #include "tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp"
 
 #include <grid_map_core/GridMap.hpp>
-#include <grid_map_ros/GridMapRosConverter.hpp>
 #include <grid_map_filters_rsl/lookup.hpp>
+#include <grid_map_ros/GridMapRosConverter.hpp>
+#include <tbai_mpc/quadruped_mpc/core/Rotations.h>
+#include <tbai_mpc/quadruped_mpc/core/SwitchedModel.h>
 #include <tbai_mpc/quadruped_mpc/quadruped_commands/ReferenceExtrapolation.h>
 #include <tbai_mpc/quadruped_mpc/quadruped_commands/TerrainAdaptation.h>
 #include <tbai_mpc/quadruped_mpc/terrain/PlaneFitting.h>
-#include <tbai_mpc/quadruped_mpc/core/Rotations.h>
-#include <tbai_mpc/quadruped_mpc/core/SwitchedModel.h>
 
 namespace tbai {
 namespace mpc {
@@ -16,74 +16,79 @@ namespace reference {
 using namespace switched_model;
 
 namespace {
-void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory& baseRef) {
-  auto N = baseRef.time.size();
-  if (N <= 1) {
-    return;
-  }
+void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory &baseRef) {
+    auto N = baseRef.time.size();
+    if (N <= 1) {
+        return;
+    }
 
-  baseRef.linearVelocityInWorld.clear();
-  baseRef.angularVelocityInWorld.clear();
-  baseRef.linearVelocityInWorld.reserve(N);
-  baseRef.angularVelocityInWorld.reserve(N);
+    baseRef.linearVelocityInWorld.clear();
+    baseRef.angularVelocityInWorld.clear();
+    baseRef.linearVelocityInWorld.reserve(N);
+    baseRef.angularVelocityInWorld.reserve(N);
 
-  for (size_t k = 0; (k + 1) < baseRef.time.size(); ++k) {
-    auto dt = baseRef.time[k + 1] - baseRef.time[k];
-    baseRef.angularVelocityInWorld.push_back(rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[k + 1], baseRef.eulerXyz[k]) / dt);
-    baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[k + 1] - baseRef.positionInWorld[k]) / dt);
-  }
+    for (size_t k = 0; (k + 1) < baseRef.time.size(); ++k) {
+        auto dt = baseRef.time[k + 1] - baseRef.time[k];
+        baseRef.angularVelocityInWorld.push_back(
+            rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[k + 1], baseRef.eulerXyz[k]) / dt);
+        baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[k + 1] - baseRef.positionInWorld[k]) / dt);
+    }
 
-  auto dt = baseRef.time[N - 1] - baseRef.time[N - 2];
-  baseRef.angularVelocityInWorld.push_back(rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[N - 1], baseRef.eulerXyz[N - 2]) / dt);
-  baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[N - 1] - baseRef.positionInWorld[N - 2]) / dt);
+    auto dt = baseRef.time[N - 1] - baseRef.time[N - 2];
+    baseRef.angularVelocityInWorld.push_back(
+        rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[N - 1], baseRef.eulerXyz[N - 2]) / dt);
+    baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[N - 1] - baseRef.positionInWorld[N - 2]) / dt);
 }
 }  // namespace
 
-static BaseReferenceTrajectory generateExtrapolatedBaseReference(const BaseReferenceHorizon& horizon, const BaseReferenceState& initialState,
-    const BaseReferenceCommand& command, const grid_map::GridMap& gridMap,
-    double nominalStanceWidthInHeading, double nominalStanceWidthLateral) {
-    const auto& baseReferenceLayer = gridMap.get("smooth_planar");
+static BaseReferenceTrajectory generateExtrapolatedBaseReference(
+    const BaseReferenceHorizon &horizon, const BaseReferenceState &initialState, const BaseReferenceCommand &command,
+    const grid_map::GridMap &gridMap, double nominalStanceWidthInHeading, double nominalStanceWidthLateral) {
+    const auto &baseReferenceLayer = gridMap.get("smooth_planar");
 
     // Helper to get a projected heading frame derived from the terrain.
-    auto getLocalHeadingFrame = [&](const vector2_t& baseXYPosition, scalar_t yaw) {
-    vector2_t lfOffset(nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
-    vector2_t rfOffset(nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
-    vector2_t lhOffset(-nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
-    vector2_t rhOffset(-nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
-    // Rotate from heading to world frame
-    rotateInPlace2d(lfOffset, yaw);
-    rotateInPlace2d(rfOffset, yaw);
-    rotateInPlace2d(lhOffset, yaw);
-    rotateInPlace2d(rhOffset, yaw);
-    // shift by base center
-    lfOffset += baseXYPosition;
-    rfOffset += baseXYPosition;
-    lhOffset += baseXYPosition;
-    rhOffset += baseXYPosition;
+    auto getLocalHeadingFrame = [&](const vector2_t &baseXYPosition, scalar_t yaw) {
+        vector2_t lfOffset(nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+        vector2_t rfOffset(nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+        vector2_t lhOffset(-nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+        vector2_t rhOffset(-nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+        // Rotate from heading to world frame
+        rotateInPlace2d(lfOffset, yaw);
+        rotateInPlace2d(rfOffset, yaw);
+        rotateInPlace2d(lhOffset, yaw);
+        rotateInPlace2d(rhOffset, yaw);
+        // shift by base center
+        lfOffset += baseXYPosition;
+        rfOffset += baseXYPosition;
+        lhOffset += baseXYPosition;
+        rhOffset += baseXYPosition;
 
-    auto interp = [&](const vector2_t& offset) -> vector3_t {
-    auto projection = grid_map::lookup::projectToMapWithMargin(gridMap, grid_map::Position(offset.x(), offset.y()));
+        auto interp = [&](const vector2_t &offset) -> vector3_t {
+            auto projection =
+                grid_map::lookup::projectToMapWithMargin(gridMap, grid_map::Position(offset.x(), offset.y()));
 
-    try {
-    auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
-    return vector3_t(offset.x(), offset.y(), z);
-    } catch (std::out_of_range& e) {
-    double interp = gridMap.getResolution() / (projection - gridMap.getPosition()).norm();
-    projection = (1.0 - interp) * projection + interp * gridMap.getPosition();
-    auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
-    return vector3_t(offset.x(), offset.y(), z);
-    }
-    };
+            try {
+                auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+                return vector3_t(offset.x(), offset.y(), z);
+            } catch (std::out_of_range &e) {
+                double interp = gridMap.getResolution() / (projection - gridMap.getPosition()).norm();
+                projection = (1.0 - interp) * projection + interp * gridMap.getPosition();
+                auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+                return vector3_t(offset.x(), offset.y(), z);
+            }
+        };
 
-    vector3_t lfVerticalProjection = interp(lfOffset);
-    vector3_t rfVerticalProjection = interp(rfOffset);
-    vector3_t lhVerticalProjection = interp(lhOffset);
-    vector3_t rhVerticalProjection = interp(rhOffset);
+        vector3_t lfVerticalProjection = interp(lfOffset);
+        vector3_t rfVerticalProjection = interp(rfOffset);
+        vector3_t lhVerticalProjection = interp(lhOffset);
+        vector3_t rhVerticalProjection = interp(rhOffset);
 
-    const auto normalAndPosition = estimatePlane({lfVerticalProjection, rfVerticalProjection, lhVerticalProjection, rhVerticalProjection});
+        const auto normalAndPosition =
+            estimatePlane({lfVerticalProjection, rfVerticalProjection, lhVerticalProjection, rhVerticalProjection});
 
-    TerrainPlane terrainPlane(normalAndPosition.position, orientationWorldToTerrainFromSurfaceNormalInWorld(normalAndPosition.normal));
-    return getProjectedHeadingFrame({0.0, 0.0, yaw}, terrainPlane);
+        TerrainPlane terrainPlane(normalAndPosition.position,
+                                  orientationWorldToTerrainFromSurfaceNormalInWorld(normalAndPosition.normal));
+        return getProjectedHeadingFrame({0.0, 0.0, yaw}, terrainPlane);
     };
 
     auto reference2d = generate2DExtrapolatedBaseReference(horizon, initialState, command);
@@ -95,30 +100,26 @@ static BaseReferenceTrajectory generateExtrapolatedBaseReference(const BaseRefer
 
     // Adapt poses
     for (int k = 0; k < horizon.N; ++k) {
-    const auto projectedHeadingFrame = getLocalHeadingFrame(reference2d.positionInWorld[k], reference2d.yaw[k]);
+        const auto projectedHeadingFrame = getLocalHeadingFrame(reference2d.positionInWorld[k], reference2d.yaw[k]);
 
-    baseRef.positionInWorld.push_back(
-    adaptDesiredPositionHeightToTerrain(reference2d.positionInWorld[k], projectedHeadingFrame, command.baseHeight));
-    baseRef.eulerXyz.emplace_back(alignDesiredOrientationToTerrain({0.0, 0.0, reference2d.yaw[k]}, projectedHeadingFrame));
+        baseRef.positionInWorld.push_back(adaptDesiredPositionHeightToTerrain(
+            reference2d.positionInWorld[k], projectedHeadingFrame, command.baseHeight));
+        baseRef.eulerXyz.emplace_back(
+            alignDesiredOrientationToTerrain({0.0, 0.0, reference2d.yaw[k]}, projectedHeadingFrame));
     }
 
     addVelocitiesFromFiniteDifference(baseRef);
     return baseRef;
 }
 
-
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 GridmapReferenceTrajectoryGenerator::GridmapReferenceTrajectoryGenerator(
-    ros::NodeHandle& nh,
-    const std::string& configFile,
+    ros::NodeHandle &nh, const std::string &configFile,
     std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
-    std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr,
-    ocs2::scalar_t trajdt,
-    size_t trajKnots,
-    const std::string& terrainTopic,
-    bool blind)
+    std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt,
+    size_t trajKnots, const std::string &terrainTopic, bool blind)
     : ReferenceTrajectoryGenerator(configFile, std::move(velocityGeneratorPtr), std::move(kinematicsPtr), trajdt,
                                    trajKnots),
       blind_(blind) {
@@ -132,7 +133,7 @@ GridmapReferenceTrajectoryGenerator::GridmapReferenceTrajectoryGenerator(
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceTrajectory(
-    ocs2::scalar_t currentTime, const ocs2::SystemObservation& observation) {
+    ocs2::scalar_t currentTime, const ocs2::SystemObservation &observation) {
     // Update observation (this also updates terrain estimator if no external terrain)
     updateObservation(observation);
 
@@ -150,9 +151,9 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
     } else {
         lock.unlock();
         // Fall back to terrain plane-based generation
-        baseReferenceTrajectory = generateExtrapolatedBaseReference(getBaseReferenceHorizon(), getBaseReferenceState(),
-                                                                    getBaseReferenceCommand(currentTime),
-                                                                    getTerrainPlane());
+        baseReferenceTrajectory =
+            generateExtrapolatedBaseReference(getBaseReferenceHorizon(), getBaseReferenceState(),
+                                              getBaseReferenceCommand(currentTime), getTerrainPlane());
     }
 
     // Generate target trajectory
@@ -194,7 +195,7 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const switched_model::TerrainPlane& terrainPlane) {
+void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const switched_model::TerrainPlane &terrainPlane) {
     tbai_ros_ocs2::local_terrain msg;
 
     // Position (3 elements)
@@ -205,7 +206,7 @@ void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const switched_mod
 
     // Rotation matrix (9 elements, row-major)
     msg.rotation.resize(9);
-    const auto& R = terrainPlane.orientationWorldToTerrain;
+    const auto &R = terrainPlane.orientationWorldToTerrain;
     msg.rotation[0] = static_cast<float>(R(0, 0));
     msg.rotation[1] = static_cast<float>(R(0, 1));
     msg.rotation[2] = static_cast<float>(R(0, 2));
@@ -230,7 +231,7 @@ bool GridmapReferenceTrajectoryGenerator::hasGridmap() const {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void GridmapReferenceTrajectoryGenerator::terrainCallback(const grid_map_msgs::GridMap& msg) {
+void GridmapReferenceTrajectoryGenerator::terrainCallback(const grid_map_msgs::GridMap &msg) {
     if (!blind_) {
         // Convert ROS message to grid map
         std::unique_ptr<grid_map::GridMap> mapPtr(new grid_map::GridMap);

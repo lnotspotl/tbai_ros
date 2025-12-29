@@ -32,13 +32,10 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
      * @param blind: If true, ignores gridmap and uses only terrain plane estimation
      */
     GridmapReferenceTrajectoryGenerator(
-        ros::NodeHandle& nh,
-        const std::string& configFile,
+        ros::NodeHandle &nh, const std::string &configFile,
         std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
-        std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr,
-        ocs2::scalar_t trajdt = 0.1,
-        size_t trajKnots = 20,
-        const std::string& terrainTopic = "/elevation_mapping/elevation_map",
+        std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt = 0.1,
+        size_t trajKnots = 20, const std::string &terrainTopic = "/elevation_mapping/elevation_map",
         bool blind = false);
 
     /**
@@ -48,7 +45,7 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
      * @return Generated target trajectories
      */
     ocs2::TargetTrajectories generateReferenceTrajectory(ocs2::scalar_t currentTime,
-                                                          const ocs2::SystemObservation& observation) override;
+                                                         const ocs2::SystemObservation &observation) override;
 
     /**
      * Checks if gridmap is available
@@ -57,8 +54,8 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
     bool hasGridmap() const;
 
    private:
-    void terrainCallback(const grid_map_msgs::GridMap& msg);
-    void publishLocalTerrain(const switched_model::TerrainPlane& terrainPlane);
+    void terrainCallback(const grid_map_msgs::GridMap &msg);
+    void publishLocalTerrain(const switched_model::TerrainPlane &terrainPlane);
 
     ros::Subscriber terrainSubscriber_;
     ros::Publisher localTerrainPublisher_;

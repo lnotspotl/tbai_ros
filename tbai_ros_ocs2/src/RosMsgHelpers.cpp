@@ -32,55 +32,56 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace ocs2 {
 namespace ros_msg_helpers {
 
-geometry_msgs::Point getPointMsg(const Eigen::Vector3d& point) {
-  geometry_msgs::Point pointMsg;
-  pointMsg.x = point.x();
-  pointMsg.y = point.y();
-  pointMsg.z = point.z();
-  return pointMsg;
+geometry_msgs::Point getPointMsg(const Eigen::Vector3d &point) {
+    geometry_msgs::Point pointMsg;
+    pointMsg.x = point.x();
+    pointMsg.y = point.y();
+    pointMsg.z = point.z();
+    return pointMsg;
 }
 
-geometry_msgs::Vector3 getVectorMsg(const Eigen::Vector3d& vec) {
-  geometry_msgs::Vector3 vecMsg;
-  vecMsg.x = vec.x();
-  vecMsg.y = vec.y();
-  vecMsg.z = vec.z();
-  return vecMsg;
+geometry_msgs::Vector3 getVectorMsg(const Eigen::Vector3d &vec) {
+    geometry_msgs::Vector3 vecMsg;
+    vecMsg.x = vec.x();
+    vecMsg.y = vec.y();
+    vecMsg.z = vec.z();
+    return vecMsg;
 }
 
-geometry_msgs::Quaternion getOrientationMsg(const Eigen::Quaterniond& orientation) {
-  geometry_msgs::Quaternion orientationMsg;
-  orientationMsg.x = orientation.x();
-  orientationMsg.y = orientation.y();
-  orientationMsg.z = orientation.z();
-  orientationMsg.w = orientation.w();
-  return orientationMsg;
+geometry_msgs::Quaternion getOrientationMsg(const Eigen::Quaterniond &orientation) {
+    geometry_msgs::Quaternion orientationMsg;
+    orientationMsg.x = orientation.x();
+    orientationMsg.y = orientation.y();
+    orientationMsg.z = orientation.z();
+    orientationMsg.w = orientation.w();
+    return orientationMsg;
 }
 
-std_msgs::Header getHeaderMsg(const std::string& frame_id, const ros::Time& timeStamp) {
-  std_msgs::Header header;
-  header.frame_id = frame_id;
-  header.stamp = timeStamp;
-  return header;
+std_msgs::Header getHeaderMsg(const std::string &frame_id, const ros::Time &timeStamp) {
+    std_msgs::Header header;
+    header.frame_id = frame_id;
+    header.stamp = timeStamp;
+    return header;
 }
 
-visualization_msgs::Marker getLineMsg(std::vector<geometry_msgs::Point>&& points, std::array<double, 3> color, double lineWidth) {
-  visualization_msgs::Marker line;
-  line.type = visualization_msgs::Marker::LINE_STRIP;
-  line.scale.x = lineWidth;
-  line.color = getColor(color);
-  line.points = std::move(points);
-  line.pose.orientation = getOrientationMsg({1., 0., 0., 0.});
-  return line;
+visualization_msgs::Marker getLineMsg(std::vector<geometry_msgs::Point> &&points, std::array<double, 3> color,
+                                      double lineWidth) {
+    visualization_msgs::Marker line;
+    line.type = visualization_msgs::Marker::LINE_STRIP;
+    line.scale.x = lineWidth;
+    line.color = getColor(color);
+    line.points = std::move(points);
+    line.pose.orientation = getOrientationMsg({1., 0., 0., 0.});
+    return line;
 }
 
 std_msgs::ColorRGBA getColor(std::array<double, 3> rgb, double alpha /* = 1.0*/) {
-  std_msgs::ColorRGBA colorMsg;
-  colorMsg.r = rgb[0];
-  colorMsg.g = rgb[1];
-  colorMsg.b = rgb[2];
-  colorMsg.a = alpha;
-  return colorMsg;
+    std_msgs::ColorRGBA colorMsg;
+    colorMsg.r = rgb[0];
+    colorMsg.g = rgb[1];
+    colorMsg.b = rgb[2];
+    colorMsg.a = alpha;
+    return colorMsg;
 }
 
 }  // namespace ros_msg_helpers

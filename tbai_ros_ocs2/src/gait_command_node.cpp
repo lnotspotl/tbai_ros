@@ -1,5 +1,4 @@
 #include "tbai_ros_ocs2/logic/GaitCommandNode.h"
-
 #include <ros/ros.h>
 #include <tbai_core/Throws.hpp>
 
