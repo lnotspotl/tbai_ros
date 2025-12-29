@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
     ros::init(argc, argv, "tbai_ros_static");
     ros::NodeHandle nh;
 
+    std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
+
     // Set zero time
     tbai::writeInitTime(tbai::RosTime::rightNow());
 
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     // Add MPC controller
     controller.addController(std::make_unique<tbai::mpc::RosMpcController>(
-        stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
+        robotName, stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
 
     // Start controller loop
     controller.start();

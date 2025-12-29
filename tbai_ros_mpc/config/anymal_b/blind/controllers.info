@@ -9,8 +9,8 @@ sqpWbc
   frictionCoefficient     0.5
 
   ; Swing leg kp and kd (in cartesian space - ee tracking)
-  swingKp                 550.0
-  swingKd                 50.0
+  swingKp                 150.0
+  swingKd                 10.0
 
   ; Base position kp and kd 
   baseKp                  1.0

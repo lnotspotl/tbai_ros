@@ -186,7 +186,9 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
     }
 
     // Publish local terrain
-    publishLocalTerrain(getTerrainPlane());
+    if (blind_) {
+        publishLocalTerrain(getTerrainPlane());
+    }
 
     return ocs2::TargetTrajectories(std::move(desiredTimeTrajectory), std::move(desiredStateTrajectory),
                                     std::move(desiredInputTrajectory));

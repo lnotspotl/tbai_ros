@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
-    <arg name="controllers_ns"      default="anymal_d"/>
+    <arg name="robot_name"          default="anymal_b"/>
+    <arg name="controllers_ns"      default="anymal_b"/>
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_mpc)/config/anymal_b/blind/default_config_anymal_b.yaml"/>
     <arg name="description_name"    default="robot_description"/>
@@ -12,6 +13,8 @@
     <arg name="task_settings_file" default="$(find tbai_ros_mpc)/config/anymal_b/blind/task.info"/>
     <arg name="target_command_config_file" default="$(find tbai_ros_mpc)/config/anymal_b/blind/targetCommand.info"/>
     <arg name="controller_config_file" default="$(find tbai_ros_mpc)/config/anymal_b/blind/controllers.info"/>
+    <arg name="gait_file" default="$(find tbai_ros_mpc)/config/anymal_b/blind/gait.info"/>
+
 
     <!-- Gazebo parameters -->
     <arg name="gui" default="false"/>
@@ -35,7 +38,9 @@
     <param name="task_settings_file" type="string" value="$(arg task_settings_file)"/>
     <param name="target_command_config_file" type="string" value="$(arg target_command_config_file)"/>
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>
-
+    <param name="gait_file" type="string" value="$(arg gait_file)"/>
+    <param name="robot_name" type="string" value="$(arg robot_name)"/>
+    
     <!-- Launch gazebo -->
     <include file="$(find tbai_ros_gazebo)/launch/world.launch">
         <arg name="controllers_ns" value="$(arg controllers_ns)"/>
@@ -55,13 +60,12 @@
     <node name="simple" pkg="tbai_ros_mpc" type="simple_blind" output="screen"/>
 
     <!-- Launch MPC node -->
-    <node pkg="tbai_ros_mpc" type="anymal_mpc_node" name="anymal_mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
 
     <!-- Launch Gait command node -->
     <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
           output="screen" launch-prefix="x-terminal-emulator -e">
-        <param name="gait_file" value="$(find ocs2_anymal_commands)/config/gait.info"/>
-        <param name="robot_name" value="anymal"/>
+        <param name="robot_name" value="$(arg robot_name)"/>
     </node>
 
     <!-- Start Rviz visualizer -->

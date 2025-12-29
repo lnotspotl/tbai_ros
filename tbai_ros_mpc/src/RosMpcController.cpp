@@ -29,9 +29,7 @@ ContactVisualizer::ContactVisualizer() {
 
     // Setup Pinocchio model
     std::string urdfString;
-    if (!ros::param::get("/robot_description", urdfString)) {
-        throw std::runtime_error("Failed to get param /robot_description");
-    }
+    TBAI_THROW_UNLESS(ros::param::get("/robot_description", urdfString), "Failed to get param /robot_description");
 
     pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
     data_ = pinocchio::Data(model_);
@@ -80,9 +78,10 @@ void ContactVisualizer::visualize(const vector_t &currentState, const std::vecto
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-RosMpcController::RosMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
+RosMpcController::RosMpcController(const std::string &robotName,
+                                   const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                                    std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr)
-    : MpcController(stateSubscriberPtr, std::move(velocityGeneratorPtr)) {
+    : MpcController(robotName, stateSubscriberPtr, std::move(velocityGeneratorPtr)) {
     using tbai::fromGlobalConfig;
 
     initTime_ = tbai::readInitTime();
@@ -223,15 +222,6 @@ std::unique_ptr<ocs2::MPC_BASE> RosMpcController::createMpcInterface() {
 /*********************************************************************************************************************/
 void RosMpcController::preStep(scalar_t currentTime, scalar_t dt) {
     ros::spinOnce();
-
-    // For MRT_ROS_Interface, also spin the MRT callback queue
-    if (useRosInterface_) {
-        auto *mrtRos = dynamic_cast<tbai::ocs2_ros::MRT_ROS_Interface *>(mrtPtr_.get());
-        if (mrtRos != nullptr) {
-            mrtRos->spinMRT();
-        }
-    }
-
     state_ = stateSubscriberPtr_->getLatestState();
 }
 

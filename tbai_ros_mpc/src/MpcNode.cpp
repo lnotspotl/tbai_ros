@@ -1,4 +1,3 @@
-#include "tbai_ros_mpc/QuadrupedMpcNode.h"
 #include <ocs2_ddp/DDP_Settings.h>
 #include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ocs2_mpc/MPC_Settings.h>
@@ -9,7 +8,6 @@
 #include <tbai_core/config/Config.hpp>
 #include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
 #include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
-#include <tbai_ros_mpc/QuadrupedMpcNode.h>
 #include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/RosReferenceManager.hpp>
 #include <tbai_ros_ocs2/logic/GaitReceiver.h>
@@ -94,7 +92,7 @@ int main(int argc, char *argv[]) {
         quadrupedInterface =
             anymal::getAnymalInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
                                        anymal::frameDeclarationFromFile(frameDeclarationFile));
-    } else if (robotName == "go2") {
+    } else if (robotName == "go2" || robotName == "spot") {  // TODO(lnotspotl): Add spot interface
         quadrupedInterface =
             anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
                                     anymal::frameDeclarationFromFile(frameDeclarationFile));

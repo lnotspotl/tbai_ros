@@ -60,7 +60,7 @@ class RosMpcController : public MpcController {
      * @param stateSubscriberPtr: State subscriber for getting robot state
      * @param velocityGeneratorPtr: Reference velocity generator
      */
-    RosMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
+    RosMpcController(const std::string &robotName, const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                      std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr);
 
     void postStep(scalar_t currentTime, scalar_t dt) override;
