@@ -14,21 +14,21 @@ SwingPlanningVisualizer::SwingPlanningVisualizer(const SwingTrajectoryPlanner &s
                                                  ros::NodeHandle &nodeHandle)
     : swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner) {
     nominalFootholdPublishers_[0] =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/swing_planner/nominalFootholds_LF", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/swing_planner/nominalFootholds_LF", 1);
     nominalFootholdPublishers_[1] =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/swing_planner/nominalFootholds_RF", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/swing_planner/nominalFootholds_RF", 1);
     nominalFootholdPublishers_[2] =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/swing_planner/nominalFootholds_LH", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/swing_planner/nominalFootholds_LH", 1);
     nominalFootholdPublishers_[3] =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/swing_planner/nominalFootholds_RH", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/swing_planner/nominalFootholds_RH", 1);
     swingTrajectoryPublishers_[0] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/swing_planner/trajectory_LF", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/swing_planner/trajectory_LF", 1);
     swingTrajectoryPublishers_[1] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/swing_planner/trajectory_RF", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/swing_planner/trajectory_RF", 1);
     swingTrajectoryPublishers_[2] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/swing_planner/trajectory_LH", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/swing_planner/trajectory_LH", 1);
     swingTrajectoryPublishers_[3] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/swing_planner/trajectory_RH", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/swing_planner/trajectory_RH", 1);
 }
 
 void SwingPlanningVisualizer::preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t &currentState,

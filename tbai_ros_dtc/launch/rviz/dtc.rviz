@@ -496,7 +496,7 @@ Visualization Manager:
       Visual Enabled: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/optimizedStateTrajectory
+      Marker Topic: /ocs2_quadruped/optimizedStateTrajectory
       Name: MarkerArray
       Namespaces:
         Base Trajectory: true

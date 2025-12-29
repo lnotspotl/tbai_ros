@@ -24,37 +24,37 @@ namespace switched_model {
 void QuadrupedVisualizer::launchVisualizerNode(ros::NodeHandle &nodeHandle, std::vector<std::string> jointNames,
                                                std::string baseName) {
     costDesiredBasePositionPublisher_ =
-        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/desiredBaseTrajectory", 1);
+        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/desiredBaseTrajectory", 1);
     costDesiredBasePosePublisher_ =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/desiredPoseTrajectory", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/desiredPoseTrajectory", 1);
     costDesiredBaseAngVelocityPublisher_ =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredAngVelTrajectory", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredAngVelTrajectory", 1);
     costDesiredBaseVelocityPublisher_ =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredVelTrajectory", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredVelTrajectory", 1);
     costDesiredFeetPositionPublishers_[0] =
-        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/desiredFeetTrajectory/LF", 1);
+        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/desiredFeetTrajectory/LF", 1);
     costDesiredFeetPositionPublishers_[1] =
-        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/desiredFeetTrajectory/RF", 1);
+        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/desiredFeetTrajectory/RF", 1);
     costDesiredFeetPositionPublishers_[2] =
-        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/desiredFeetTrajectory/LH", 1);
+        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/desiredFeetTrajectory/LH", 1);
     costDesiredFeetPositionPublishers_[3] =
-        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/desiredFeetTrajectory/RH", 1);
+        nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/desiredFeetTrajectory/RH", 1);
     costDesiredFeetVelocityPublishers_[0] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredFeetVelTrajectory/LF", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredFeetVelTrajectory/LF", 1);
     costDesiredFeetVelocityPublishers_[1] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredFeetVelTrajectory/RF", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredFeetVelTrajectory/RF", 1);
     costDesiredFeetVelocityPublishers_[2] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredFeetVelTrajectory/LH", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredFeetVelTrajectory/LH", 1);
     costDesiredFeetVelocityPublishers_[3] =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/desiredFeetVelTrajectory/RH", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/desiredFeetVelTrajectory/RH", 1);
     stateOptimizedPublisher_ =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/optimizedStateTrajectory", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/optimizedStateTrajectory", 1);
     stateOptimizedPosePublisher_ =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/optimizedPoseTrajectory", 1);
-    currentStatePublisher_ = nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/currentState", 1);
-    currentFeetPosesPublisher_ = nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_anymal/currentFeetPoses", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/optimizedPoseTrajectory", 1);
+    currentStatePublisher_ = nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/currentState", 1);
+    currentFeetPosesPublisher_ = nodeHandle.advertise<geometry_msgs::PoseArray>("/ocs2_quadruped/currentFeetPoses", 1);
     currentCollisionSpheresPublisher_ =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_anymal/currentCollisionSpheres", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/ocs2_quadruped/currentCollisionSpheres", 1);
 
     quadrupedTfPublisher_.launchNode(nodeHandle, "robot_description", std::move(jointNames), std::move(baseName));
 }

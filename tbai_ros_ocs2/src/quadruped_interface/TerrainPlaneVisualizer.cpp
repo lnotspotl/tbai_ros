@@ -10,7 +10,7 @@
 namespace switched_model {
 
 TerrainPlaneVisualizer::TerrainPlaneVisualizer(ros::NodeHandle &nodeHandle) {
-    terrainPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_anymal/localTerrain", 1, true);
+    terrainPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/localTerrain", 1, true);
 }
 
 void TerrainPlaneVisualizer::update(scalar_t time, const TerrainPlane &terrainPlane) {
