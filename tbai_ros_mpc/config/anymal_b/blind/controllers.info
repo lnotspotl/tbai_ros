@@ -9,7 +9,7 @@ sqpWbc
   frictionCoefficient     0.5
 
   ; Swing leg kp and kd (in cartesian space - ee tracking)
-  swingKp                 150.0
+  swingKp                 350.0
   swingKd                 10.0
 
   ; Base position kp and kd 
@@ -30,6 +30,10 @@ sqpWbc
 
   ; Joint torque limit
   torqueLimit              80.0
+
+  ; whether stance should be enforeced as a constraint 
+  ; or as a cost (false is more robust (e.g. slips))
+  stanceAsConstraint false
 }
 
 hqpWbc
