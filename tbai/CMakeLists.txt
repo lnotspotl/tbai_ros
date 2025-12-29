@@ -17,6 +17,8 @@ catkin_package(
     tbai_static
     tbai_estim
     tbai_deploy_go2
+    tbai_deploy_go2w
+    tbai_deploy_g1
     tbai_mpc
 
     # unitree sdk

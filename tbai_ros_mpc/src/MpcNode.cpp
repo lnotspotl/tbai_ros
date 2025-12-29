@@ -8,7 +8,7 @@
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/config/Config.hpp>
 #include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
-#include <tbai_mpc/quadruped_mpc/anymal_interface/Interface.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
 #include <tbai_ros_mpc/QuadrupedMpcNode.h>
 #include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/RosReferenceManager.hpp>

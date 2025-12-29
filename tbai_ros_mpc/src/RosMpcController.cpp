@@ -9,7 +9,7 @@
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
-#include <tbai_mpc/quadruped_mpc/anymal_interface/Interface.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
 #include <tbai_mpc/wbc/Factory.hpp>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <visualization_msgs/Marker.h>
