@@ -102,7 +102,7 @@ class RosMpcController : public MpcController {
     ros::CallbackQueue referenceThreadCallbackQueue_;
 
     // Whether to use MRT_ROS_Interface (true) or MPC_MRT_Interface (false)
-    bool useRosInterface_ = false;
+    bool useRosInterface_ = true;
 };
 
 }  // namespace mpc

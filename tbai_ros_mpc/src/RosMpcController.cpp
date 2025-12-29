@@ -140,8 +140,10 @@ RosMpcController::RosMpcController(const std::shared_ptr<tbai::StateSubscriber> 
 std::unique_ptr<ocs2::MRT_BASE> RosMpcController::createMrtInterface() {
     if (useRosInterface_) {
         // Create MRT_ROS_Interface for distributed MPC
-        auto mrtRos = std::make_unique<tbai::ocs2_ros::MRT_ROS_Interface>("anymal");
         ros::NodeHandle nh;
+        std::string robotName;
+        TBAI_THROW_UNLESS(nh.getParam("/robot_name", robotName), "Failed to get parameter /robot_name");
+        auto mrtRos = std::make_unique<tbai::ocs2_ros::MRT_ROS_Interface>(robotName);
         mrtRos->launchNodes(nh);
         return mrtRos;
     } else {
