@@ -3,9 +3,9 @@ robot_name: 'go2'
 joint_names: &jn ["LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE", "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"]
 base_name: "base"
 
-state_topic: "anymal_d/state"
-command_topic: "anymal_d/command"
-change_controller_topic: "anymal_d/change_controller"
+state_topic: "go2/state"
+command_topic: "go2/command"
+change_controller_topic: "go2/change_controller"
 contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"] 
 
 use_lidar: true

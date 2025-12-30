@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
-    <arg name="controllers_ns"              default="anymal_d"/>
+    <arg name="robot_name"                  default="go2"/>
+    <arg name="controllers_ns"              default="go2"/>
     <arg name="controllers_args"            default="joint_controller"/>
     <arg name="tbai_config_path"            default="$(find tbai_ros_deploy_go2_rl)/config/deploy_go2_rl.yaml"/>
     <arg name="description_name"            default="robot_description"/>
@@ -20,6 +21,8 @@
         <node name="dsa" pkg="tbai_ros_utils" type="run_bash.py" output="screen"
         args="unitree_mujoco $(arg mujoco_config_file)"/>
     </group>
+
+    <param name="robot_name" type="string" value="$(arg robot_name)"/>
 
     <!-- Upload config path to ROS param server -->
     <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>

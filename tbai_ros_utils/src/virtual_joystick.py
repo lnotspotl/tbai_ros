@@ -240,7 +240,7 @@ class UIController:
 
 def main():
   rospy.init_node("virtual_joystick", anonymous=True)
-  robot_name = rospy.get_param("/robot_name", "anymal")
+  robot_name = rospy.get_param("/robot_name")
   rospy.loginfo(f"Robot name parameter: {robot_name}")
 
   try:
