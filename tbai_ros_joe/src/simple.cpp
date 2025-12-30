@@ -12,7 +12,8 @@
 #include <tbai_ros_core/Publishers.hpp>
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
-#include <tbai_ros_joe/JoeController.hpp>
+#include <tbai_ros_joe/RosJoeController.hpp>
+#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 #include <tbai_ros_static/StaticController.hpp>
 
 int main(int argc, char *argv[]) {
@@ -36,13 +37,16 @@ int main(int argc, char *argv[]) {
         std::shared_ptr<tbai::ChangeControllerSubscriber>(
             new tbai::RosChangeControllerSubscriber(nh, changeControllerTopic));
 
+    auto robotName = tbai::fromGlobalConfig<std::string>("robot_name");
+
     tbai::CentralController<ros::Rate, tbai::RosTime> controller(commandPublisher, changeControllerSubscriber);
 
     // Add static controller
     controller.addController(std::make_unique<tbai::static_::RosStaticController>(stateSubscriber));
 
     // Add Joe controller
-    controller.addController(std::make_unique<tbai::joe::JoeController>(stateSubscriber));
+    controller.addController(std::make_unique<tbai::joe::RosJoeController>(
+        robotName, stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh), tbai::RosTime::rightNow));
 
     // Start controller loop
     controller.start();

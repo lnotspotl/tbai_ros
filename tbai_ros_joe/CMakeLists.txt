@@ -39,7 +39,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/JoeController.cpp
+  src/RosJoeController.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

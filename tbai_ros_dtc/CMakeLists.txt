@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_ocs2
   tbai_ros_mpc
   tbai_ros_gridmap
+  tbai_ros_reference
 )
 
 catkin_package(
@@ -36,7 +37,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/DtcController.cpp
+  src/RosDtcController.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

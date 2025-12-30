@@ -23,6 +23,7 @@ static_controller:
 joe_controller:
   hf_repo: "kubjonai/tbai-models"
   hf_model: "sjoe.pt"
+  blind: false # true is not supported yet
 
 anymal_d:
   joint_controller:
