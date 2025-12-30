@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     // Add MPC controller
     controller.addController(std::make_unique<tbai::mpc::RosMpcController>(
-        robotName, stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
+        robotName, stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh), tbai::RosTime::rightNow));
 
     // Start controller loop
     controller.start();

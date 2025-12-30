@@ -80,8 +80,8 @@ void ContactVisualizer::visualize(const vector_t &currentState, const std::vecto
 /*********************************************************************************************************************/
 RosMpcController::RosMpcController(const std::string &robotName,
                                    const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
-                                   std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr)
-    : MpcController(robotName, stateSubscriberPtr, std::move(velocityGeneratorPtr)) {
+                                   std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr, std::function<scalar_t()> getCurrentTimeFunction)
+    : MpcController(robotName, stateSubscriberPtr, std::move(velocityGeneratorPtr), getCurrentTimeFunction) {
     using tbai::fromGlobalConfig;
 
     initTime_ = tbai::readInitTime();

@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
     // Add MPC controller
     std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
-    controller.addController(std::make_unique<tbai::mpc::RosMpcController>(robotName, stateSubscriber, referenceVelocityPtr));
+    controller.addController(std::make_unique<tbai::mpc::RosMpcController>(robotName, stateSubscriber, referenceVelocityPtr, tbai::RosTime::rightNow));
 
     // Start controller loop
     controller.start();
