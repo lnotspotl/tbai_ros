@@ -24,7 +24,7 @@ model_settings
   muJointsTorque                1.0
   deltaJointsTorque             1.0
 
-joint_lower_limits
+  joint_lower_limits
   {
      (0,0)  -0.70       ; LF_HAA
      (1,0)  -1e30       ; LF_HFE
@@ -74,18 +74,18 @@ joint_lower_limits
 
   joint_torque_limits
   {
-     (0,0)   150.0       ; LF_HAA
-     (1,0)   150.0       ; LF_HFE
-     (2,0)   150.0       ; LF_KFE
-     (3,0)   150.0       ; RF_HAA
-     (4,0)   150.0       ; RF_HFE
-     (5,0)   150.0       ; RF_KFE
-     (6,0)   150.0       ; LH_HAA
-     (7,0)   150.0       ; LH_HFE
-     (8,0)   150.0       ; LH_KFE
-     (9,0)   150.0       ; RH_HAA
-     (10,0)  150.0       ; RH_HFE
-     (11,0)  150.0       ; RH_KFE
+     (0,0)   80.0       ; LF_HAA
+     (1,0)   80.0       ; LF_HFE
+     (2,0)   80.0       ; LF_KFE
+     (3,0)   80.0       ; RF_HAA
+     (4,0)   80.0       ; RF_HFE
+     (5,0)   80.0       ; RF_KFE
+     (6,0)   80.0       ; LH_HAA
+     (7,0)   80.0       ; LH_HFE
+     (8,0)   80.0       ; LH_KFE
+     (9,0)   80.0       ; RH_HAA
+     (10,0)  80.0       ; RH_HFE
+     (11,0)  80.0       ; RH_KFE
   }
 
   swing_trajectory_settings
@@ -96,7 +96,7 @@ joint_lower_limits
     touchdownAfterHorizon         0.2
     errorGain                     0.0
     swingTimeScale                0.15
-    sdfMidswingMargin             0.005
+    sdfMidswingMargin             0.1
     terrainMargin                 0.0
     previousFootholdFactor        0.333
     previousFootholdDeadzone      0.05
@@ -234,6 +234,7 @@ initialRobotState
    (22,0) -0.60  ; RH_HFE
    (23,0)  0.85  ; RH_KFE
 }
+
 tracking_cost_weights
 {
     ; Base

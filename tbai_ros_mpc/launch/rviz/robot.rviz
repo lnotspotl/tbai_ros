@@ -529,7 +529,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/swing_planner/trajectory_LF
+      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_LF
       Name: MarkerArray
       Namespaces:
         "": true
@@ -537,7 +537,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/swing_planner/trajectory_LH
+      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_LH
       Name: MarkerArray
       Namespaces:
         "": true
@@ -545,7 +545,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/swing_planner/trajectory_RF
+      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_RF
       Name: MarkerArray
       Namespaces:
         "": true
@@ -553,7 +553,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/swing_planner/trajectory_RH
+      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_RH
       Name: MarkerArray
       Namespaces:
         "": true
@@ -561,7 +561,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/desiredVelTrajectory
+      Marker Topic: /ocs2_quadruped/desiredVelTrajectory
       Name: MarkerArray
       Namespaces:
         "": true

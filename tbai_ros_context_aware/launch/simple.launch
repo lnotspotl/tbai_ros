@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
+    <arg name="robot_name"          default="anymal_d"/>
     <arg name="controllers_ns"      default="anymal_d"/>
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_context_aware)/config/default_config.yaml"/>
     <arg name="description_name"    default="robot_description"/>
     <arg name="description_file"    default="$(find tbai_ros_description)/urdf/anymal_d_gazebo.urdf.xacro"/>
+    <arg name="mapping_device"      default="cpu"/>
 
     <arg name="sqp_settings_file" default="$(find tbai_ros_context_aware)/config/sqp.info"/>
     <arg name="frame_declaration_file" default="$(find tbai_ros_context_aware)/config/frame_declarations.info"/>
     <arg name="task_settings_file" default="$(find tbai_ros_context_aware)/config/task.info"/>
     <arg name="target_command_config_file" default="$(find tbai_ros_context_aware)/config/targetCommand.info"/>
     <arg name="controller_config_file" default="$(find tbai_ros_context_aware)/config/controllers.info"/>
+    <arg name="gait_file" default="$(find tbai_ros_context_aware)/config/gait.info"/>
 
     <!-- Gazebo parameters -->
     <arg name="gui" default="false"/>
@@ -29,11 +32,13 @@
 
     <!-- Upload config path to ROS param server -->
     <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
+    <param name="robot_name" type="string" value="$(arg robot_name)"/>
     <param name="sqp_settings_file" type="string" value="$(arg sqp_settings_file)"/>
     <param name="frame_declaration_file" type="string" value="$(arg frame_declaration_file)"/>
     <param name="task_settings_file" type="string" value="$(arg task_settings_file)"/>
     <param name="target_command_config_file" type="string" value="$(arg target_command_config_file)"/>
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>
+    <param name="gait_file" type="string" value="$(arg gait_file)"/>
 
     <!-- Launch gazebo -->
     <include file="$(find tbai_ros_gazebo)/launch/world.launch">
@@ -53,10 +58,12 @@
     <!-- Launch simple node -->
     <node name="simple" pkg="tbai_ros_context_aware" type="simple" output="screen"/>
 
-    <node pkg="tbai_ros_mpc" type="anymal_mpc_node" name="anymal_mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
 
-    <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="x-terminal-emulator -e "/>
+    <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
+          output="screen" launch-prefix="x-terminal-emulator -e">
+        <param name="robot_name" value="$(arg robot_name)"/>
+    </node>
 
     <!-- Start Rviz visualizer -->
     <arg name="rvizconfig" default="$(find tbai_ros_context_aware)/launch/anymal_d.rviz" />
@@ -68,10 +75,10 @@
           <arg name="node_parameter_file" default="$(find tbai_ros_context_aware)/config/convex_plane_decomposition_node.yaml"/>
         </include>
 
-        <!-- Elevation mapping -->
-        <node pkg="nodelet" type="nodelet" name="pcl_manager" args="manager" output="screen"/>
-        <!-- Front camera -->
-        <node pkg="nodelet" type="nodelet" name="voxel_grid" args="load pcl/VoxelGrid pcl_manager" output="screen">
+    <!-- Elevation mapping -->
+    <node pkg="nodelet" type="nodelet" name="pcl_manager" args="manager" output="screen"/>
+    <!-- Front camera -->
+    <node pkg="nodelet" type="nodelet" name="voxel_grid" args="load pcl/VoxelGrid pcl_manager" output="screen">
       <remap from="~input" to="/camera/depth/points"/>
         <remap from="~output" to="/camera/depth/points_downsampled"/>
         <rosparam>
@@ -79,50 +86,12 @@
             filter_limit_min: 0.01
             filter_limit_max: 4.0  <!-- Limit the range of points to forward to 6 meters in viewing direction-->
             filter_limit_negative: False
-            leaf_size: 0.06  <!-- Limit the density to 5 cm-->
-        </rosparam>
-        </node>
-        <!-- Rear camera -->
-        <node pkg="nodelet" type="nodelet" name="voxel_grid1" args="load pcl/VoxelGrid pcl_manager" output="screen">
-      <remap from="~input" to="/rear_camera/depth/points"/>
-        <remap from="~output" to="/rear_camera/depth/points_downsampled"/>
-        <rosparam>
-            filter_field_name: z
-            filter_limit_min: 0.01
-            filter_limit_max: 4.0  <!-- Limit the range of points to forward to 6 meters in viewing direction-->
-            filter_limit_negative: False
-            leaf_size: 0.06  <!-- Limit the density to 5 cm-->
-        </rosparam>
-        </node>
+            leaf_size: 0.06  <!-- Limit the density to 6 cm-->
+      </rosparam>
+    </node>
 
-        <!-- Right camera -->
-        <node pkg="nodelet" type="nodelet" name="voxel_grid2" args="load pcl/VoxelGrid pcl_manager" output="screen">
-      <remap from="~input" to="/right_camera/depth/points"/>
-        <remap from="~output" to="/right_camera/depth/points_downsampled"/>
-        <rosparam>
-            filter_field_name: z
-            filter_limit_min: 0.01
-            filter_limit_max: 4.0  <!-- Limit the range of points to forward to 6 meters in viewing direction-->
-            filter_limit_negative: False
-            leaf_size: 0.06  <!-- Limit the density to 5 cm-->
-        </rosparam>
-        </node>
-
-        <!-- Left camera -->
-        <node pkg="nodelet" type="nodelet" name="voxel_grid3" args="load pcl/VoxelGrid pcl_manager" output="screen">
-      <remap from="~input" to="/left_camera/depth/points"/>
-        <remap from="~output" to="/left_camera/depth/points_downsampled"/>
-        <rosparam>
-            filter_field_name: z
-            filter_limit_min: 0.01
-            filter_limit_max: 4.0  <!-- Limit the range of points to forward to 6 meters in viewing direction-->
-            filter_limit_negative: False
-            leaf_size: 0.06  <!-- Limit the density to 5 cm-->
-        </rosparam>
-        </node>
-
-        <node pkg="elevation_mapping" type="elevation_mapping" name="elevation_mapping" output="screen">
-        <rosparam command="load" file="$(find tbai_ros_context_aware)/config/elevation_mapping.yaml"/>
-        </node>
+    <include file="$(find tbai_ros_bob)/launch/anymal_d_mapping.launch">
+        <arg name="mapping_device" value="$(arg mapping_device)"/>
+    </include>
 
 </launch>

@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "tbai_ros_mpc/MpcController.hpp"
+#include "tbai_ros_mpc/RosMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
@@ -14,10 +14,13 @@
 #include <tbai_ros_core/Publishers.hpp>
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
+#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "tbai_ros_static");
     ros::NodeHandle nh;
+
+    std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
 
     // Set zero time
     tbai::writeInitTime(tbai::RosTime::rightNow());
@@ -53,8 +56,8 @@ int main(int argc, char *argv[]) {
     controller.addController(std::make_unique<tbai::static_::RosStaticController>(stateSubscriber));
 
     // Add MPC controller
-    controller.addController(std::make_unique<tbai::mpc::MpcController>(
-        stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
+    controller.addController(std::make_unique<tbai::mpc::RosMpcController>(
+        robotName, stateSubscriber, tbai::reference::getReferenceVelocityGeneratorShared(nh)));
 
     // Start controller loop
     controller.start();

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
-    <arg name="controllers_ns"      default="anymal_d"/>
+    <arg name="robot_name"          default="go2"/>
+    <arg name="controllers_ns"      default="go2"/>
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_mpc)/config/go2/perceptive/default_config.yaml"/>
     <arg name="description_name"    default="robot_description"/>
@@ -12,7 +13,7 @@
     <arg name="task_settings_file" default="$(find tbai_ros_mpc)/config/go2/perceptive/task.info"/>
     <arg name="target_command_config_file" default="$(find tbai_ros_mpc)/config/go2/perceptive/targetCommand.info"/>
     <arg name="controller_config_file" default="$(find tbai_ros_mpc)/config/go2/perceptive/controllers.info"/>
-
+    <arg name="gait_file" default="$(find tbai_ros_mpc)/config/go2/perceptive/gait.info"/>
     <!-- Gazebo parameters -->
     <arg name="gui" default="false"/>
     <arg name="paused" default="false"/>
@@ -34,7 +35,9 @@
     <param name="task_settings_file" type="string" value="$(arg task_settings_file)"/>
     <param name="target_command_config_file" type="string" value="$(arg target_command_config_file)"/>
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>
-
+    <param name="robot_name" type="string" value="$(arg robot_name)"/>
+    <param name="gait_file" type="string" value="$(arg gait_file)"/>
+    
     <!-- Launch gazebo -->
     <include file="$(find tbai_ros_gazebo)/launch/world.launch">
         <arg name="controllers_ns" value="$(arg controllers_ns)"/>
@@ -53,10 +56,13 @@
     <!-- Launch simple node -->
     <node name="simple_perceptive" pkg="tbai_ros_mpc" type="simple_perceptive" output="screen"/>
 
-    <node pkg="tbai_ros_mpc" type="anymal_mpc_node" name="anymal_mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
 
-    <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="x-terminal-emulator -e "/>
+    <!-- Launch Gait command node -->
+    <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
+          output="screen" launch-prefix="x-terminal-emulator -e">
+        <param name="robot_name" value="$(arg robot_name)"/>
+    </node>
 
     <!-- Start Rviz visualizer -->
     <arg name="rvizconfig" default="$(find tbai_ros_mpc)/launch/rviz/robot.rviz" />

@@ -110,6 +110,13 @@ anymal_d_dtc_blind_gazebo:
     source $(catkin locate)/devel/setup.bash
     roslaunch tbai_ros_dtc simple_blind.launch gui:=true
 
+# ANYmal D perceptive Joe in Gazebo
+[group("2. demos")]
+anymal_d_joe_perceptive_gazebo:
+    #!/usr/bin/env bash
+    source $(catkin locate)/devel/setup.bash
+    roslaunch tbai_ros_joe simple_perceptive.launch gui:=true
+
 # Go2 NP3O in Gazebo
 [group("2. demos")]
 go2_np3o_gazebo:
@@ -158,13 +165,6 @@ anymal_d_bob_perceptive_gazebo:
     #!/usr/bin/env bash
     source $(catkin locate)/devel/setup.bash
     roslaunch tbai_ros_bob anymal_d_perceptive.launch gui:=true
-
-# ANYmal D mapping Bob in Gazebo
-[group("2. demos")]
-anymal_d_bob_mapping_gazebo:
-    #!/usr/bin/env bash
-    source $(catkin locate)/devel/setup.bash
-    roslaunch tbai_ros_bob anymal_d_mapping.launch gui:=true
 
 # Go2 blind Bob in Gazebo
 [group("2. demos")]

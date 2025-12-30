@@ -1,11 +1,11 @@
-robot_name: 'anymal_d'
+robot_name: 'anymal_c'
 
 joint_names: &jn ["LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE", "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"]
 base_name: "base"
 
-state_topic: "anymal_d/state"
-command_topic: "anymal_d/command"
-change_controller_topic: "anymal_d/change_controller"
+state_topic: "anymal_c/state"
+command_topic: "anymal_c/command"
+change_controller_topic: "anymal_c/change_controller"
 contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"] 
 
 static_controller:
@@ -28,7 +28,7 @@ mpc_controller:
     traj_knots: 10
     blind: true
 
-anymal_d:
+anymal_c:
   joint_controller:
       type: tbai_ros_gazebo/JointController
       joints: *jn

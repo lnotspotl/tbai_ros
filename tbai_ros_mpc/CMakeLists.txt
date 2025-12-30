@@ -6,28 +6,22 @@ add_compile_options(-std=c++17)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
+    std_msgs
+    geometry_msgs
+    visualization_msgs
+    tf
+    urdf
+    kdl_parser
+    robot_state_publisher
     tbai_ros_core
     tbai_ros_msgs
-    ocs2_core
-    ocs2_mpc
-    ocs2_msgs
-    ocs2_ros_interfaces
-    ocs2_anymal_commands
+    tbai_ros_ocs2
     grid_map_core
     grid_map_ros
+    grid_map_filters_rsl
     tbai_ros_static
     tbai_ros_reference
-
-    roscpp
-    std_msgs
     qpoases_catkin
-    ocs2_mpc
-    ocs2_core
-    ocs2_anymal_mpc
-    ocs2_ros_interfaces
-    ocs2_pinocchio_interface
-    ocs2_quadruped_interface
-    ocs2_switched_model_interface
     tbai
 )
 
@@ -36,7 +30,7 @@ find_package(spdlog REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES tbai_ros_mpc
- CATKIN_DEPENDS ocs2_anymal_mpc tbai_ros_reference
+  CATKIN_DEPENDS tbai_ros_reference tbai_ros_ocs2 tbai
 )
 
 include_directories(
@@ -46,16 +40,11 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/reference/ReferenceTrajectoryGenerator.cpp
-    src/wbc/Task.cpp
-    src/wbc/SqpSolver.cpp
-    src/wbc/SqpWbc.cpp
-    src/wbc/HqpSolver.cpp
-    src/wbc/HqpWbc.cpp
-    src/wbc/Factory.cpp
-    src/wbc/WbcBase.cpp
+    src/reference/GridmapReferenceTrajectoryGenerator.cpp
     src/utils/LoadConfig.cpp
-    src/MpcController.cpp
+    src/RosMpcController.cpp
+    src/visualization/QuadrupedTfPublisher.cpp
+    src/visualization/QuadrupedVisualizer.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
@@ -64,13 +53,13 @@ target_link_libraries(${PROJECT_NAME}
 )
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
-add_executable(anymal_mpc_node
+add_executable(mpc_node
   src/MpcNode.cpp
 )
-target_link_libraries(anymal_mpc_node
-  ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog
+target_link_libraries(mpc_node
+  ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${PROJECT_NAME}
 )
-target_compile_options(anymal_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(mpc_node PRIVATE ${OCS2_CXX_FLAGS})
 
 add_executable(simple_blind
     src/simple_blind.cpp

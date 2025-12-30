@@ -3,7 +3,7 @@
 ## Example
 ```bash
 # Start ROS and relevant nodes
-roslaunch tbai_ros_dtc simple.launch gui:=true
+roslaunch tbai_ros_joe simple_perceptive.launch gui:=true
 
 # Change controllers
 rostopic pub /anymal_d/change_controller std_msgs/String "data: 'STAND'"

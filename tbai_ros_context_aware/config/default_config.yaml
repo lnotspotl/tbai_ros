@@ -6,13 +6,14 @@ base_name: "base"
 state_topic: "anymal_d/state"
 command_topic: "anymal_d/command"
 change_controller_topic: "anymal_d/change_controller"
+gridmap_topic: "/elevation_mapping/elevation_map_raw"
+gridmap_layer: "inpaint"
+contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"] 
+
 marker_topic: "markers"
 odom_frame: "odom"
-gridmap_topic: "elevation_mapping/elevation_map_raw"
-gridmap_layer: "elevation"
 
-state_publisher:
-  update_rate: 400 # Hz
+contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"] 
 
 static_controller:
   stand_controller:
@@ -24,23 +25,27 @@ static_controller:
   interpolation_time: 1.0 # s
   rate: 50 # Hz
 
+
 mpc_controller:
   wbc_type: "sqp"
   reference_trajectory:
     terrain_topic: "/convex_plane_decomposition_ros/filtered_map"
-    reference_topic: "/anymal_mpc_target"
-    observation_topic: "/anymal_mpc_observation"
+    reference_topic: "/anymal_d_mpc_target"
+    observation_topic: "/anymal_d_mpc_observation"
     traj_dt: 0.1
     traj_knots: 10
     blind: false
 
 bob_controller:
-  blind: false
+  blind: true
   kp: 80.0
   kd: 2.0
 
   hf_repo: "kubjonai/tbai-models"
-  hf_model: "anymal_model_action12_anymal_d_perceptive.pt"
+  hf_model: "anymal_model_action12_anymal_d_blind.pt"
+
+  action_scale: 0.5
+  lin_vel_scale: 2.0
 
   default_stance: [
     [ 0.00790786,  0.05720384, -0.573],
@@ -59,11 +64,6 @@ bob_controller:
     time_offsets: [0.0, 0.3, 0.3, 0.0]  # LF, LH, RF, RH
     swing_height: 0.2
 
-anymal_d:
-  joint_controller:
-      type: tbai_ros_gazebo/JointController
-      joints: *jn
-
 reference_generator:
   type: "twist"
 
@@ -80,5 +80,22 @@ reference_generator:
   twist:
     topic: "cmd_vel"
 
-contact_sensor:
-  update_rate: 20 # Hz
+anymal_d:
+  joint_controller:
+      type: tbai_ros_gazebo/JointController
+      joints: *jn
+
+estimator_type: "ground_truth" # muse does not work yet
+
+gazebo:
+  contact_sensor:
+    enabled: true
+    update_rate: 200 # Hz
+
+  ground_truth_state_publisher:
+    enabled: true
+    update_rate: 200 # Hz
+
+  muse_state_publisher:
+    enabled: false
+    update_rate: 200 # Hz

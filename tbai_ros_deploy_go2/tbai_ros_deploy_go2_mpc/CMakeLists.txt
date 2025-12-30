@@ -11,8 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
     tbai_ros_mpc
     tbai_ros_static
     tbai_ros_reference
-    ocs2_legged_robot
-    ocs2_legged_robot_ros
 )
 
 find_package(spdlog REQUIRED)

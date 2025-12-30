@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "tbai_ros_mpc/MpcController.hpp"
+#include "tbai_ros_mpc/RosMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -17,6 +17,7 @@
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
 #include <tbai_ros_deploy_go2_mpc/Go2Joystick.hpp>
+#include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 
 class Go2RobotInterfaceWithLidar : public tbai::Go2RobotInterface {
    public:
@@ -116,7 +117,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Add MPC controller
-    controller.addController(std::make_unique<tbai::mpc::MpcController>(stateSubscriber, referenceVelocityPtr));
+    std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
+    controller.addController(std::make_unique<tbai::mpc::RosMpcController>(robotName, stateSubscriber, referenceVelocityPtr));
 
     // Start controller loop
     controller.start();

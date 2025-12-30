@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
+    <arg name="robot_name"          default="anymal_d"/>
     <arg name="controllers_ns"      default="anymal_d"/>
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_mpc)/config/anymal_d/blind/default_config_anymal_d.yaml"/>
@@ -12,6 +13,7 @@
     <arg name="task_settings_file" default="$(find tbai_ros_mpc)/config/anymal_d/blind/task.info"/>
     <arg name="target_command_config_file" default="$(find tbai_ros_mpc)/config/anymal_d/blind/targetCommand.info"/>
     <arg name="controller_config_file" default="$(find tbai_ros_mpc)/config/anymal_d/blind/controllers.info"/>
+    <arg name="gait_file" default="$(find tbai_ros_mpc)/config/anymal_d/blind/gait.info"/>
 
     <!-- Gazebo parameters -->
     <arg name="gui" default="false"/>
@@ -23,9 +25,11 @@
 
     <!-- Upload config path to ROS param server -->
     <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
-
+    <param name="robot_name" type="string" value="$(arg robot_name)"/>
+    
     <!-- Set environment variable for config path -->
     <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
+    <param name="gait_file" type="string" value="$(arg gait_file)"/>
 
     <!-- Launch virtual joystick -->
     <node name="virtual_joystick" pkg="tbai_ros_utils" type="virtual_joystick.py" output="screen"/>
@@ -55,11 +59,13 @@
     <node name="simple" pkg="tbai_ros_mpc" type="simple_blind" output="screen"/>
 
     <!-- Launch MPC node -->
-    <node pkg="tbai_ros_mpc" type="anymal_mpc_node" name="anymal_mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
 
     <!-- Launch Gait command node -->
-    <node pkg="ocs2_anymal_commands" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="x-terminal-emulator -e "/>
+    <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
+          output="screen" launch-prefix="x-terminal-emulator -e">
+        <param name="robot_name" value="$(arg robot_name)"/>
+    </node>
 
     <!-- Start Rviz visualizer -->
     <arg name="rvizconfig" default="$(find tbai_ros_mpc)/launch/rviz/robot.rviz" />

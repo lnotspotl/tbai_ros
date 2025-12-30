@@ -490,7 +490,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_anymal/swing_planner/trajectory_LF
+      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_LF
       Name: MarkerArray
       Namespaces:
         {}
