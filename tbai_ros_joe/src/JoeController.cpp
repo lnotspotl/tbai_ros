@@ -8,26 +8,26 @@
 #include <vector>
 
 #include "tbai_ros_ocs2/common/RosMsgConversions.h"
+#include <grid_map_core/GridMap.hpp>
+#include <grid_map_filters_rsl/lookup.hpp>
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/ModelHelperFunctions.h>
 #include <ocs2_centroidal_model/PinocchioCentroidalDynamics.h>
 #include <ocs2_core/misc/LinearInterpolation.h>
 #include <ocs2_core/reference/TargetTrajectories.h>
-#include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
-#include <tbai_ros_ocs2/mpc_target_trajectories.h>
 #include <ocs2_robotic_tools/common/RotationDerivativesTransforms.h>
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 #include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/parsers/urdf.hpp>
 #include <tbai_core/Logging.hpp>
-#include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
-#include <grid_map_core/GridMap.hpp>
-#include <grid_map_filters_rsl/lookup.hpp>
+#include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
+#include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
 #include <tbai_mpc/quadruped_mpc/quadruped_commands/TerrainAdaptation.h>
 #include <tbai_mpc/quadruped_mpc/terrain/PlaneFitting.h>
+#include <tbai_ros_ocs2/mpc_target_trajectories.h>
 
 namespace tbai {
 
@@ -320,7 +320,7 @@ contact_flag_t JoeController::getDesiredContactFlags(scalar_t currentTime, scala
     auto &modeSchedule = solution.modeSchedule_;
     size_t mode = modeSchedule.modeAtTime(currentTime);
     auto contacts = switched_model::modeNumber2StanceLeg(mode);
-    // flip 
+    // flip
     std::swap(contacts[1], contacts[2]);
     return contacts;
 }
@@ -338,9 +338,9 @@ vector_t JoeController::getTimeLeftInPhase(scalar_t currentTime, scalar_t dt) {
 
 TargetTrajectories JoeController::generateTargetTrajectories(scalar_t currentTime, scalar_t dt,
                                                              const vector3_t &command) {
-    switched_model::BaseReferenceTrajectory baseReferenceTrajectory =
-        generateExtrapolatedBaseReferenceFromGridmap(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
-                                          getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
+    switched_model::BaseReferenceTrajectory baseReferenceTrajectory = generateExtrapolatedBaseReferenceFromGridmap(
+        getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
+        getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
     constexpr size_t INPUT_DIM = 12 + 12;

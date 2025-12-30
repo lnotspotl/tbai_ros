@@ -12,7 +12,6 @@
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_pinocchio_interface/PinocchioInterface.h>
-#include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/multibody/data.hpp>
@@ -21,6 +20,7 @@
 #include <tbai_core/Types.hpp>
 #include <tbai_ros_core/Subscribers.hpp>
 #include <tbai_ros_gridmap/GridmapInterface.hpp>
+#include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 #include <torch/script.h>
 
@@ -33,25 +33,25 @@
 #include <tbai_mpc/quadruped_mpc/quadruped_models/QuadrupedCom.h>
 #undef private
 #undef protected
-#include <tbai_mpc/quadruped_mpc/quadruped_commands/ReferenceExtrapolation.h>
-#include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
-#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
-#include <tbai_mpc/quadruped_mpc/core/Rotations.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/control/Controllers.hpp>
 #include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
+#include <tbai_mpc/quadruped_mpc/core/Rotations.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_commands/ReferenceExtrapolation.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
 #include <tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp>
+#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
 
 namespace tbai {
 namespace dtc {
 
 using ocs2::SystemObservation;
 using ocs2::TargetTrajectories;
-using switched_model::contact_flag_t;
 using switched_model::BaseReferenceCommand;
 using switched_model::BaseReferenceHorizon;
 using switched_model::BaseReferenceState;
+using switched_model::contact_flag_t;
 using switched_model::TerrainPlane;
 
 class DtcController final : public tbai::Controller {

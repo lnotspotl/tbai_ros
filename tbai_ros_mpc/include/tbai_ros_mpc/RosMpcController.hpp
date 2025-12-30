@@ -61,7 +61,8 @@ class RosMpcController : public MpcController {
      * @param velocityGeneratorPtr: Reference velocity generator
      */
     RosMpcController(const std::string &robotName, const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
-                     std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr, std::function<scalar_t()> getCurrentTimeFunction);
+                     std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
+                     std::function<scalar_t()> getCurrentTimeFunction);
 
     void postStep(scalar_t currentTime, scalar_t dt) override;
 
