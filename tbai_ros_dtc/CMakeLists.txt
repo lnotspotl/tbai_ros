@@ -12,22 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_core
   tbai_ros_static
-  ocs2_core
-  ocs2_mpc
-  ocs2_robotic_tools
-  ocs2_pinocchio_interface
-  ocs2_centroidal_model
-  ocs2_legged_robot
-  ocs2_legged_robot_ros
-  ocs2_msgs
-  ocs2_ros_interfaces
-  tbai_ros_reference
-  tbai_ros_gridmap
-  tbai_ros_mpc
-  ocs2_quadruped_interface
-  ocs2_anymal_mpc
-  ocs2_switched_model_interface
   tbai
+  tbai_ros_ocs2
+  tbai_ros_mpc
+  tbai_ros_gridmap
 )
 
 catkin_package(

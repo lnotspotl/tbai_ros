@@ -16,18 +16,7 @@
   <depend>tbai_ros_static</depend>
   <depend>tbai_ros_gridmap</depend>
   <depend>tbai_ros_mpc</depend>
-  <depend>ocs2_core</depend>
-  <depend>ocs2_msgs</depend>
-  <depend>ocs2_mpc</depend>
-  <depend>ocs2_ros_interfaces</depend>
-  <depend>ocs2_robotic_tools</depend>
-  <depend>ocs2_legged_robot</depend>
-  <depend>ocs2_legged_robot_ros</depend>
-  <depend>ocs2_centroidal_model</depend>
-  <depend>ocs2_pinocchio_interface</depend>
-  <depend>ocs2_quadruped_interface</depend>
-  <depend>ocs2_anymal_mpc</depend>
-  <depend>ocs2_switched_model_interface</depend>
+  <depend>tbai_ros_ocs2</depend>
   <depend>tbai</depend>
 
   <export>

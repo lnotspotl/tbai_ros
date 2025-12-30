@@ -5,16 +5,14 @@
 #include <string>
 #include <vector>
 
-#include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_centroidal_model/PinocchioCentroidalDynamics.h>
 #include <ocs2_core/reference/TargetTrajectories.h>
-#include <ocs2_legged_robot/LeggedRobotInterface.h>
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_pinocchio_interface/PinocchioInterface.h>
-#include <ocs2_ros_interfaces/mrt/MRT_ROS_Interface.h>
+#include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/multibody/data.hpp>
@@ -27,29 +25,30 @@
 #include <torch/script.h>
 
 // Perceptive DTC
-#include <ocs2_anymal_models/FrameDeclaration.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_models/FrameDeclaration.h>
 
 // This is a bit hacky :/
 #define private public
 #define protected public
-#include <ocs2_anymal_models/QuadrupedCom.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_models/QuadrupedCom.h>
 #undef private
 #undef protected
-#include <ocs2_anymal_commands/ReferenceExtrapolation.h>
-#include <ocs2_anymal_mpc/AnymalInterface.h>
-#include <ocs2_quadruped_interface/QuadrupedVisualizer.h>
-#include <ocs2_switched_model_interface/core/Rotations.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_commands/ReferenceExtrapolation.h>
+#include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
+#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
+#include <tbai_mpc/quadruped_mpc/core/Rotations.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/control/Controllers.hpp>
-#include <tbai_ros_mpc/reference/ReferenceTrajectoryGenerator.hpp>
+#include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
+#include <tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp>
 
 namespace tbai {
 namespace dtc {
 
 using ocs2::SystemObservation;
 using ocs2::TargetTrajectories;
-using ocs2::legged_robot::contact_flag_t;
+using switched_model::contact_flag_t;
 using switched_model::BaseReferenceCommand;
 using switched_model::BaseReferenceHorizon;
 using switched_model::BaseReferenceState;
@@ -184,8 +183,10 @@ class DtcController final : public tbai::Controller {
 
     scalar_t initTime_;
 
-    ocs2::MRT_ROS_Interface mrt_;
+    std::unique_ptr<tbai::ocs2_ros::MRT_ROS_Interface> mrt_;
     bool mrt_initialized_ = false;
+
+    std::string robotName_;
 
     std::unique_ptr<tbai::reference::ReferenceVelocityGenerator> refVelGen_;
     void publishReference(const TargetTrajectories &targetTrajectories);

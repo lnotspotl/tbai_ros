@@ -5,10 +5,7 @@ project(tbai_ros_context_aware)
 add_compile_options(-std=c++17)
 set(CMAKE_CXX_STANDARD 17)
 
-
-find_package(catkin REQUIRED COMPONENTS
-    tbai_ros_core
-)
+find_package(Torch REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
@@ -16,15 +13,16 @@ find_package(catkin REQUIRED COMPONENTS
     tbai_ros_mpc
     tbai_ros_static
     tbai_ros_bob
+    tbai_ros_ocs2
     tbai
 )
 
 find_package(spdlog REQUIRED)
 
 catkin_package(
-  INCLUDE_DIRS 
-  LIBRARIES  
- CATKIN_DEPENDS  
+  INCLUDE_DIRS
+  LIBRARIES
+  CATKIN_DEPENDS
 )
 
 include_directories(
@@ -36,5 +34,6 @@ add_executable(simple
 )
 target_link_libraries(simple
     PUBLIC
-    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog
+    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${TORCH_LIBRARIES}
 )
+target_compile_options(simple PUBLIC ${OCS2_CXX_FLAGS})

@@ -7,24 +7,27 @@
 #include <string>
 #include <vector>
 
-#include "ocs2_ros_interfaces/common/RosMsgConversions.h"
+#include "tbai_ros_ocs2/common/RosMsgConversions.h"
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/ModelHelperFunctions.h>
 #include <ocs2_centroidal_model/PinocchioCentroidalDynamics.h>
 #include <ocs2_core/misc/LinearInterpolation.h>
 #include <ocs2_core/reference/TargetTrajectories.h>
-#include <ocs2_legged_robot/gait/LegLogic.h>
-#include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
-#include <ocs2_msgs/mpc_target_trajectories.h>
+#include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
+#include <tbai_ros_ocs2/mpc_target_trajectories.h>
 #include <ocs2_robotic_tools/common/RotationDerivativesTransforms.h>
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
-#include <ocs2_switched_model_interface/core/MotionPhaseDefinition.h>
 #include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/parsers/urdf.hpp>
 #include <tbai_core/Logging.hpp>
+#include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
+#include <grid_map_core/GridMap.hpp>
+#include <grid_map_filters_rsl/lookup.hpp>
+#include <tbai_mpc/quadruped_mpc/quadruped_commands/TerrainAdaptation.h>
+#include <tbai_mpc/quadruped_mpc/terrain/PlaneFitting.h>
 
 namespace tbai {
 
@@ -32,8 +35,107 @@ namespace joe {
 
 namespace LinearInterpolation = ocs2::LinearInterpolation;
 
+using namespace switched_model;
+
+namespace {
+void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory &baseRef) {
+    auto N = baseRef.time.size();
+    if (N <= 1) {
+        return;
+    }
+
+    baseRef.linearVelocityInWorld.clear();
+    baseRef.angularVelocityInWorld.clear();
+    baseRef.linearVelocityInWorld.reserve(N);
+    baseRef.angularVelocityInWorld.reserve(N);
+
+    for (size_t k = 0; (k + 1) < baseRef.time.size(); ++k) {
+        auto dt = baseRef.time[k + 1] - baseRef.time[k];
+        baseRef.angularVelocityInWorld.push_back(
+            rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[k + 1], baseRef.eulerXyz[k]) / dt);
+        baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[k + 1] - baseRef.positionInWorld[k]) / dt);
+    }
+
+    auto dt = baseRef.time[N - 1] - baseRef.time[N - 2];
+    baseRef.angularVelocityInWorld.push_back(
+        rotationErrorInWorldEulerXYZ(baseRef.eulerXyz[N - 1], baseRef.eulerXyz[N - 2]) / dt);
+    baseRef.linearVelocityInWorld.push_back((baseRef.positionInWorld[N - 1] - baseRef.positionInWorld[N - 2]) / dt);
+}
+
+BaseReferenceTrajectory generateExtrapolatedBaseReferenceFromGridmap(
+    const BaseReferenceHorizon &horizon, const BaseReferenceState &initialState, const BaseReferenceCommand &command,
+    const grid_map::GridMap &gridMap, double nominalStanceWidthInHeading, double nominalStanceWidthLateral) {
+    const auto &baseReferenceLayer = gridMap.get("smooth_planar");
+
+    // Helper to get a projected heading frame derived from the terrain.
+    auto getLocalHeadingFrame = [&](const vector2_t &baseXYPosition, scalar_t yaw) {
+        vector2_t lfOffset(nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+        vector2_t rfOffset(nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+        vector2_t lhOffset(-nominalStanceWidthInHeading / 2.0, nominalStanceWidthLateral / 2.0);
+        vector2_t rhOffset(-nominalStanceWidthInHeading / 2.0, -nominalStanceWidthLateral / 2.0);
+        // Rotate from heading to world frame
+        rotateInPlace2d(lfOffset, yaw);
+        rotateInPlace2d(rfOffset, yaw);
+        rotateInPlace2d(lhOffset, yaw);
+        rotateInPlace2d(rhOffset, yaw);
+        // shift by base center
+        lfOffset += baseXYPosition;
+        rfOffset += baseXYPosition;
+        lhOffset += baseXYPosition;
+        rhOffset += baseXYPosition;
+
+        auto interp = [&](const vector2_t &offset) -> vector3_t {
+            auto projection =
+                grid_map::lookup::projectToMapWithMargin(gridMap, grid_map::Position(offset.x(), offset.y()));
+
+            try {
+                auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+                return vector3_t(offset.x(), offset.y(), z);
+            } catch (std::out_of_range &e) {
+                double interp = gridMap.getResolution() / (projection - gridMap.getPosition()).norm();
+                projection = (1.0 - interp) * projection + interp * gridMap.getPosition();
+                auto z = gridMap.atPosition("smooth_planar", projection, grid_map::InterpolationMethods::INTER_NEAREST);
+                return vector3_t(offset.x(), offset.y(), z);
+            }
+        };
+
+        vector3_t lfVerticalProjection = interp(lfOffset);
+        vector3_t rfVerticalProjection = interp(rfOffset);
+        vector3_t lhVerticalProjection = interp(lhOffset);
+        vector3_t rhVerticalProjection = interp(rhOffset);
+
+        const auto normalAndPosition =
+            estimatePlane({lfVerticalProjection, rfVerticalProjection, lhVerticalProjection, rhVerticalProjection});
+
+        TerrainPlane terrainPlane(normalAndPosition.position,
+                                  orientationWorldToTerrainFromSurfaceNormalInWorld(normalAndPosition.normal));
+        return getProjectedHeadingFrame({0.0, 0.0, yaw}, terrainPlane);
+    };
+
+    auto reference2d = generate2DExtrapolatedBaseReference(horizon, initialState, command);
+
+    BaseReferenceTrajectory baseRef;
+    baseRef.time = std::move(reference2d.time);
+    baseRef.eulerXyz.reserve(horizon.N);
+    baseRef.positionInWorld.reserve(horizon.N);
+
+    // Adapt poses
+    for (size_t k = 0; k < horizon.N; ++k) {
+        const auto projectedHeadingFrame = getLocalHeadingFrame(reference2d.positionInWorld[k], reference2d.yaw[k]);
+
+        baseRef.positionInWorld.push_back(adaptDesiredPositionHeightToTerrain(
+            reference2d.positionInWorld[k], projectedHeadingFrame, command.baseHeight));
+        baseRef.eulerXyz.emplace_back(
+            alignDesiredOrientationToTerrain({0.0, 0.0, reference2d.yaw[k]}, projectedHeadingFrame));
+    }
+
+    addVelocitiesFromFiniteDifference(baseRef);
+    return baseRef;
+}
+}  // namespace
+
 JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriber)
-    : stateSubscriberPtr_(stateSubscriber), mrt_("anymal") {
+    : stateSubscriberPtr_(stateSubscriber) {
     // Load initial time - the epoch
     initTime_ = tbai::readInitTime();
 
@@ -41,7 +143,13 @@ JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &state
 
     // Launch ROS nodes
     ros::NodeHandle nh;
-    mrt_.launchNodes(nh);
+
+    // Get robot name from config
+    robotName_ = tbai::fromGlobalConfig<std::string>("robot_name");
+
+    // Initialize MRT interface with robot name
+    mrt_ = std::make_unique<tbai::ocs2_ros::MRT_ROS_Interface>(robotName_);
+    mrt_->launchNodes(nh);
 
     // Load parameters
     std::string taskFile, urdfFile, referenceFile;
@@ -78,7 +186,7 @@ JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &state
 
     TBAI_LOG_INFO(logger_, "Setting up reference velocity generator");
     refVelGen_ = tbai::reference::getReferenceVelocityGeneratorUnique(nh);
-    refPub_ = nh.advertise<ocs2_msgs::mpc_target_trajectories>("anymal_mpc_target", 1, false);
+    refPub_ = nh.advertise<tbai_ros_ocs2::mpc_target_trajectories>(robotName_ + "_mpc_target", 1, false);
 
     horizon_ = 1.0;  // TODO(lnotspotl): Load this parameter from the config file
     mpcRate_ = 30;   // TODO(lnotspotl): Load this parameter from the config file
@@ -90,10 +198,12 @@ JoeController::JoeController(const std::shared_ptr<tbai::StateSubscriber> &state
     }
 
     TBAI_LOG_INFO(logger_, "Initializing quadruped interface");
-    std::string urdf, taskFolder;
-    ros::param::get("robot_description", urdf);
-    ros::param::get("task_folder", taskFolder);
-    quadrupedInterface_ = anymal::getAnymalInterface(urdf, taskFolder);
+    std::string urdf, taskSettingsFile, frameDeclarationFile;
+    ros::param::get("/robot_description", urdf);
+    ros::param::get("/task_settings_file", taskSettingsFile);
+    ros::param::get("/frame_declaration_file", frameDeclarationFile);
+    quadrupedInterface_ = anymal::getAnymalInterface(urdf, switched_model::loadQuadrupedSettings(taskSettingsFile),
+                                                     anymal::frameDeclarationFromFile(frameDeclarationFile));
     auto &quadrupedInterface = *quadrupedInterface_;
     comModel_.reset(quadrupedInterface.getComModel().clone());
     kinematicsModel_.reset(quadrupedInterface.getKinematicModel().clone());
@@ -111,8 +221,8 @@ void JoeController::publishReference(const TargetTrajectories &targetTrajectorie
 }
 
 std::vector<MotorCommand> JoeController::getMotorCommands(scalar_t currentTime, scalar_t dt) {
-    mrt_.spinMRT();
-    mrt_.updatePolicy();
+    mrt_->spinMRT();
+    mrt_->updatePolicy();
 
     vector3_t linearVelocityObservation = getLinearVelocityObservation(currentTime, dt);
     vector3_t angularVelocityObservation = getAngularVelocityObservation(currentTime, dt);
@@ -206,14 +316,17 @@ std::vector<MotorCommand> JoeController::getMotorCommands(scalar_t currentTime, 
 }
 
 contact_flag_t JoeController::getDesiredContactFlags(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto &modeSchedule = solution.modeSchedule_;
     size_t mode = modeSchedule.modeAtTime(currentTime);
-    return ocs2::legged_robot::modeNumber2StanceLeg(mode);
+    auto contacts = switched_model::modeNumber2StanceLeg(mode);
+    // flip 
+    std::swap(contacts[1], contacts[2]);
+    return contacts;
 }
 
 vector_t JoeController::getTimeLeftInPhase(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto &modeSchedule = solution.modeSchedule_;
     auto &eventTimes = modeSchedule.eventTimes;
     auto it = std::lower_bound(eventTimes.begin(), eventTimes.end(), currentTime);
@@ -226,7 +339,7 @@ vector_t JoeController::getTimeLeftInPhase(scalar_t currentTime, scalar_t dt) {
 TargetTrajectories JoeController::generateTargetTrajectories(scalar_t currentTime, scalar_t dt,
                                                              const vector3_t &command) {
     switched_model::BaseReferenceTrajectory baseReferenceTrajectory =
-        generateExtrapolatedBaseReference(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
+        generateExtrapolatedBaseReferenceFromGridmap(getBaseReferenceHorizon(currentTime), getBaseReferenceState(currentTime),
                                           getBaseReferenceCommand(currentTime, command), gridmap_->getMap(), 0.3, 0.3);
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
@@ -299,7 +412,7 @@ std::vector<vector3_t> JoeController::getCurrentFeetVelocities(scalar_t currentT
 }
 
 std::vector<vector3_t> JoeController::getDesiredFeetPositions(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     vector_t optimizedState =
         LinearInterpolation::interpolate(currentTime, solution.timeTrajectory_, solution.stateTrajectory_);
     auto &quadcom = *comModel_;
@@ -315,7 +428,7 @@ std::vector<vector3_t> JoeController::getDesiredFeetPositions(scalar_t currentTi
 }
 
 std::vector<vector3_t> JoeController::getDesiredFeetVelocities(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     vector_t optimizedState =
         LinearInterpolation::interpolate(currentTime, solution.timeTrajectory_, solution.stateTrajectory_);
     vector_t optimizedInput =
@@ -340,7 +453,7 @@ void JoeController::computeBaseKinematicsAndDynamics(scalar_t currentTime, scala
                                                      vector_t &baseOrientation, vector3_t &baseLinearVelocity,
                                                      vector3_t &baseAngularVelocity, vector3_t &baseLinearAcceleration,
                                                      vector3_t &baseAngularAcceleration) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
 
     // compute desired MPC state and input
     vector_t desiredState = LinearInterpolation::interpolate(currentTime + ISAAC_SIM_DT, solution.timeTrajectory_,
@@ -448,7 +561,7 @@ vector_t JoeController::getPastActionObservation(scalar_t currentTime, scalar_t 
 }
 
 vector_t JoeController::getPlanarFootholdsObservation(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto &modeSchedule = solution.modeSchedule_;
     auto timeLeftInPhase = getTimeLeftInPhase(currentTime, dt);
 
@@ -481,7 +594,7 @@ vector_t JoeController::getPlanarFootholdsObservation(scalar_t currentTime, scal
 }
 
 vector_t JoeController::getDesiredJointAnglesObservation(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto &modeSchedule = solution.modeSchedule_;
     auto timeLeftInPhase = getTimeLeftInPhase(currentTime, dt);
     vector_t out = vector_t().setZero(12);
@@ -514,7 +627,7 @@ vector_t JoeController::getDesiredJointAnglesObservation(scalar_t currentTime, s
 }
 
 vector_t JoeController::getCurrentDesiredJointAnglesObservation(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto optimizedState = LinearInterpolation::interpolate(currentTime + ISAAC_SIM_DT, solution.timeTrajectory_,
                                                            solution.stateTrajectory_);
     auto *quadcomPtr = dynamic_cast<anymal::QuadrupedCom *>(comModel_.get());
@@ -638,7 +751,7 @@ vector_t JoeController::getDesiredBaseAngAccObservation(scalar_t currentTime, sc
 }
 
 vector_t JoeController::getCpgObservation(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto &modeSchedule = solution.modeSchedule_;
 
     auto desiredContacts = getDesiredContactFlags(currentTime, dt);
@@ -716,7 +829,7 @@ vector_t JoeController::getDesiredFootVelocitiesObservation(scalar_t currentTime
 }
 
 vector_t JoeController::getHeightSamplesObservation(scalar_t currentTime, scalar_t dt) {
-    auto &solution = mrt_.getPolicy();
+    auto &solution = mrt_->getPolicy();
     auto currentFootPositions = getCurrentFeetPositions(currentTime, dt);
     auto timeLeftInPhase = getTimeLeftInPhase(currentTime, dt);
     vector_t out(4 * 10);
@@ -748,7 +861,7 @@ vector_t JoeController::getHeightSamplesObservation(scalar_t currentTime, scalar
 }
 
 void JoeController::postStep(scalar_t currentTime, scalar_t dt) {
-    visualizer_->update(generateSystemObservation(), mrt_.getPolicy(), mrt_.getCommand());
+    visualizer_->update(generateSystemObservation(), mrt_->getPolicy(), mrt_->getCommand());
 }
 
 void JoeController::changeController(const std::string &controllerType, scalar_t currentTime) {
@@ -830,13 +943,13 @@ void JoeController::resetMpc() {
     ocs2::TargetTrajectories initTargetTrajectories({0.0}, {mpcObservation.state}, {mpcObservation.input});
 
     TBAI_LOG_INFO(logger_, "Resetting MPC...");
-    mrt_.resetMpcNode(initTargetTrajectories);
+    mrt_->resetMpcNode(initTargetTrajectories);
 
-    while (!mrt_.initialPolicyReceived() && ros::ok()) {
+    while (!mrt_->initialPolicyReceived() && ros::ok()) {
         TBAI_LOG_INFO(logger_, "Waiting for initial policy...");
         ros::spinOnce();
-        mrt_.spinMRT();
-        mrt_.setCurrentObservation(generateSystemObservation());
+        mrt_->spinMRT();
+        mrt_->setCurrentObservation(generateSystemObservation());
         ros::Duration(0.1).sleep();
     }
 
@@ -844,7 +957,7 @@ void JoeController::resetMpc() {
 }
 
 void JoeController::setObservation() {
-    mrt_.setCurrentObservation(generateSystemObservation());
+    mrt_->setCurrentObservation(generateSystemObservation());
 }
 
 torch::Tensor vector2torch(const vector_t &v) {
