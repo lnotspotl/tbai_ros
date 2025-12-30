@@ -30,6 +30,10 @@ sqpWbc
 
   ; Joint torque limit
   torqueLimit             25
+
+  ; whether stance should be enforeced as a constraint 
+  ; or as a cost (false is more robust (e.g. slips))
+  stanceAsConstraint false
 }
 
 hqpWbc

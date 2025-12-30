@@ -88,7 +88,7 @@ class VirtualJoystick(tk.Frame):
 
 
 class UIController:
-  def __init__(self):
+  def __init__(self, robot_name):
     self.root = tk.Tk()
     self.root.title("Virtual Joystick")
     self.root.resizable(False, False)  # Prevent resizing
@@ -167,9 +167,9 @@ class UIController:
     self.autonomy_mode = False
 
     self.velocity_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=2)
-    self.controller_pub = rospy.Publisher("/anymal_d/change_controller", String, queue_size=2)
-    self.autonomy_pub = rospy.Publisher("/anymal_d/autonomy", Bool, queue_size=2)
-    self.cbf_switch_pub = rospy.Publisher("/anymal_d/cbf_switch", Bool, queue_size=2)
+    self.controller_pub = rospy.Publisher(f"/{robot_name}/change_controller", String, queue_size=2)
+    self.autonomy_pub = rospy.Publisher(f"/{robot_name}/autonomy", Bool, queue_size=2)
+    self.cbf_switch_pub = rospy.Publisher(f"/{robot_name}/cbf_switch", Bool, queue_size=2)
 
     self.linear_x = 0.0
     self.linear_y = 0.0
@@ -249,8 +249,10 @@ class UIController:
 def main():
   rospy.init_node("virtual_joystick", anonymous=True)
 
+  robot_name = rospy.get_param("robot_name")
+
   try:
-    ui_controller = UIController()
+    ui_controller = UIController(robot_name)
     ui_controller.run()
   except KeyboardInterrupt:
     print("Keyboard interrupt - shutting down")

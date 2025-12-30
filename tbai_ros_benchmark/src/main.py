@@ -32,6 +32,8 @@ def main():
   rospy.init_node("tbai_ros_benchmark")
   rospy.loginfo("Context-aware controller" + "enabled" if args.context_aware else "disabled")
 
+  robot_name = rospy.get_param("robot_name")
+
   ## setup
   urdf = rospy.get_param("/robot_description")
   foot_names = ["LF_FOOT", "RF_FOOT", "LH_FOOT", "RH_FOOT"]
@@ -56,11 +58,11 @@ def main():
   statistician = Statistician(track, phase)
 
   ## State subscriber and twist publisher
-  state_topic = "/anymal_d/state"
+  state_topic = f"/{robot_name}/state"
   command_topic = "/cmd_vel"
   state_subscriber = StateSubscriber(state_topic)
   twist_publisher = rospy.Publisher(command_topic, Twist, queue_size=1)
-  change_publisher = rospy.Publisher("/anymal_d/change_controller", String, queue_size=1)
+  change_publisher = rospy.Publisher(f"/{robot_name}/change_controller", String, queue_size=1)
 
   ## Main loop
   rate = rospy.Rate(10)

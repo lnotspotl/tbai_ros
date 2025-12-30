@@ -80,8 +80,10 @@ class SafeNode:
     self.trajectory_marker_pub = rospy.Publisher("/trajectory_markers", MarkerArray, queue_size=1)
     self.frame_id = rospy.get_param("~frame_id", "odom")
 
-    self.cbf_switch_subscriber = rospy.Subscriber("/anymal_d/cbf_switch", Bool, self._cbf_switch_callback)
-    self.toggle_autonomy_subscriber = rospy.Subscriber("/anymal_d/autonomy", Bool, self._toggle_autonomy_callback)
+    robot_name = rospy.get_param("robot_name")
+
+    self.cbf_switch_subscriber = rospy.Subscriber(f"/{robot_name}/cbf_switch", Bool, self._cbf_switch_callback)
+    self.toggle_autonomy_subscriber = rospy.Subscriber(f"/{robot_name}/autonomy", Bool, self._toggle_autonomy_callback)
 
     self.x = 0
     self.y = 0

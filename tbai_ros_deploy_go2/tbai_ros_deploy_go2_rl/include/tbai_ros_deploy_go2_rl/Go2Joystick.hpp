@@ -15,7 +15,8 @@ namespace reference {
 class Go2Joystick : public ::tbai::reference::ReferenceVelocityGenerator, public ::tbai::go2::Go2JoystickInterface {
    public:
     Go2Joystick(ros::NodeHandle &nh) : Go2JoystickInterface(), ReferenceVelocityGenerator() {
-        changeControllerPublisher_ = nh.advertise<std_msgs::String>("/anymal_d/change_controller", 10);
+        std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
+        changeControllerPublisher_ = nh.advertise<std_msgs::String>("/" + robotName + "/change_controller", 10);
         TBAI_LOG_INFO(logger_, "Go2Joystick initialized");
 
         velocityFactorX_ = tbai::fromGlobalConfig<scalar_t>("go2_joystick/velocity_factor_x", 0.6);
