@@ -21,6 +21,7 @@ catkin_package(
     tbai_deploy_g1
     tbai_mpc
     tbai_dtc
+    tbai_joe
 
     # unitree sdk
     unitree_sdk2
