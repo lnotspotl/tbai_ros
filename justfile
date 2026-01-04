@@ -357,6 +357,10 @@ clone-tbai:
         git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=main dependencies/tbai
     else
         echo "[TBAI] dependencies/tbai already exists, skipping clone"
+        if [[ -d dependencies/tbai/.git ]]; then
+            echo "[TBAI] dependencies/tbai exists, pulling latest changes"
+            git -C dependencies/tbai pull
+        fi
     fi
 
 # Build tbai library
@@ -380,6 +384,10 @@ clone-mujoco-robotic-assets:
         git clone https://github.com/lnotspotl/mujoco_robotic_assets.git --single-branch --branch=main dependencies/mujoco_robotic_assets
     else
         echo "[TBAI] dependencies/mujoco_robotic_assets already exists, skipping clone"
+        if [[ -d dependencies/mujoco_robotic_assets/.git ]]; then
+            echo "[TBAI] dependencies/mujoco_robotic_assets exists, pulling latest changes"
+            git -C dependencies/mujoco_robotic_assets pull
+        fi
     fi
 
 [group("4. development")]
@@ -399,6 +407,10 @@ clone-unitree-mujoco:
         git clone https://github.com/lnotspotl/unitree_mujoco.git --single-branch --branch=main dependencies/unitree_mujoco
     else
         echo "[TBAI] dependencies/unitree_mujoco already exists, skipping clone"
+        if [[ -d dependencies/unitree_mujoco/.git ]]; then
+            echo "[TBAI] dependencies/unitree_mujoco exists, pulling latest changes"
+            git -C dependencies/unitree_mujoco pull
+        fi
     fi
 
 [group("4. development")]
