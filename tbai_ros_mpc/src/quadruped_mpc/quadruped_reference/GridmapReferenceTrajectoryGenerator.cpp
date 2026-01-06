@@ -1,4 +1,4 @@
-#include "tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp"
+#include "tbai_ros_mpc/quadruped_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.hpp"
 
 #include <grid_map_core/GridMap.hpp>
 #include <grid_map_filters_rsl/lookup.hpp>

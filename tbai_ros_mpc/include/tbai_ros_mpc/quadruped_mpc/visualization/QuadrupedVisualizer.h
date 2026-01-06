@@ -11,9 +11,9 @@
 #include <tbai_mpc/quadruped_mpc/core/KinematicsModelBase.h>
 #include <tbai_mpc/quadruped_mpc/core/SwitchedModel.h>
 
-#include "tbai_ros_mpc/visualization/DummyObserver.h"
+#include "tbai_ros_mpc/quadruped_mpc/visualization/DummyObserver.h"
 #include "tbai_ros_ocs2/visualization/VisualizationColors.h"
-#include "tbai_ros_mpc/visualization/QuadrupedTfPublisher.h"
+#include "tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedTfPublisher.h"
 
 namespace switched_model {
 

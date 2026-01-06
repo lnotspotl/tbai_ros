@@ -2,7 +2,7 @@
 #include <pinocchio/fwd.hpp>
 // clang-format on
 
-#include "tbai_ros_mpc/RosMpcController.hpp"
+#include "tbai_ros_mpc/quadruped_mpc/RosMpcController.hpp"
 
 #include <pinocchio/parsers/urdf.hpp>
 #include <tbai_core/Rotations.hpp>
@@ -10,7 +10,7 @@
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
 #include <tbai_mpc/quadruped_mpc/quadruped_interfaces/Interfaces.h>
-#include <tbai_mpc/wbc/Factory.hpp>
+#include <tbai_mpc/quadruped_wbc/Factory.hpp>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <visualization_msgs/Marker.h>
 

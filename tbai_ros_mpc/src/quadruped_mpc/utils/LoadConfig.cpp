@@ -1,4 +1,4 @@
-#include "tbai_ros_mpc/utils/LoadConfig.hpp"
+#include "tbai_ros_mpc/quadruped_mpc/utils/LoadConfig.hpp"
 
 #include <ocs2_core/misc/LoadData.h>
 

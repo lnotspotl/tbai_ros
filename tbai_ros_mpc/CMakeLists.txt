@@ -40,11 +40,11 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/reference/GridmapReferenceTrajectoryGenerator.cpp
-    src/utils/LoadConfig.cpp
-    src/RosMpcController.cpp
-    src/visualization/QuadrupedTfPublisher.cpp
-    src/visualization/QuadrupedVisualizer.cpp
+    src/quadruped_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.cpp
+    src/quadruped_mpc/utils/LoadConfig.cpp
+    src/quadruped_mpc/RosMpcController.cpp
+    src/quadruped_mpc/visualization/QuadrupedTfPublisher.cpp
+    src/quadruped_mpc/visualization/QuadrupedVisualizer.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

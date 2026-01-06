@@ -2,7 +2,7 @@
 // Created by rgrandia on 13.02.19.
 //
 
-#include "tbai_ros_mpc/visualization/QuadrupedVisualizer.h"
+#include "tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedVisualizer.h"
 
 #include <ocs2_core/misc/LinearInterpolation.h>
 #include <tbai_ros_ocs2/visualization/VisualizationHelpers.h>

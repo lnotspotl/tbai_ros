@@ -7,7 +7,7 @@
 #include <grid_map_core/GridMap.hpp>
 #include <grid_map_msgs/GridMap.h>
 #include <ros/ros.h>
-#include <tbai_mpc/reference/ReferenceTrajectoryGenerator.hpp>
+#include <tbai_mpc/quadruped_mpc/quadruped_reference/ReferenceTrajectoryGenerator.hpp>
 #include <tbai_ros_ocs2/local_terrain.h>
 
 namespace tbai {

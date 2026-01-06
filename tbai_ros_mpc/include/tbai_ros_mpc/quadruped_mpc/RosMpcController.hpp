@@ -13,10 +13,10 @@
 #include <pinocchio/multibody/model.hpp>
 #include <ros/callback_queue.h>
 #include <ros/ros.h>
-#include <tbai_mpc/MpcController.hpp>
+#include <tbai_mpc/quadruped_mpc/MpcController.hpp>
 #include <tbai_mpc/quadruped_mpc/QuadrupedMpc.h>
-#include <tbai_ros_mpc/reference/GridmapReferenceTrajectoryGenerator.hpp>
-#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
+#include <tbai_ros_mpc/quadruped_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.hpp>
+#include <tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedVisualizer.h>
 #include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/RosReferenceManager.hpp>
 #include <tbai_ros_ocs2/logic/GaitReceiver.h>

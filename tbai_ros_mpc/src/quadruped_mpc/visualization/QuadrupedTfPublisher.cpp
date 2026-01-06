@@ -2,7 +2,7 @@
 // Created by rgrandia on 10.03.22.
 //
 
-#include "tbai_ros_mpc/visualization/QuadrupedTfPublisher.h"
+#include "tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedTfPublisher.h"
 
 #include <tbai_ros_ocs2/visualization/VisualizationHelpers.h>
 

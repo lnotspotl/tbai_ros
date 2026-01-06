@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "tbai_ros_mpc/RosMpcController.hpp"
+#include "tbai_ros_mpc/quadruped_mpc/RosMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
