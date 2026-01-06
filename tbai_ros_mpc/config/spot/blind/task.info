@@ -4,7 +4,7 @@ model_settings
   recompileLibraries            false
   robotName                     spot
 
-  analyticalInverseKinematics   false
+  analyticalInverseKinematics   true
 
   frictionCoefficient           0.5
   gripperForce                  0.0   ; [N] negative gripper force -> minimum force in normal direction

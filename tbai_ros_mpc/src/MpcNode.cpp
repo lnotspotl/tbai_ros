@@ -92,9 +92,13 @@ int main(int argc, char *argv[]) {
         quadrupedInterface =
             anymal::getAnymalInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
                                        anymal::frameDeclarationFromFile(frameDeclarationFile));
-    } else if (robotName == "go2" || robotName == "spot") {  // TODO(lnotspotl): Add spot interface
+    } else if (robotName == "go2") {
         quadrupedInterface =
             anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
+                                    anymal::frameDeclarationFromFile(frameDeclarationFile));
+    } else if (robotName == "spot" || robotName == "spot_arm") {
+        quadrupedInterface =
+            anymal::getSpotInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
                                     anymal::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
