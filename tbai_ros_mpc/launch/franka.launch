@@ -1,0 +1,43 @@
+<launch>
+  <!-- Enable rviz visualization -->
+  <arg name="rviz" default="true" />
+  <!-- Set nodes on debug mode -->
+  <arg name="debug" default="false" />
+
+  <!-- The URDF model of the robot -->
+  <arg name="urdfFile" default="$(find gazebo_robotic_assets)/resources/mobile_manipulator/franka/urdf/panda.urdf" />
+  <!-- The task file for the mpc. -->
+  <arg name="taskFile" default="$(find tbai_ros_mpc)/../dependencies/tbai/tbai_mpc/config/franka/task.info" />
+  <!-- The library folder to generate CppAD codegen into -->
+  <arg name="libFolder" default="/tmp/tbai_franka_mpc/franka" />
+
+  <!-- make the files into global parameters -->
+  <param name="taskFile" value="$(arg taskFile)" />
+  <param name="urdfFile" value="$(arg urdfFile)" />
+  <param name="libFolder" value="$(arg libFolder)" />
+
+  <!-- Load robot description -->
+  <param name="robot_description" textfile="$(arg urdfFile)" />
+
+  <!-- Robot state publisher for TF transforms -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+
+  <!-- RViz visualization -->
+  <group if="$(arg rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find tbai_ros_mpc)/rviz/franka.rviz" />
+  </group>
+
+  <!-- MPC node -->
+  <node if="$(arg debug)" pkg="tbai_ros_mpc" type="franka_mpc_node" name="mobile_manipulator_mpc_node"
+        output="screen" launch-prefix="gnome-terminal -- gdb -ex run --args" />
+  <node unless="$(arg debug)" pkg="tbai_ros_mpc" type="franka_mpc_node" name="mobile_manipulator_mpc_node"
+        output="screen" />
+
+  <!-- Dummy MRT node -->
+  <node pkg="tbai_ros_mpc" type="franka_dummy_mrt_node" name="mobile_manipulator_dummy_mrt_node"
+        output="screen" />
+
+  <!-- Target interactive marker -->
+  <node if="$(arg rviz)" pkg="tbai_ros_mpc" type="franka_target" name="mobile_manipulator_target"
+        output="screen" />
+</launch>

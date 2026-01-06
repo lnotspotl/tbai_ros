@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+
+<!-- Includes -->
+<xacro:include filename="utils.xacro" />
+
+<!-- Franka Panda bare urdf -->
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/mobile_manipulator/franka/urdf/panda.urdf" />
+
+<!-- World link for Gazebo anchoring -->
+<link name="world"/>
+<joint name="world_joint" type="fixed">
+  <parent link="world"/>
+  <child link="panda_link0"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<!-- Fix base to world for Gazebo -->
+<gazebo reference="world">
+  <static>true</static>
+</gazebo>
+
+<!-- Add inertial properties to all links -->
+<gazebo reference="panda_link0">
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <selfCollide>false</selfCollide>
+</gazebo>
+
+<!-- Disable self-collision for all arm links -->
+<gazebo reference="panda_link1"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link2"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link3"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link4"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link5"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link6"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link7"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_link8"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_hand"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_leftfinger"><selfCollide>false</selfCollide></gazebo>
+<gazebo reference="panda_rightfinger"><selfCollide>false</selfCollide></gazebo>
+
+<!-- Transmissions for arm joints -->
+<xacro:transmission name="transmission_panda_joint1" joint="panda_joint1" actuator="motor_panda_joint1"/>
+<xacro:transmission name="transmission_panda_joint2" joint="panda_joint2" actuator="motor_panda_joint2"/>
+<xacro:transmission name="transmission_panda_joint3" joint="panda_joint3" actuator="motor_panda_joint3"/>
+<xacro:transmission name="transmission_panda_joint4" joint="panda_joint4" actuator="motor_panda_joint4"/>
+<xacro:transmission name="transmission_panda_joint5" joint="panda_joint5" actuator="motor_panda_joint5"/>
+<xacro:transmission name="transmission_panda_joint6" joint="panda_joint6" actuator="motor_panda_joint6"/>
+<xacro:transmission name="transmission_panda_joint7" joint="panda_joint7" actuator="motor_panda_joint7"/>
+
+<!-- Joint controller -->
+<gazebo>
+  <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <robotNamespace>/franka</robotNamespace>
+  </plugin>
+</gazebo>
+
+<!-- State publisher -->
+<gazebo>
+  <plugin filename="libStatePublisher.so" name="StatePublisher"/>
+</gazebo>
+
+<gazebo>
+  <plugin filename="libRobotStatePublisher.so" name="RobotStatePublisher"/>
+</gazebo>
+
+</robot>

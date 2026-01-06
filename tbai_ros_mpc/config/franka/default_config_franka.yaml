@@ -1,0 +1,43 @@
+robot_name: 'franka'
+
+joint_names: &jn ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
+base_name: "panda_link0"
+
+state_topic: "franka/state"
+command_topic: "franka/command"
+change_controller_topic: "franka/change_controller"
+
+contact_topics: [] 
+
+static_controller:
+  home_controller:
+    joint_angles: [0.0, -0.785, 0.0, -2.356, 0.0, 1.571, 0.785]  # home position
+  kp: 400
+  kd: 40
+  interpolation_time: 2.0 # s
+  rate: 500 # Hz
+
+mpc_controller:
+  reference_trajectory:
+    reference_topic: "/mobile_manipulator_mpc_target"
+    observation_topic: "/mobile_manipulator_mpc_observation"
+
+franka:
+  joint_controller:
+      type: tbai_ros_gazebo/JointController
+      joints: *jn
+
+estimator_type: "ground_truth"
+
+gazebo:
+  contact_sensor:
+    enabled: false
+    update_rate: 200 # Hz
+
+  ground_truth_state_publisher:
+    enabled: true
+    update_rate: 400 # Hz
+
+  muse_state_publisher:
+    enabled: false
+    update_rate: 200 # Hz

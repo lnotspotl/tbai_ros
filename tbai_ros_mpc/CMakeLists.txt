@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
     urdf
     kdl_parser
     robot_state_publisher
+    interactive_markers
     tbai_ros_core
     tbai_ros_msgs
     tbai_ros_ocs2
@@ -74,3 +75,43 @@ add_executable(simple_perceptive
 target_link_libraries(simple_perceptive
     ${catkin_LIBRARIES} yaml-cpp ${PROJECT_NAME}
 )
+
+## Franka MPC visualization library
+add_library(tbai_ros_franka_mpc
+    src/franka_mpc/MobileManipulatorDummyVisualization.cpp
+)
+target_link_libraries(tbai_ros_franka_mpc
+    PUBLIC
+    ${catkin_LIBRARIES}
+    ${pinocchio_LIBRARIES}
+)
+target_compile_options(tbai_ros_franka_mpc PUBLIC ${OCS2_CXX_FLAGS})
+
+## Franka MPC node
+add_executable(franka_mpc_node
+    src/franka_mpc/MobileManipulatorMpcNode.cpp
+)
+target_link_libraries(franka_mpc_node
+    ${catkin_LIBRARIES}
+    tbai_ros_franka_mpc
+)
+target_compile_options(franka_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+
+## Franka Dummy MRT node
+add_executable(franka_dummy_mrt_node
+    src/franka_mpc/MobileManipulatorDummyMRT.cpp
+)
+target_link_libraries(franka_dummy_mrt_node
+    ${catkin_LIBRARIES}
+    tbai_ros_franka_mpc
+)
+target_compile_options(franka_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
+
+## Franka target interactive marker node
+add_executable(franka_target
+    src/franka_mpc/MobileManipulatorTarget.cpp
+)
+target_link_libraries(franka_target
+    ${catkin_LIBRARIES}
+)
+target_compile_options(franka_target PRIVATE ${OCS2_CXX_FLAGS})
