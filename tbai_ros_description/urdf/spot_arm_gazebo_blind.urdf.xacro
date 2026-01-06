@@ -44,7 +44,22 @@
   </plugin>
 </gazebo>
 
+<!-- Joint controller -->
+<gazebo>
+  <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <robotNamespace>/spot</robotNamespace>
+  </plugin>
+</gazebo>
 
+<!-- State publisher - enabled or disabled based on the config file -->
+<gazebo>
+  <plugin filename="libStatePublisher.so" name="StatePublisher"/>
+</gazebo>
+
+<gazebo>
+  <plugin filename="libRobotStatePublisher.so" name="RobotStatePublisher"/>
+</gazebo>
 
 <!-- Gazebo materials for arm links (alternating yellow/black like real Spot arm) -->
 <gazebo reference="arm_link_sh0">
