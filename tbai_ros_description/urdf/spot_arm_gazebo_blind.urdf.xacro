@@ -34,7 +34,6 @@
 <xacro:transmission name="transmission_arm_el1" joint="arm_el1" actuator="motor_arm_el1"/>
 <xacro:transmission name="transmission_arm_wr0" joint="arm_wr0" actuator="motor_arm_wr0"/>
 <xacro:transmission name="transmission_arm_wr1" joint="arm_wr1" actuator="motor_arm_wr1"/>
-<xacro:transmission name="transmission_arm_f1x" joint="arm_f1x" actuator="motor_arm_f1x"/>
 
 <!-- Joint controller -->
 <gazebo>
