@@ -48,6 +48,8 @@ RosStaticController::RosStaticController(std::shared_ptr<tbai::StateSubscriber> 
             tbai::fromGlobalConfig<std::string>("static/state_topic", "estimated_state"), 10);
     }
 
+    baseFrameName_ = tbai::fromGlobalConfig<std::string>("base_name");
+
     // Some dummy value
     timeSinceLastVisualizationUpdate_ = 1000.0;
 
@@ -65,7 +67,11 @@ void RosStaticController::setupPinocchioModel() {
         throw std::runtime_error("Failed to get param /robot_description");
     }
 
-    pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
+    if (fixedBase_) {
+        pinocchio::urdf::buildModelFromXML(urdfString, model_);
+    } else {
+        pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
+    }
     data_ = pinocchio::Data(model_);
 }
 
@@ -77,7 +83,9 @@ void RosStaticController::postStep(scalar_t currentTime, scalar_t dt) {
         auto currentRosTime = ros::Time::now();
         publishOdomBaseTransforms(state_.x, currentRosTime);
         publishJointAngles(state_.x, currentRosTime);
-        visualizeContactPoints(state_.x, state_.contactFlags, currentRosTime);
+        if (!fixedBase_) {
+            visualizeContactPoints(state_.x, state_.contactFlags, currentRosTime);
+        }
         if (publishState_) {
             publishEstimatedState();
         }
@@ -96,19 +104,30 @@ void RosStaticController::publishOdomBaseTransforms(const vector_t &currentState
     // Header
     odomBaseTransform.header.stamp = currentTime;
     odomBaseTransform.header.frame_id = "odom";
-    odomBaseTransform.child_frame_id = "base";
+    odomBaseTransform.child_frame_id = baseFrameName_;
 
-    // Position
-    odomBaseTransform.transform.translation.x = currentState(3);
-    odomBaseTransform.transform.translation.y = currentState(4);
-    odomBaseTransform.transform.translation.z = currentState(5);
+    if (fixedBase_) {
+        // Fixed base: publish identity transform
+        odomBaseTransform.transform.translation.x = 0.0;
+        odomBaseTransform.transform.translation.y = 0.0;
+        odomBaseTransform.transform.translation.z = 0.0;
+        odomBaseTransform.transform.rotation.x = 0.0;
+        odomBaseTransform.transform.rotation.y = 0.0;
+        odomBaseTransform.transform.rotation.z = 0.0;
+        odomBaseTransform.transform.rotation.w = 1.0;
+    } else {
+        // Position
+        odomBaseTransform.transform.translation.x = currentState(3);
+        odomBaseTransform.transform.translation.y = currentState(4);
+        odomBaseTransform.transform.translation.z = currentState(5);
 
-    // Orientation
-    tbai::quaternion_t quat = tbai::ocs2rpy2quat(currentState.head<3>());
-    odomBaseTransform.transform.rotation.x = quat.x();
-    odomBaseTransform.transform.rotation.y = quat.y();
-    odomBaseTransform.transform.rotation.z = quat.z();
-    odomBaseTransform.transform.rotation.w = quat.w();
+        // Orientation
+        tbai::quaternion_t quat = tbai::ocs2rpy2quat(currentState.head<3>());
+        odomBaseTransform.transform.rotation.x = quat.x();
+        odomBaseTransform.transform.rotation.y = quat.y();
+        odomBaseTransform.transform.rotation.z = quat.z();
+        odomBaseTransform.transform.rotation.w = quat.w();
+    }
 
     // Publish
     tfBroadcaster_.sendTransform(odomBaseTransform);
@@ -119,8 +138,9 @@ void RosStaticController::publishOdomBaseTransforms(const vector_t &currentState
 /*********************************************************************************************************************/
 void RosStaticController::publishJointAngles(const vector_t &currentState, const ros::Time &currentTime) {
     std::map<std::string, scalar_t> jointPositionMap;
+    const size_t offset = fixedBase_ ? 0 : (3 + 3 + 3 + 3);
     for (size_t i = 0; i < jointNames_.size(); ++i) {
-        jointPositionMap[jointNames_[i]] = currentState(i + 3 + 3 + 3 + 3);
+        jointPositionMap[jointNames_[i]] = currentState(i + offset);
     }
     robotStatePublisherPtr_->publishTransforms(jointPositionMap, currentTime);
 }
@@ -133,30 +153,33 @@ void RosStaticController::publishEstimatedState() {
     stateMsg.timestamp = state_.timestamp;
 
     // Resize dynamic arrays
-    const size_t numJoints = (state_.x.size() - 12) / 2;  // state = 12 base + n_joints + n_joints
+    const size_t baseStateSize = fixedBase_ ? 0 : 12;
+    const size_t numJoints = (state_.x.size() - baseStateSize) / 2;  // state = base + n_joints + n_joints
     stateMsg.joint_angles.resize(numJoints);
     stateMsg.joint_velocities.resize(numJoints);
     stateMsg.contact_flags.resize(state_.contactFlags.size());
 
-    // Base position
-    std::copy(state_.x.data() + 3, state_.x.data() + 3 + 3, stateMsg.base_position.begin());  // position
+    if (!fixedBase_) {
+        // Base position
+        std::copy(state_.x.data() + 3, state_.x.data() + 3 + 3, stateMsg.base_position.begin());  // position
 
-    // Base orientation
-    tbai::quaternion_t quat = tbai::ocs2rpy2quat(state_.x.head<3>());
-    std::copy(quat.coeffs().data(), quat.coeffs().data() + 4, stateMsg.base_orientation_xyzw.begin());  // orientation
+        // Base orientation
+        tbai::quaternion_t quat = tbai::ocs2rpy2quat(state_.x.head<3>());
+        std::copy(quat.coeffs().data(), quat.coeffs().data() + 4, stateMsg.base_orientation_xyzw.begin());  // orientation
 
-    // Base linear velocity
-    std::copy(state_.x.data() + 3 + 3 + 3, state_.x.data() + 3 + 3 + 3 + 3,
-              stateMsg.base_lin_vel.begin());  // linear velocity
+        // Base linear velocity
+        std::copy(state_.x.data() + 3 + 3 + 3, state_.x.data() + 3 + 3 + 3 + 3,
+                  stateMsg.base_lin_vel.begin());  // linear velocity
 
-    // Base angular velocity
-    std::copy(state_.x.data() + 3 + 3, state_.x.data() + 3 + 3 + 3, stateMsg.base_ang_vel.begin());  // angular velocity
+        // Base angular velocity
+        std::copy(state_.x.data() + 3 + 3, state_.x.data() + 3 + 3 + 3, stateMsg.base_ang_vel.begin());  // angular velocity
+    }
 
     // Joint positions
-    std::copy(state_.x.data() + 12, state_.x.data() + 12 + numJoints, stateMsg.joint_angles.begin());
+    std::copy(state_.x.data() + baseStateSize, state_.x.data() + baseStateSize + numJoints, stateMsg.joint_angles.begin());
 
     // Joint velocities
-    std::copy(state_.x.data() + 12 + numJoints, state_.x.data() + 12 + numJoints + numJoints,
+    std::copy(state_.x.data() + baseStateSize + numJoints, state_.x.data() + baseStateSize + numJoints + numJoints,
               stateMsg.joint_velocities.begin());
 
     // Contact flags

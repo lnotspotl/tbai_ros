@@ -27,7 +27,7 @@ void RobotStatePublisher::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
         return;
     }
 
-    fixedBase_ = tbai::fromGlobalConfig<bool>("gazebo/muse_state_publisher/fixed_base", false);
+    fixedBase_ = tbai::fromGlobalConfig<bool>("fixed_base", false);
 
     // set Gazebo callback function
     updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&RobotStatePublisher::OnUpdate, this));

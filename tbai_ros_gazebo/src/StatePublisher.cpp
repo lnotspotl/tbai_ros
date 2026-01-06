@@ -27,7 +27,7 @@ void StatePublisher::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
         return;
     }
 
-    fixedBase_ = tbai::fromGlobalConfig<bool>("gazebo/ground_truth_state_publisher/fixed_base", false);
+    fixedBase_ = tbai::fromGlobalConfig<bool>("fixed_base", false);
 
     // set Gazebo callback function
     updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&StatePublisher::OnUpdate, this));

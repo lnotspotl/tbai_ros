@@ -37,8 +37,6 @@
 <gazebo reference="panda_link7"><selfCollide>false</selfCollide></gazebo>
 <gazebo reference="panda_link8"><selfCollide>false</selfCollide></gazebo>
 <gazebo reference="panda_hand"><selfCollide>false</selfCollide></gazebo>
-<gazebo reference="panda_leftfinger"><selfCollide>false</selfCollide></gazebo>
-<gazebo reference="panda_rightfinger"><selfCollide>false</selfCollide></gazebo>
 
 <!-- Transmissions for arm joints -->
 <xacro:transmission name="transmission_panda_joint1" joint="panda_joint1" actuator="motor_panda_joint1"/>

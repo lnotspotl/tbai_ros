@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <!-- Required arguments -->
+    <arg name="controllers_ns"      default="franka"/>
+    <arg name="controllers_args"    default="joint_controller"/>
+    <arg name="tbai_config_path"    default="$(find tbai_ros_static)/config/default_config_franka.yaml"/>
+    <arg name="description_name"    default="robot_description"/>
+    <arg name="description_file"    default="$(find tbai_ros_description)/urdf/franka_gazebo.urdf.xacro"/>
+
+    <!-- Gazebo parameters -->
+    <arg name="gui" default="false"/>
+    <arg name="paused" default="false"/>
+    <arg name="world" default="normal"/>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="1.0"/>
+
+     <!-- Upload config path to ROS param server -->
+    <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
+
+    <!-- Set environment variable for config path -->
+    <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
+
+    <!-- Launch gazebo -->
+    <include file="$(find tbai_ros_gazebo)/launch/world.launch">
+        <arg name="controllers_ns" value="$(arg controllers_ns)"/>
+        <arg name="controllers_args" value="$(arg controllers_args)"/>
+        <arg name="config_file" value="$(arg tbai_config_path)"/>
+        <arg name="description_name" value="$(arg description_name)"/>
+        <arg name="description_file" value="$(arg description_file)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="world" value="$(arg world)"/>
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="paused" value="$(arg paused)"/>
+    </include>
+
+    <!-- Launch simple node -->
+    <node name="simple" pkg="tbai_ros_static" type="simple" output="screen"/>
+
+    <!-- Launch virtual joystick -->
+    <node name="virtual_joystick" pkg="tbai_ros_utils" type="virtual_joystick.py" output="screen"/>
+
+    <!-- Start Rviz visualizer -->
+    <arg name="rvizconfig" default="$(find tbai_ros_static)/launch/rviz/robot.rviz" />
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen" />
+
+</launch>
