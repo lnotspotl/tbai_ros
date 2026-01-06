@@ -57,6 +57,12 @@ void RosNp3oController::publishEstimatedState() {
 
     tbai_ros_msgs::EstimatedState stateMsg;
     stateMsg.timestamp = state_.timestamp;
+
+    // Resize dynamic arrays
+    stateMsg.joint_angles.resize(state.jointPositions.size());
+    stateMsg.joint_velocities.resize(state.jointVelocities.size());
+    stateMsg.contact_flags.resize(state_.contactFlags.size());
+
     std::copy(state.basePositionWorld.data(), state.basePositionWorld.data() + state.basePositionWorld.size(),
               stateMsg.base_position.begin());
     std::copy(state.baseOrientationWorld.data(), state.baseOrientationWorld.data() + state.baseOrientationWorld.size(),

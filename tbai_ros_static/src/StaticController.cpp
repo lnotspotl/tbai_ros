@@ -132,6 +132,12 @@ void RosStaticController::publishEstimatedState() {
     tbai_ros_msgs::EstimatedState stateMsg;
     stateMsg.timestamp = state_.timestamp;
 
+    // Resize dynamic arrays
+    const size_t numJoints = (state_.x.size() - 12) / 2;  // state = 12 base + n_joints + n_joints
+    stateMsg.joint_angles.resize(numJoints);
+    stateMsg.joint_velocities.resize(numJoints);
+    stateMsg.contact_flags.resize(state_.contactFlags.size());
+
     // Base position
     std::copy(state_.x.data() + 3, state_.x.data() + 3 + 3, stateMsg.base_position.begin());  // position
 
@@ -147,10 +153,10 @@ void RosStaticController::publishEstimatedState() {
     std::copy(state_.x.data() + 3 + 3, state_.x.data() + 3 + 3 + 3, stateMsg.base_ang_vel.begin());  // angular velocity
 
     // Joint positions
-    std::copy(state_.x.data() + 3 + 3 + 3 + 3, state_.x.data() + 3 + 3 + 3 + 3 + 12, stateMsg.joint_angles.begin());
+    std::copy(state_.x.data() + 12, state_.x.data() + 12 + numJoints, stateMsg.joint_angles.begin());
 
     // Joint velocities
-    std::copy(state_.x.data() + 3 + 3 + 3 + 3 + 12, state_.x.data() + 3 + 3 + 3 + 3 + 12 + 12,
+    std::copy(state_.x.data() + 12 + numJoints, state_.x.data() + 12 + numJoints + numJoints,
               stateMsg.joint_velocities.begin());
 
     // Contact flags

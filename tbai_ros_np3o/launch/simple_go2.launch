@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- Required arguments -->
-    <arg name="controllers_ns"      default="anymal_d"/>
+    <arg name="controllers_ns"      default="go2"/>
     <arg name="controllers_args"    default="joint_controller"/>
     <arg name="tbai_config_path"    default="$(find tbai_ros_np3o)/config/default_config_go2.yaml"/>
     <arg name="description_name"    default="robot_description"/>

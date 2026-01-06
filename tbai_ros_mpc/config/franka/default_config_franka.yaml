@@ -7,7 +7,7 @@ state_topic: "franka/state"
 command_topic: "franka/command"
 change_controller_topic: "franka/change_controller"
 
-contact_topics: [] 
+fixed_base: true
 
 static_controller:
   home_controller:
@@ -37,7 +37,9 @@ gazebo:
   ground_truth_state_publisher:
     enabled: true
     update_rate: 400 # Hz
+    fixed_base: true
 
   muse_state_publisher:
     enabled: false
     update_rate: 200 # Hz
+    fixed_base: true
