@@ -30,9 +30,9 @@ class GridmapTerrainInterface : public TerrainInterface {
 
     void waitTillInitialized() override { gridmap_->waitTillInitialized(); }
 
-    TargetTrajectories generateTargetTrajectories(scalar_t currentTime, const BaseReferenceHorizon &horizon,
-                                                  const BaseReferenceState &state, const BaseReferenceCommand &command,
-                                                  const switched_model::QuadrupedInterface &quadrupedInterface) override;
+    TargetTrajectories generateTargetTrajectories(
+        scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
+        const BaseReferenceCommand &command, const switched_model::QuadrupedInterface &quadrupedInterface) override;
 
     tbai::gridmap::GridmapInterface &getGridmap() { return *gridmap_; }
 

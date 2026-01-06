@@ -123,8 +123,8 @@ BaseReferenceTrajectory generateExtrapolatedBaseReferenceFromGridmap(
 TargetTrajectories GridmapTerrainInterface::generateTargetTrajectories(
     scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
     const BaseReferenceCommand &command, const switched_model::QuadrupedInterface &quadrupedInterface) {
-    switched_model::BaseReferenceTrajectory baseReferenceTrajectory = generateExtrapolatedBaseReferenceFromGridmap(
-        horizon, state, command, gridmap_->getMap(), 0.3, 0.3);
+    switched_model::BaseReferenceTrajectory baseReferenceTrajectory =
+        generateExtrapolatedBaseReferenceFromGridmap(horizon, state, command, gridmap_->getMap(), 0.3, 0.3);
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
     constexpr size_t INPUT_DIM = 12 + 12;

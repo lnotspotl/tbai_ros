@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     } else if (robotName == "spot" || robotName == "spot_arm") {
         quadrupedInterface =
             anymal::getSpotInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                    anymal::frameDeclarationFromFile(frameDeclarationFile));
+                                     anymal::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }

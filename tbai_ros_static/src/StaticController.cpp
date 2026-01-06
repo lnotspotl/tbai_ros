@@ -165,18 +165,21 @@ void RosStaticController::publishEstimatedState() {
 
         // Base orientation
         tbai::quaternion_t quat = tbai::ocs2rpy2quat(state_.x.head<3>());
-        std::copy(quat.coeffs().data(), quat.coeffs().data() + 4, stateMsg.base_orientation_xyzw.begin());  // orientation
+        std::copy(quat.coeffs().data(), quat.coeffs().data() + 4,
+                  stateMsg.base_orientation_xyzw.begin());  // orientation
 
         // Base linear velocity
         std::copy(state_.x.data() + 3 + 3 + 3, state_.x.data() + 3 + 3 + 3 + 3,
                   stateMsg.base_lin_vel.begin());  // linear velocity
 
         // Base angular velocity
-        std::copy(state_.x.data() + 3 + 3, state_.x.data() + 3 + 3 + 3, stateMsg.base_ang_vel.begin());  // angular velocity
+        std::copy(state_.x.data() + 3 + 3, state_.x.data() + 3 + 3 + 3,
+                  stateMsg.base_ang_vel.begin());  // angular velocity
     }
 
     // Joint positions
-    std::copy(state_.x.data() + baseStateSize, state_.x.data() + baseStateSize + numJoints, stateMsg.joint_angles.begin());
+    std::copy(state_.x.data() + baseStateSize, state_.x.data() + baseStateSize + numJoints,
+              stateMsg.joint_angles.begin());
 
     // Joint velocities
     std::copy(state_.x.data() + baseStateSize + numJoints, state_.x.data() + baseStateSize + numJoints + numJoints,

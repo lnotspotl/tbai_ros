@@ -27,43 +27,41 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+#include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ros/init.h>
 #include <ros/package.h>
-
-#include <ocs2_ddp/GaussNewtonDDP_MPC.h>
+#include <tbai_mpc/franka_mpc/MobileManipulatorInterface.h>
 #include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/RosReferenceManager.hpp>
-
-#include <tbai_mpc/franka_mpc/MobileManipulatorInterface.h>
 
 using namespace ocs2;
 using namespace mobile_manipulator;
 
-int main(int argc, char** argv) {
-  const std::string robotName = "mobile_manipulator";
+int main(int argc, char **argv) {
+    const std::string robotName = "mobile_manipulator";
 
-  ros::init(argc, argv, robotName + "_mpc");
-  ros::NodeHandle nodeHandle;
+    ros::init(argc, argv, robotName + "_mpc");
+    ros::NodeHandle nodeHandle;
 
-  std::string taskFile, libFolder, urdfFile;
-  nodeHandle.getParam("/taskFile", taskFile);
-  nodeHandle.getParam("/libFolder", libFolder);
-  nodeHandle.getParam("/urdfFile", urdfFile);
-  std::cerr << "Loading task file: " << taskFile << std::endl;
-  std::cerr << "Loading library folder: " << libFolder << std::endl;
-  std::cerr << "Loading urdf file: " << urdfFile << std::endl;
+    std::string taskFile, libFolder, urdfFile;
+    nodeHandle.getParam("/taskFile", taskFile);
+    nodeHandle.getParam("/libFolder", libFolder);
+    nodeHandle.getParam("/urdfFile", urdfFile);
+    std::cerr << "Loading task file: " << taskFile << std::endl;
+    std::cerr << "Loading library folder: " << libFolder << std::endl;
+    std::cerr << "Loading urdf file: " << urdfFile << std::endl;
 
-  MobileManipulatorInterface interface(taskFile, libFolder, urdfFile);
+    MobileManipulatorInterface interface(taskFile, libFolder, urdfFile);
 
-  auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(robotName, interface.getReferenceManagerPtr());
-  rosReferenceManagerPtr->subscribe(nodeHandle);
+    auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(robotName, interface.getReferenceManagerPtr());
+    rosReferenceManagerPtr->subscribe(nodeHandle);
 
-  GaussNewtonDDP_MPC mpc(interface.mpcSettings(), interface.ddpSettings(), interface.getRollout(),
-                         interface.getOptimalControlProblem(), interface.getInitializer());
-  mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+    GaussNewtonDDP_MPC mpc(interface.mpcSettings(), interface.ddpSettings(), interface.getRollout(),
+                           interface.getOptimalControlProblem(), interface.getInitializer());
+    mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
 
-  MPC_ROS_Interface mpcNode(mpc, robotName);
-  mpcNode.launchNodes(nodeHandle);
+    MPC_ROS_Interface mpcNode(mpc, robotName);
+    mpcNode.launchNodes(nodeHandle);
 
-  return 0;
+    return 0;
 }
