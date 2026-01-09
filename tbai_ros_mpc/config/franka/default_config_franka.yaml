@@ -10,17 +10,21 @@ change_controller_topic: "franka/change_controller"
 fixed_base: true
 
 static_controller:
-  home_controller:
+  stand_controller:
     joint_angles: [0.0, -0.785, 0.0, -2.356, 0.0, 1.571, 0.785]  # home position
+  sit_controller:
+    joint_angles: [0.0, -0.785, 0.0, -2.356, 0.0, 1.571, 0.785]  # same as stand for arm
   kp: 400
   kd: 40
   interpolation_time: 2.0 # s
-  rate: 500 # Hz
+  rate: 50 # Hz
 
 mpc_controller:
+  wbc_type: "hqp"  # "hqp" or "sqp"
+  rate: 400        # Hz
   reference_trajectory:
-    reference_topic: "/mobile_manipulator_mpc_target"
-    observation_topic: "/mobile_manipulator_mpc_observation"
+    reference_topic: "/franka_mpc_target"
+    observation_topic: "/franka_mpc_observation"
 
 franka:
   joint_controller:

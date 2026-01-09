@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /InteractiveMarkers1
       Splitter Ratio: 0.5
     Tree Height: 534
   - Class: rviz/Selection
@@ -124,6 +125,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -131,42 +136,12 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        command:
-          Value: true
-        panda_hand:
-          Value: true
-        panda_hand_tcp:
-          Value: true
-        panda_leftfinger:
-          Value: true
-        panda_link0:
-          Value: true
-        panda_link1:
-          Value: true
-        panda_link2:
-          Value: true
-        panda_link3:
-          Value: true
-        panda_link4:
-          Value: true
-        panda_link5:
-          Value: true
-        panda_link6:
-          Value: true
-        panda_link7:
-          Value: true
-        panda_link8:
-          Value: true
-        panda_rightfinger:
-          Value: true
-        root:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -174,35 +149,15 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        panda_link0:
-          command:
-            {}
-          panda_link1:
-            panda_link2:
-              panda_link3:
-                panda_link4:
-                  panda_link5:
-                    panda_link6:
-                      panda_link7:
-                        panda_link8:
-                          panda_hand:
-                            panda_hand_tcp:
-                              {}
-                            panda_leftfinger:
-                              {}
-                            panda_rightfinger:
-                              {}
-          root:
-            {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /mobile_manipulator/optimizedStateTrajectory
+      Marker Topic: /franka/optimizedStateTrajectory
       Name: MarkerArray
       Namespaces:
-        Base Trajectory: true
-        EE Trajectory: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -219,7 +174,7 @@ Visualization Manager:
       Shaft Length: 0.23000000417232513
       Shaft Radius: 0.009999999776482582
       Shape: Axes
-      Topic: /mobile_manipulator/optimizedPoseTrajectory
+      Topic: /franka/optimizedPoseTrajectory
       Unreliable: false
       Value: true
     - Class: rviz/InteractiveMarkers
@@ -229,7 +184,15 @@ Visualization Manager:
       Show Axes: false
       Show Descriptions: true
       Show Visual Aids: false
-      Update Topic: /target_marker/update
+      Update Topic: /franka_ee_target/update
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /franka/desiredEETrajectory
+      Name: Marker
+      Namespaces:
+        EE Trajectory: true
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:
@@ -267,17 +230,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: -0.07224977761507034
+        Y: -0.07358246296644211
+        Z: 0.1843273788690567
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4003985524177551
+      Pitch: 0.385398268699646
       Target Frame: <Fixed Frame>
-      Yaw: 0.44039851427078247
+      Yaw: 0.7603970170021057
     Saved: ~
 Window Geometry:
   Displays:
@@ -295,5 +258,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1200
-  X: 720
-  Y: 250
+  X: 1182
+  Y: 220

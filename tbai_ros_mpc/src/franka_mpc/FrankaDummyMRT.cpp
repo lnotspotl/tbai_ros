@@ -1,44 +1,15 @@
-/******************************************************************************
-Copyright (c) 2020, Farbod Farshidian. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
- * Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
- * Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-
 #include <ocs2_mpc/SystemObservation.h>
 #include <ros/init.h>
 #include <ros/package.h>
-#include <tbai_mpc/franka_mpc/MobileManipulatorInterface.h>
-#include <tbai_ros_mpc/franka_mpc/MobileManipulatorDummyVisualization.h>
+#include <tbai_mpc/franka_mpc/FrankaInterface.h>
+#include <tbai_ros_mpc/franka_mpc/FrankaDummyVisualization.h>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 
 using namespace ocs2;
-using namespace mobile_manipulator;
+using namespace franka;
 
 int main(int argc, char **argv) {
-    const std::string robotName = "mobile_manipulator";
+    const std::string robotName = "franka";
 
     ros::init(argc, argv, robotName + "_mrt");
     ros::NodeHandle nodeHandle;
@@ -51,7 +22,7 @@ int main(int argc, char **argv) {
     std::cerr << "Loading library folder: " << libFolder << std::endl;
     std::cerr << "Loading urdf file: " << urdfFile << std::endl;
 
-    mobile_manipulator::MobileManipulatorInterface interface(taskFile, libFolder, urdfFile);
+    franka::FrankaInterface interface(taskFile, libFolder, urdfFile);
 
     // MRT
     tbai::ocs2_ros::MRT_ROS_Interface mrt(robotName);
@@ -60,19 +31,19 @@ int main(int argc, char **argv) {
 
     // Visualization
     auto dummyVisualization =
-        std::make_shared<mobile_manipulator::MobileManipulatorDummyVisualization>(nodeHandle, interface);
+        std::make_shared<franka::FrankaDummyVisualization>(nodeHandle, interface);
 
     // Initial observation
     SystemObservation observation;
     observation.state = interface.getInitialState();
-    observation.input.setZero(interface.getManipulatorModelInfo().inputDim);
+    observation.input.setZero(interface.getFrankaModelInfo().inputDim);
     observation.time = 0.0;
 
     // Initial target
     vector_t initTarget(7);
     initTarget.head(3) << 0.5, 0, 0.5;
     initTarget.tail(4) << Eigen::Quaternion<scalar_t>(1, 0, 0, 0).coeffs();
-    const vector_t zeroInput = vector_t::Zero(interface.getManipulatorModelInfo().inputDim);
+    const vector_t zeroInput = vector_t::Zero(interface.getFrankaModelInfo().inputDim);
     const TargetTrajectories initTargetTrajectories({observation.time}, {initTarget}, {zeroInput});
 
     // Reset MPC node

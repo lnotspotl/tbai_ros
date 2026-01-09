@@ -37,16 +37,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_oc/oc_data/PrimalSolution.h>
 #include <ocs2_mpc/CommandData.h>
 
-#include <tbai_mpc/franka_mpc/ManipulatorModelInfo.h>
-#include <tbai_mpc/franka_mpc/MobileManipulatorInterface.h>
+#include <tbai_mpc/franka_mpc/FrankaModelInfo.h>
+#include <tbai_mpc/franka_mpc/FrankaInterface.h>
 
 namespace ocs2 {
-namespace mobile_manipulator {
+namespace franka {
 
-class MobileManipulatorDummyVisualization {
+class FrankaDummyVisualization {
  public:
-  MobileManipulatorDummyVisualization(ros::NodeHandle& nodeHandle, const MobileManipulatorInterface& interface);
-  ~MobileManipulatorDummyVisualization() = default;
+  FrankaDummyVisualization(ros::NodeHandle& nodeHandle, const FrankaInterface& interface);
+  ~FrankaDummyVisualization() = default;
 
   void update(const SystemObservation& observation, const PrimalSolution& policy, const CommandData& command);
 
@@ -57,7 +57,7 @@ class MobileManipulatorDummyVisualization {
   void publishOptimizedTrajectory(const ros::Time& timeStamp, const PrimalSolution& policy);
 
   PinocchioInterface pinocchioInterface_;
-  const ManipulatorModelInfo modelInfo_;
+  const FrankaModelInfo modelInfo_;
   std::vector<std::string> removeJointNames_;
 
   std::unique_ptr<robot_state_publisher::RobotStatePublisher> robotStatePublisherPtr_;
@@ -67,5 +67,5 @@ class MobileManipulatorDummyVisualization {
   ros::Publisher stateOptimizedPosePublisher_;
 };
 
-}  // namespace mobile_manipulator
+}  // namespace franka
 }  // namespace ocs2

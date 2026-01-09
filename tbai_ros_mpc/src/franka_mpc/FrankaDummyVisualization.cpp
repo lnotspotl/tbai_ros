@@ -1,32 +1,3 @@
-/******************************************************************************
-Copyright (c) 2020, Farbod Farshidian. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
- * Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
- * Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-
 #include <geometry_msgs/PoseArray.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include <ocs2_core/misc/LoadData.h>
@@ -36,20 +7,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ros/package.h>
 #include <tbai_mpc/franka_mpc/AccessHelperFunctions.h>
 #include <tbai_mpc/franka_mpc/FactoryFunctions.h>
-#include <tbai_mpc/franka_mpc/ManipulatorModelInfo.h>
-#include <tbai_mpc/franka_mpc/MobileManipulatorInterface.h>
-#include <tbai_ros_mpc/franka_mpc/MobileManipulatorDummyVisualization.h>
+#include <tbai_mpc/franka_mpc/FrankaModelInfo.h>
+#include <tbai_mpc/franka_mpc/FrankaInterface.h>
+#include <tbai_ros_mpc/franka_mpc/FrankaDummyVisualization.h>
 #include <tbai_ros_ocs2/common/RosMsgHelpers.h>
 #include <tf/tf.h>
 #include <urdf/model.h>
 #include <visualization_msgs/MarkerArray.h>
 
 namespace ocs2 {
-namespace mobile_manipulator {
+namespace franka {
 
-MobileManipulatorDummyVisualization::MobileManipulatorDummyVisualization(ros::NodeHandle &nodeHandle,
-                                                                         const MobileManipulatorInterface &interface)
-    : pinocchioInterface_(interface.getPinocchioInterface()), modelInfo_(interface.getManipulatorModelInfo()) {
+FrankaDummyVisualization::FrankaDummyVisualization(ros::NodeHandle &nodeHandle,
+                                                                         const FrankaInterface &interface)
+    : pinocchioInterface_(interface.getPinocchioInterface()), modelInfo_(interface.getFrankaModelInfo()) {
     launchVisualizerNode(nodeHandle);
 }
 
@@ -67,7 +38,7 @@ void assignIncreasingId(It firstIt, It lastIt, int startId = 0) {
     }
 }
 
-void MobileManipulatorDummyVisualization::launchVisualizerNode(ros::NodeHandle &nodeHandle) {
+void FrankaDummyVisualization::launchVisualizerNode(ros::NodeHandle &nodeHandle) {
     const std::string urdfName = "robot_description";
     urdf::Model model;
     if (!model.initParam(urdfName)) {
@@ -82,16 +53,16 @@ void MobileManipulatorDummyVisualization::launchVisualizerNode(ros::NodeHandle &
     robotStatePublisherPtr_->publishFixedTransforms(true);
 
     stateOptimizedPublisher_ =
-        nodeHandle.advertise<visualization_msgs::MarkerArray>("/mobile_manipulator/optimizedStateTrajectory", 1);
+        nodeHandle.advertise<visualization_msgs::MarkerArray>("/franka/optimizedStateTrajectory", 1);
     stateOptimizedPosePublisher_ =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/mobile_manipulator/optimizedPoseTrajectory", 1);
+        nodeHandle.advertise<geometry_msgs::PoseArray>("/franka/optimizedPoseTrajectory", 1);
 
     std::string taskFile;
     nodeHandle.getParam("/taskFile", taskFile);
     loadData::loadStdVector<std::string>(taskFile, "model_information.removeJoints", removeJointNames_, false);
 }
 
-void MobileManipulatorDummyVisualization::update(const SystemObservation &observation, const PrimalSolution &policy,
+void FrankaDummyVisualization::update(const SystemObservation &observation, const PrimalSolution &policy,
                                                  const CommandData &command) {
     const ros::Time timeStamp = ros::Time::now();
 
@@ -100,7 +71,7 @@ void MobileManipulatorDummyVisualization::update(const SystemObservation &observ
     publishOptimizedTrajectory(timeStamp, policy);
 }
 
-void MobileManipulatorDummyVisualization::publishObservation(const ros::Time &timeStamp,
+void FrankaDummyVisualization::publishObservation(const ros::Time &timeStamp,
                                                              const SystemObservation &observation) {
     const auto r_world_base = getBasePosition(observation.state, modelInfo_);
     const Eigen::Quaternion<scalar_t> q_world_base = getBaseOrientation(observation.state, modelInfo_);
@@ -124,7 +95,7 @@ void MobileManipulatorDummyVisualization::publishObservation(const ros::Time &ti
     robotStatePublisherPtr_->publishTransforms(jointPositions, timeStamp);
 }
 
-void MobileManipulatorDummyVisualization::publishTargetTrajectories(const ros::Time &timeStamp,
+void FrankaDummyVisualization::publishTargetTrajectories(const ros::Time &timeStamp,
                                                                     const TargetTrajectories &targetTrajectories) {
     const Eigen::Vector3d eeDesiredPosition = targetTrajectories.stateTrajectory.back().head(3);
     Eigen::Quaterniond eeDesiredOrientation;
@@ -138,7 +109,7 @@ void MobileManipulatorDummyVisualization::publishTargetTrajectories(const ros::T
     tfBroadcaster_.sendTransform(command_tf);
 }
 
-void MobileManipulatorDummyVisualization::publishOptimizedTrajectory(const ros::Time &timeStamp,
+void FrankaDummyVisualization::publishOptimizedTrajectory(const ros::Time &timeStamp,
                                                                      const PrimalSolution &policy) {
     const scalar_t TRAJECTORYLINEWIDTH = 0.005;
     const std::array<scalar_t, 3> red{0.6350, 0.0780, 0.1840};
@@ -192,5 +163,5 @@ void MobileManipulatorDummyVisualization::publishOptimizedTrajectory(const ros::
     stateOptimizedPosePublisher_.publish(poseArray);
 }
 
-}  // namespace mobile_manipulator
+}  // namespace franka
 }  // namespace ocs2
