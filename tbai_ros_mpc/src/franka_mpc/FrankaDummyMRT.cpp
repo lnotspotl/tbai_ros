@@ -30,8 +30,7 @@ int main(int argc, char **argv) {
     mrt.launchNodes(nodeHandle);
 
     // Visualization
-    auto dummyVisualization =
-        std::make_shared<franka::FrankaDummyVisualization>(nodeHandle, interface);
+    auto dummyVisualization = std::make_shared<franka::FrankaDummyVisualization>(nodeHandle, interface);
 
     // Initial observation
     SystemObservation observation;

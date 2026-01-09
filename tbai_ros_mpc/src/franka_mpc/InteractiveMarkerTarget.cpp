@@ -6,19 +6,16 @@ namespace tbai {
 namespace mpc {
 namespace franka {
 
-InteractiveMarkerTarget::InteractiveMarkerTarget(ros::NodeHandle& nodeHandle,
-                                                  const std::string& frameId,
-                                                  const Eigen::Vector3d& initialPosition,
-                                                  const Eigen::Quaterniond& initialOrientation)
-    : server_("franka_ee_target"),
-      targetPosition_(initialPosition),
-      targetOrientation_(initialOrientation) {
+InteractiveMarkerTarget::InteractiveMarkerTarget(ros::NodeHandle &nodeHandle, const std::string &frameId,
+                                                 const Eigen::Vector3d &initialPosition,
+                                                 const Eigen::Quaterniond &initialOrientation)
+    : server_("franka_ee_target"), targetPosition_(initialPosition), targetOrientation_(initialOrientation) {
     createInteractiveMarker(frameId, initialPosition, initialOrientation);
 }
 
-void InteractiveMarkerTarget::createInteractiveMarker(const std::string& frameId,
-                                                       const Eigen::Vector3d& initialPosition,
-                                                       const Eigen::Quaterniond& initialOrientation) {
+void InteractiveMarkerTarget::createInteractiveMarker(const std::string &frameId,
+                                                      const Eigen::Vector3d &initialPosition,
+                                                      const Eigen::Quaterniond &initialOrientation) {
     visualization_msgs::InteractiveMarker intMarker;
     intMarker.header.frame_id = frameId;
     intMarker.header.stamp = ros::Time::now();
@@ -93,12 +90,11 @@ void InteractiveMarkerTarget::createInteractiveMarker(const std::string& frameId
     server_.insert(intMarker, boost::bind(&InteractiveMarkerTarget::markerCallback, this, _1));
     server_.applyChanges();
 
-    ROS_INFO("Interactive marker target created at (%.2f, %.2f, %.2f)",
-             initialPosition.x(), initialPosition.y(), initialPosition.z());
+    ROS_INFO("Interactive marker target created at (%.2f, %.2f, %.2f)", initialPosition.x(), initialPosition.y(),
+             initialPosition.z());
 }
 
-void InteractiveMarkerTarget::markerCallback(
-    const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
+void InteractiveMarkerTarget::markerCallback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback) {
     if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE) {
         std::lock_guard<std::mutex> lock(mutex_);
 
@@ -127,7 +123,7 @@ vector_t InteractiveMarkerTarget::getTargetOrientation() const {
     return quat;
 }
 
-void InteractiveMarkerTarget::getTargetPose(vector_t& position, vector_t& orientation) const {
+void InteractiveMarkerTarget::getTargetPose(vector_t &position, vector_t &orientation) const {
     std::lock_guard<std::mutex> lock(mutex_);
 
     position.resize(3);

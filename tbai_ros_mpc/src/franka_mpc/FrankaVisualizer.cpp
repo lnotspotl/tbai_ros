@@ -6,15 +6,14 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <kdl_parser/kdl_parser.hpp>
-#include <urdf/model.h>
 #include <tbai_ros_ocs2/visualization/VisualizationHelpers.h>
+#include <urdf/model.h>
 
 namespace tbai {
 namespace mpc {
 namespace franka {
 
-FrankaVisualizer::FrankaVisualizer(ros::NodeHandle& nodeHandle,
-                                   const std::vector<std::string>& jointNames,
+FrankaVisualizer::FrankaVisualizer(ros::NodeHandle &nodeHandle, const std::vector<std::string> &jointNames,
                                    scalar_t maxUpdateFrequency)
     : jointNames_(jointNames),
       lastTime_(std::numeric_limits<scalar_t>::lowest()),
@@ -36,22 +35,17 @@ FrankaVisualizer::FrankaVisualizer(ros::NodeHandle& nodeHandle,
     launchNode(nodeHandle);
 }
 
-void FrankaVisualizer::launchNode(ros::NodeHandle& nodeHandle) {
+void FrankaVisualizer::launchNode(ros::NodeHandle &nodeHandle) {
     currentEEPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/franka/currentEE", 1);
     targetEEPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/franka/targetEE", 1);
-    desiredEETrajectoryPublisher_ =
-        nodeHandle.advertise<visualization_msgs::Marker>("/franka/desiredEETrajectory", 1);
+    desiredEETrajectoryPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/franka/desiredEETrajectory", 1);
     targetPosePublisher_ = nodeHandle.advertise<geometry_msgs::PoseStamped>("/franka/targetPose", 1);
 }
 
-void FrankaVisualizer::update(const vector_t& jointPositions,
-                               const vector_t& currentEEPosition,
-                               const vector_t& currentEEOrientation,
-                               const vector_t& targetEEPosition,
-                               const vector_t& targetEEOrientation,
-                               const std::vector<vector_t>& eeTrajectory,
-                               const ocs2::SystemObservation& observation,
-                               const ocs2::PrimalSolution& primalSolution) {
+void FrankaVisualizer::update(const vector_t &jointPositions, const vector_t &currentEEPosition,
+                              const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
+                              const vector_t &targetEEOrientation, const std::vector<vector_t> &eeTrajectory,
+                              const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &primalSolution) {
     if (observation.time - lastTime_ < minPublishTimeDifference_) {
         return;
     }
@@ -69,7 +63,7 @@ void FrankaVisualizer::update(const vector_t& jointPositions,
     lastTime_ = observation.time;
 }
 
-void FrankaVisualizer::publishRobotState(ros::Time timeStamp, const vector_t& jointPositions) {
+void FrankaVisualizer::publishRobotState(ros::Time timeStamp, const vector_t &jointPositions) {
     if (!robotStatePublisherPtr_) {
         return;
     }
@@ -98,9 +92,8 @@ void FrankaVisualizer::publishRobotState(ros::Time timeStamp, const vector_t& jo
     robotStatePublisherPtr_->publishTransforms(jointPositionMap, timeStamp);
 }
 
-void FrankaVisualizer::publishCurrentEEMarker(ros::Time timeStamp,
-                                               const vector_t& position,
-                                               const vector_t& orientation) {
+void FrankaVisualizer::publishCurrentEEMarker(ros::Time timeStamp, const vector_t &position,
+                                              const vector_t &orientation) {
     Eigen::Vector3d pos(position(0), position(1), position(2));
 
     visualization_msgs::Marker marker = ocs2::getSphereMsg(pos, ocs2::Color::blue, eeMarkerDiameter_);
@@ -111,9 +104,8 @@ void FrankaVisualizer::publishCurrentEEMarker(ros::Time timeStamp,
     currentEEPublisher_.publish(marker);
 }
 
-void FrankaVisualizer::publishTargetEEMarker(ros::Time timeStamp,
-                                              const vector_t& position,
-                                              const vector_t& orientation) {
+void FrankaVisualizer::publishTargetEEMarker(ros::Time timeStamp, const vector_t &position,
+                                             const vector_t &orientation) {
     Eigen::Vector3d pos(position(0), position(1), position(2));
     Eigen::Quaterniond quat(orientation(3), orientation(0), orientation(1), orientation(2));  // w, x, y, z
 
@@ -134,8 +126,7 @@ void FrankaVisualizer::publishTargetEEMarker(ros::Time timeStamp,
     targetPosePublisher_.publish(poseMsg);
 }
 
-void FrankaVisualizer::publishDesiredEETrajectory(ros::Time timeStamp,
-                                                   const std::vector<vector_t>& eeTrajectory) {
+void FrankaVisualizer::publishDesiredEETrajectory(ros::Time timeStamp, const std::vector<vector_t> &eeTrajectory) {
     if (eeTrajectory.empty()) {
         return;
     }
@@ -144,7 +135,7 @@ void FrankaVisualizer::publishDesiredEETrajectory(ros::Time timeStamp,
     std::vector<geometry_msgs::Point> points;
     points.reserve(eeTrajectory.size());
 
-    for (const auto& eePos : eeTrajectory) {
+    for (const auto &eePos : eeTrajectory) {
         Eigen::Vector3d pos(eePos(0), eePos(1), eePos(2));
         points.push_back(ocs2::getPointMsg(pos));
     }

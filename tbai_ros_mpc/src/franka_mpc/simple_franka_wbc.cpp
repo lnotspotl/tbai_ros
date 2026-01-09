@@ -55,8 +55,7 @@ int main(int argc, char *argv[]) {
 
     // Add Franka MPC+WBC controller (switch to this via change_controller_topic)
     auto getCurrentTime = []() { return tbai::RosTime::rightNow(); };
-    controller.addController(
-        std::make_unique<tbai::mpc::franka::FrankaMpcController>(stateSubscriber, getCurrentTime));
+    controller.addController(std::make_unique<tbai::mpc::franka::FrankaMpcController>(stateSubscriber, getCurrentTime));
 
     // Start controller loop
     controller.start();

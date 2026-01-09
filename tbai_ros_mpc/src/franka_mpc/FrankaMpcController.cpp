@@ -4,16 +4,15 @@
 
 #include "tbai_ros_mpc/franka_mpc/FrankaMpcController.hpp"
 
-#include <pinocchio/algorithm/frames.hpp>
-#include <pinocchio/algorithm/kinematics.hpp>
-
 #include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ocs2_pinocchio_interface/urdf.h>
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/algorithm/kinematics.hpp>
 #include <ros/package.h>
-#include <tbai_core/config/Config.hpp>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/Utils.hpp>
+#include <tbai_core/config/Config.hpp>
 #include <tbai_mpc/franka_wbc/Factory.hpp>
 
 namespace tbai {
@@ -54,8 +53,7 @@ void FrankaMpcController::initialize() {
     std::cerr << "[FrankaMpcController] Loading URDF file: " << urdfFile << std::endl;
 
     // Create manipulator interface
-    manipulatorInterfacePtr_ =
-        std::make_unique<ocs2::franka::FrankaInterface>(taskFile, libFolder, urdfFile);
+    manipulatorInterfacePtr_ = std::make_unique<ocs2::franka::FrankaInterface>(taskFile, libFolder, urdfFile);
 
     // Get URDF string for WBC
     std::ifstream urdfStream(urdfFile);
@@ -87,21 +85,20 @@ void FrankaMpcController::initialize() {
     currentEEOrientation_(3) = 1.0;
 
     // Create Pinocchio interface copy for EE pose computation (needs mutable data for FK)
-    pinocchioInterfacePtr_ = std::make_unique<ocs2::PinocchioInterface>(
-        manipulatorInterfacePtr_->getPinocchioInterface());
-    eeFrameId_ = pinocchioInterfacePtr_->getModel().getFrameId(
-        manipulatorInterfacePtr_->getFrankaModelInfo().eeFrame);
+    pinocchioInterfacePtr_ =
+        std::make_unique<ocs2::PinocchioInterface>(manipulatorInterfacePtr_->getPinocchioInterface());
+    eeFrameId_ = pinocchioInterfacePtr_->getModel().getFrameId(manipulatorInterfacePtr_->getFrankaModelInfo().eeFrame);
 
     // Create visualizer with joint names
-    const auto& jointNames = manipulatorInterfacePtr_->getFrankaModelInfo().dofNames;
+    const auto &jointNames = manipulatorInterfacePtr_->getFrankaModelInfo().dofNames;
     visualizerPtr_ = std::make_unique<FrankaVisualizer>(nh, jointNames);
 
     // Create interactive marker target for RViz control
     Eigen::Vector3d initialPosition(targetEEPosition_(0), targetEEPosition_(1), targetEEPosition_(2));
-    Eigen::Quaterniond initialOrientation(targetEEOrientation_(3), targetEEOrientation_(0),
-                                           targetEEOrientation_(1), targetEEOrientation_(2));  // w, x, y, z
-    interactiveMarkerTargetPtr_ = std::make_unique<InteractiveMarkerTarget>(
-        nh, "panda_link0", initialPosition, initialOrientation);
+    Eigen::Quaterniond initialOrientation(targetEEOrientation_(3), targetEEOrientation_(0), targetEEOrientation_(1),
+                                          targetEEOrientation_(2));  // w, x, y, z
+    interactiveMarkerTargetPtr_ =
+        std::make_unique<InteractiveMarkerTarget>(nh, "panda_link0", initialPosition, initialOrientation);
 
     tNow_ = 0.0;
 }
@@ -126,11 +123,11 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
     ocs2::vector_t desiredState;
     ocs2::vector_t desiredInput;
     ocs2::vector_t desiredJointAcceleration;
-    
+
     desiredState = vector_t::Zero(7);
     desiredInput = vector_t::Zero(7);
     desiredJointAcceleration = vector_t::Zero(7);
-    
+
     // Evaluate MPC policy
     if (!debug) {
         size_t desiredMode;
@@ -152,9 +149,9 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
     }
 
     // Get motor commands from WBC
-    auto commands = wbcPtr_->getMotorCommands(tNow_, observation.state, observation.input, desiredState, desiredInput,
-                                               desiredJointAcceleration, targetEEPosition_, targetEEOrientation_,
-                                               isStable_);
+    auto commands =
+        wbcPtr_->getMotorCommands(tNow_, observation.state, observation.input, desiredState, desiredInput,
+                                  desiredJointAcceleration, targetEEPosition_, targetEEOrientation_, isStable_);
 
     // Update MPC observation and target periodically (same as quadruped)
     timeSinceLastMpcUpdate_ += dt;
@@ -167,10 +164,8 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
         targetState.tail(4) = targetEEOrientation_;
         const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getFrankaModelInfo().inputDim);
         const scalar_t horizon = 2.0;
-        ocs2::TargetTrajectories targetTrajectories(
-            {observation.time, observation.time + horizon},
-            {targetState, targetState},
-            {zeroInput, zeroInput});
+        ocs2::TargetTrajectories targetTrajectories({observation.time, observation.time + horizon},
+                                                    {targetState, targetState}, {zeroInput, zeroInput});
         mrtPtr_->setTargetTrajectories(targetTrajectories);
     }
 
@@ -192,7 +187,7 @@ void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
     timeSinceLastVisualizationUpdate_ += dt;
     if (timeSinceLastVisualizationUpdate_ >= 1.0 / 15.0) {
         // Get joint positions from state
-        const auto& rbdState = state_.x;
+        const auto &rbdState = state_.x;
         const size_t nJoints = manipulatorInterfacePtr_->getFrankaModelInfo().armDim;
         const vector_t jointPositions = rbdState.head(nJoints);
 
@@ -205,11 +200,8 @@ void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
 
         // Update visualizer (publishes robot state TF and markers)
         auto observation = generateSystemObservation();
-        visualizerPtr_->update(jointPositions,
-                               currentEEPosition_, currentEEOrientation_,
-                               targetEEPosition_, targetEEOrientation_,
-                               eeTrajectory_,
-                               observation, primalSolution);
+        visualizerPtr_->update(jointPositions, currentEEPosition_, currentEEOrientation_, targetEEPosition_,
+                               targetEEOrientation_, eeTrajectory_, observation, primalSolution);
 
         timeSinceLastVisualizationUpdate_ = 0.0;
     }
@@ -218,16 +210,16 @@ void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::computeCurrentEEPose(const vector_t& jointPositions) {
-    const auto& model = pinocchioInterfacePtr_->getModel();
-    auto& data = pinocchioInterfacePtr_->getData();
+void FrankaMpcController::computeCurrentEEPose(const vector_t &jointPositions) {
+    const auto &model = pinocchioInterfacePtr_->getModel();
+    auto &data = pinocchioInterfacePtr_->getData();
 
     // Forward kinematics
     pinocchio::forwardKinematics(model, data, jointPositions);
     pinocchio::updateFramePlacements(model, data);
 
     // Get EE pose
-    const auto& eePlacement = data.oMf[eeFrameId_];
+    const auto &eePlacement = data.oMf[eeFrameId_];
 
     // Extract position
     currentEEPosition_ = eePlacement.translation();
@@ -243,9 +235,9 @@ void FrankaMpcController::computeCurrentEEPose(const vector_t& jointPositions) {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-vector_t FrankaMpcController::computeEEPosition(const vector_t& jointPositions) {
-    const auto& model = pinocchioInterfacePtr_->getModel();
-    auto& data = pinocchioInterfacePtr_->getData();
+vector_t FrankaMpcController::computeEEPosition(const vector_t &jointPositions) {
+    const auto &model = pinocchioInterfacePtr_->getModel();
+    auto &data = pinocchioInterfacePtr_->getData();
 
     pinocchio::forwardKinematics(model, data, jointPositions);
     pinocchio::updateFramePlacements(model, data);
@@ -256,11 +248,11 @@ vector_t FrankaMpcController::computeEEPosition(const vector_t& jointPositions) 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-std::vector<vector_t> FrankaMpcController::computeEETrajectory(const ocs2::PrimalSolution& primalSolution) {
+std::vector<vector_t> FrankaMpcController::computeEETrajectory(const ocs2::PrimalSolution &primalSolution) {
     std::vector<vector_t> eeTrajectory;
     eeTrajectory.reserve(primalSolution.stateTrajectory_.size());
 
-    for (const auto& state : primalSolution.stateTrajectory_) {
+    for (const auto &state : primalSolution.stateTrajectory_) {
         eeTrajectory.push_back(computeEEPosition(state));
     }
 
@@ -296,10 +288,8 @@ void FrankaMpcController::referenceThreadLoop() {
         // Create trajectory with current time and a future horizon point
         // This tells MPC to reach target and hold it
         const scalar_t horizon = 2.0;  // 2 seconds into the future
-        ocs2::TargetTrajectories targetTrajectories(
-            {observation.time, observation.time + horizon},
-            {targetState, targetState},
-            {zeroInput, zeroInput});
+        ocs2::TargetTrajectories targetTrajectories({observation.time, observation.time + horizon},
+                                                    {targetState, targetState}, {zeroInput, zeroInput});
         mrtPtr_->setTargetTrajectories(targetTrajectories);
 
         TBAI_LOG_INFO_THROTTLE(logger_, 5.0, "Publishing reference");
@@ -311,7 +301,7 @@ void FrankaMpcController::referenceThreadLoop() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 ocs2::TargetTrajectories FrankaMpcController::generateReferenceTrajectory(scalar_t currentTime,
-                                                                           const ocs2::SystemObservation &observation) {
+                                                                          const ocs2::SystemObservation &observation) {
     // Simple hold-position reference trajectory
     // Similar to what a ReferenceTrajectoryGenerator would produce, but simpler for fixed-base arm
     const size_t trajKnots = 20;

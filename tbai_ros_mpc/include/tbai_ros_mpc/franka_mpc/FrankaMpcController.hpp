@@ -9,17 +9,17 @@
 #include <string>
 #include <thread>
 
+#include <ocs2_core/reference/TargetTrajectories.h>
+#include <ocs2_ddp/GaussNewtonDDP_MPC.h>
+#include <ocs2_mpc/MPC_MRT_Interface.h>
+#include <ocs2_mpc/SystemObservation.h>
+#include <ocs2_pinocchio_interface/PinocchioInterface.h>
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/control/Controllers.hpp>
 #include <tbai_core/control/Subscribers.hpp>
 #include <tbai_mpc/franka_mpc/FrankaInterface.h>
 #include <tbai_mpc/franka_wbc/WbcBase.hpp>
-#include <ocs2_core/reference/TargetTrajectories.h>
-#include <ocs2_ddp/GaussNewtonDDP_MPC.h>
-#include <ocs2_mpc/MPC_MRT_Interface.h>
-#include <ocs2_mpc/SystemObservation.h>
-#include <ocs2_pinocchio_interface/PinocchioInterface.h>
 #include <tbai_ros_mpc/franka_mpc/FrankaVisualizer.h>
 #include <tbai_ros_mpc/franka_mpc/InteractiveMarkerTarget.h>
 
@@ -29,7 +29,6 @@ namespace franka {
 
 class FrankaMpcController : public tbai::Controller {
    public:
-
     FrankaMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                         std::function<scalar_t()> getCurrentTimeFunction);
 
@@ -62,7 +61,8 @@ class FrankaMpcController : public tbai::Controller {
     void resetMpc();
     void setObservation();
     ocs2::SystemObservation generateSystemObservation() const;
-    ocs2::TargetTrajectories generateReferenceTrajectory(scalar_t currentTime, const ocs2::SystemObservation &observation);
+    ocs2::TargetTrajectories generateReferenceTrajectory(scalar_t currentTime,
+                                                         const ocs2::SystemObservation &observation);
 
     // Reference thread management
     void referenceThreadLoop();
@@ -113,13 +113,13 @@ class FrankaMpcController : public tbai::Controller {
     vector_t currentEEOrientation_;
 
     // Helper to compute current EE pose
-    void computeCurrentEEPose(const vector_t& jointPositions);
+    void computeCurrentEEPose(const vector_t &jointPositions);
 
     // Compute EE position for given joint positions
-    vector_t computeEEPosition(const vector_t& jointPositions);
+    vector_t computeEEPosition(const vector_t &jointPositions);
 
     // Compute EE trajectory from MPC solution
-    std::vector<vector_t> computeEETrajectory(const ocs2::PrimalSolution& primalSolution);
+    std::vector<vector_t> computeEETrajectory(const ocs2::PrimalSolution &primalSolution);
 
     // Cached EE trajectory for visualization
     std::vector<vector_t> eeTrajectory_;

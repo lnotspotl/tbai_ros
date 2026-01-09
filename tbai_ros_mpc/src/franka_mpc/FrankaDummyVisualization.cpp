@@ -7,8 +7,8 @@
 #include <ros/package.h>
 #include <tbai_mpc/franka_mpc/AccessHelperFunctions.h>
 #include <tbai_mpc/franka_mpc/FactoryFunctions.h>
-#include <tbai_mpc/franka_mpc/FrankaModelInfo.h>
 #include <tbai_mpc/franka_mpc/FrankaInterface.h>
+#include <tbai_mpc/franka_mpc/FrankaModelInfo.h>
 #include <tbai_ros_mpc/franka_mpc/FrankaDummyVisualization.h>
 #include <tbai_ros_ocs2/common/RosMsgHelpers.h>
 #include <tf/tf.h>
@@ -18,8 +18,7 @@
 namespace ocs2 {
 namespace franka {
 
-FrankaDummyVisualization::FrankaDummyVisualization(ros::NodeHandle &nodeHandle,
-                                                                         const FrankaInterface &interface)
+FrankaDummyVisualization::FrankaDummyVisualization(ros::NodeHandle &nodeHandle, const FrankaInterface &interface)
     : pinocchioInterface_(interface.getPinocchioInterface()), modelInfo_(interface.getFrankaModelInfo()) {
     launchVisualizerNode(nodeHandle);
 }
@@ -54,8 +53,7 @@ void FrankaDummyVisualization::launchVisualizerNode(ros::NodeHandle &nodeHandle)
 
     stateOptimizedPublisher_ =
         nodeHandle.advertise<visualization_msgs::MarkerArray>("/franka/optimizedStateTrajectory", 1);
-    stateOptimizedPosePublisher_ =
-        nodeHandle.advertise<geometry_msgs::PoseArray>("/franka/optimizedPoseTrajectory", 1);
+    stateOptimizedPosePublisher_ = nodeHandle.advertise<geometry_msgs::PoseArray>("/franka/optimizedPoseTrajectory", 1);
 
     std::string taskFile;
     nodeHandle.getParam("/taskFile", taskFile);
@@ -63,7 +61,7 @@ void FrankaDummyVisualization::launchVisualizerNode(ros::NodeHandle &nodeHandle)
 }
 
 void FrankaDummyVisualization::update(const SystemObservation &observation, const PrimalSolution &policy,
-                                                 const CommandData &command) {
+                                      const CommandData &command) {
     const ros::Time timeStamp = ros::Time::now();
 
     publishObservation(timeStamp, observation);
@@ -71,8 +69,7 @@ void FrankaDummyVisualization::update(const SystemObservation &observation, cons
     publishOptimizedTrajectory(timeStamp, policy);
 }
 
-void FrankaDummyVisualization::publishObservation(const ros::Time &timeStamp,
-                                                             const SystemObservation &observation) {
+void FrankaDummyVisualization::publishObservation(const ros::Time &timeStamp, const SystemObservation &observation) {
     const auto r_world_base = getBasePosition(observation.state, modelInfo_);
     const Eigen::Quaternion<scalar_t> q_world_base = getBaseOrientation(observation.state, modelInfo_);
 
@@ -96,7 +93,7 @@ void FrankaDummyVisualization::publishObservation(const ros::Time &timeStamp,
 }
 
 void FrankaDummyVisualization::publishTargetTrajectories(const ros::Time &timeStamp,
-                                                                    const TargetTrajectories &targetTrajectories) {
+                                                         const TargetTrajectories &targetTrajectories) {
     const Eigen::Vector3d eeDesiredPosition = targetTrajectories.stateTrajectory.back().head(3);
     Eigen::Quaterniond eeDesiredOrientation;
     eeDesiredOrientation.coeffs() = targetTrajectories.stateTrajectory.back().tail(4);
@@ -109,8 +106,7 @@ void FrankaDummyVisualization::publishTargetTrajectories(const ros::Time &timeSt
     tfBroadcaster_.sendTransform(command_tf);
 }
 
-void FrankaDummyVisualization::publishOptimizedTrajectory(const ros::Time &timeStamp,
-                                                                     const PrimalSolution &policy) {
+void FrankaDummyVisualization::publishOptimizedTrajectory(const ros::Time &timeStamp, const PrimalSolution &policy) {
     const scalar_t TRAJECTORYLINEWIDTH = 0.005;
     const std::array<scalar_t, 3> red{0.6350, 0.0780, 0.1840};
     const std::array<scalar_t, 3> blue{0, 0.4470, 0.7410};
