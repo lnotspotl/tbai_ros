@@ -108,8 +108,10 @@ void FrankaMpcController::initialize() {
 /*********************************************************************************************************************/
 std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t currentTime, scalar_t dt) {
     // Same pattern as quadruped MpcController
-    mrtPtr_->spinMRT();
-    mrtPtr_->updatePolicy();
+    if (!wbcOnly_) {
+        mrtPtr_->spinMRT();
+        mrtPtr_->updatePolicy();
+    }
 
     tNow_ = getCurrentTimeFunction_() - initTime_;
 
@@ -117,8 +119,6 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
 
     // Read target from interactive marker (thread-safe)
     interactiveMarkerTargetPtr_->getTargetPose(targetEEPosition_, targetEEOrientation_);
-
-    constexpr bool debug = false;
 
     ocs2::vector_t desiredState;
     ocs2::vector_t desiredInput;
@@ -128,8 +128,11 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
     desiredInput = vector_t::Zero(7);
     desiredJointAcceleration = vector_t::Zero(7);
 
-    // Evaluate MPC policy
-    if (!debug) {
+    if (wbcOnly_) {
+        desiredState = observation.state;
+        desiredInput = observation.input;
+        desiredJointAcceleration = vector_t::Zero(7);
+    } else {
         size_t desiredMode;
         mrtPtr_->evaluatePolicy(tNow_, observation.state, desiredState, desiredInput, desiredMode);
 
@@ -142,10 +145,6 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
 
         const size_t nJoints = 7;
         desiredJointAcceleration = 0 * (dummyInput.tail(nJoints) - desiredInput.tail(nJoints)) / time_eps;
-    } else {
-        desiredState = observation.state;
-        desiredInput = observation.input;
-        desiredJointAcceleration = vector_t::Zero(7);
     }
 
     // Get motor commands from WBC
@@ -155,7 +154,7 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
 
     // Update MPC observation and target periodically (same as quadruped)
     timeSinceLastMpcUpdate_ += dt;
-    if (timeSinceLastMpcUpdate_ >= 1.0 / mpcRate_) {
+    if (timeSinceLastMpcUpdate_ >= 1.0 / mpcRate_ && !wbcOnly_) {
         setObservation();
 
         // Update target trajectory (inline, no separate thread)
@@ -194,14 +193,20 @@ void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
         // Compute current EE pose from joint positions
         computeCurrentEEPose(jointPositions);
 
-        // Compute EE trajectory from MPC solution (make a copy for thread safety)
-        ocs2::PrimalSolution primalSolution = mrtPtr_->getPolicy();
-        eeTrajectory_ = computeEETrajectory(primalSolution);
+        if (!wbcOnly_) {
+            // Compute EE trajectory from MPC solution (make a copy for thread safety)
+            ocs2::PrimalSolution primalSolution = mrtPtr_->getPolicy();
+            eeTrajectory_ = computeEETrajectory(primalSolution);
 
-        // Update visualizer (publishes robot state TF and markers)
-        auto observation = generateSystemObservation();
-        visualizerPtr_->update(jointPositions, currentEEPosition_, currentEEOrientation_, targetEEPosition_,
-                               targetEEOrientation_, eeTrajectory_, observation, primalSolution);
+            // Update visualizer (publishes robot state TF and markers)
+            auto observation = generateSystemObservation();
+            visualizerPtr_->update(jointPositions, currentEEPosition_, currentEEOrientation_, targetEEPosition_,
+                                   targetEEOrientation_, eeTrajectory_, observation, primalSolution);
+        } else {
+            auto observation = generateSystemObservation();
+            visualizerPtr_->updateWbc(jointPositions, currentEEPosition_, currentEEOrientation_, targetEEPosition_,
+                                      targetEEOrientation_, observation);
+        }
 
         timeSinceLastVisualizationUpdate_ = 0.0;
     }

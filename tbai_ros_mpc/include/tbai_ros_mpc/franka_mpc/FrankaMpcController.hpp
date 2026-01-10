@@ -112,6 +112,8 @@ class FrankaMpcController : public tbai::Controller {
     vector_t currentEEPosition_;
     vector_t currentEEOrientation_;
 
+    const bool wbcOnly_ = true;
+
     // Helper to compute current EE pose
     void computeCurrentEEPose(const vector_t &jointPositions);
 

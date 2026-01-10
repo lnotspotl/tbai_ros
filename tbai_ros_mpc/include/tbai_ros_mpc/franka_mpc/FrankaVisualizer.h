@@ -37,6 +37,13 @@ class FrankaVisualizer {
                 const std::vector<vector_t>& eeTrajectory,
                 const ocs2::SystemObservation& observation,
                 const ocs2::PrimalSolution& primalSolution);
+    
+    void updateWbc(const vector_t& jointPositions,
+        const vector_t& currentEEPosition,
+        const vector_t& currentEEOrientation,
+        const vector_t& targetEEPosition,
+        const vector_t& targetEEOrientation,
+        const ocs2::SystemObservation& observation);
 
    private:
     void launchNode(ros::NodeHandle& nodeHandle);

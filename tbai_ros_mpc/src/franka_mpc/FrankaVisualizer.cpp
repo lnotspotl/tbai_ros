@@ -42,10 +42,9 @@ void FrankaVisualizer::launchNode(ros::NodeHandle &nodeHandle) {
     targetPosePublisher_ = nodeHandle.advertise<geometry_msgs::PoseStamped>("/franka/targetPose", 1);
 }
 
-void FrankaVisualizer::update(const vector_t &jointPositions, const vector_t &currentEEPosition,
-                              const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
-                              const vector_t &targetEEOrientation, const std::vector<vector_t> &eeTrajectory,
-                              const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &primalSolution) {
+void FrankaVisualizer::updateWbc(const vector_t &jointPositions, const vector_t &currentEEPosition,
+                                 const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
+                                 const vector_t &targetEEOrientation, const ocs2::SystemObservation &observation) {
     if (observation.time - lastTime_ < minPublishTimeDifference_) {
         return;
     }
@@ -58,6 +57,20 @@ void FrankaVisualizer::update(const vector_t &jointPositions, const vector_t &cu
     // Publish visualization markers
     publishCurrentEEMarker(timeStamp, currentEEPosition, currentEEOrientation);
     publishTargetEEMarker(timeStamp, targetEEPosition, targetEEOrientation);
+}
+
+void FrankaVisualizer::update(const vector_t &jointPositions, const vector_t &currentEEPosition,
+                              const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
+                              const vector_t &targetEEOrientation, const std::vector<vector_t> &eeTrajectory,
+                              const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &primalSolution) {
+    if (observation.time - lastTime_ < minPublishTimeDifference_) {
+        return;
+    }
+
+    const auto timeStamp = ros::Time::now();
+    updateWbc(jointPositions, currentEEPosition, currentEEOrientation, targetEEPosition, targetEEOrientation,
+              observation);
+
     publishDesiredEETrajectory(timeStamp, eeTrajectory);
 
     lastTime_ = observation.time;
