@@ -68,7 +68,7 @@ using namespace switched_model;
 
 int main(int argc, char *argv[]) {
     // Initialize ros node
-    ros::init(argc, argv, "mpc_node");
+    ros::init(argc, argv, "quadruped_mpc_node");
     ros::NodeHandle nodeHandle;
 
     // Ger urdf

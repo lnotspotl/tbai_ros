@@ -54,23 +54,23 @@ target_link_libraries(${PROJECT_NAME}
 )
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
-add_executable(mpc_node
-  src/MpcNode.cpp
+add_executable(quadruped_mpc_node
+  src/quadruped_mpc/QuadrupedMpcNode.cpp
 )
-target_link_libraries(mpc_node
+target_link_libraries(quadruped_mpc_node
   ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${PROJECT_NAME}
 )
-target_compile_options(mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(quadruped_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
 
 add_executable(simple_blind
-    src/simple_blind.cpp
+    src/quadruped_mpc/simple_blind.cpp
 )
 target_link_libraries(simple_blind
     ${catkin_LIBRARIES} yaml-cpp ${PROJECT_NAME}
 )
 
 add_executable(simple_perceptive
-    src/simple_perceptive.cpp
+    src/quadruped_mpc/simple_perceptive.cpp
 )
 target_link_libraries(simple_perceptive
     ${catkin_LIBRARIES} yaml-cpp ${PROJECT_NAME}

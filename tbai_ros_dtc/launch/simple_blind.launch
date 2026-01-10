@@ -70,6 +70,6 @@
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>  
 
     <!-- Launch MPC node -->
-    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="quadruped_mpc_node" name="quadruped_mpc_node" output="screen"/>
 
 </launch>

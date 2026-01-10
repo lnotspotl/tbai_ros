@@ -51,9 +51,9 @@
         <param name="robot_description" textfile="$(arg urdf_file)"/>
 
         <!-- MPC node -->
-        <node if="$(arg debug)" pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node"
+        <node if="$(arg debug)" pkg="tbai_ros_mpc" type="quadruped_mpc_node" name="quadruped_mpc_node"
               output="screen" launch-prefix="gnome-terminal -- gdb -ex run --args"/>
-        <node unless="$(arg debug)" pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node"
+        <node unless="$(arg debug)" pkg="tbai_ros_mpc" type="quadruped_mpc_node" name="quadruped_mpc_node"
               output="screen"/>
 
         <!-- Dummy MRT node -->
@@ -94,7 +94,7 @@
         <node name="simple" pkg="tbai_ros_mpc" type="simple_blind" output="screen"/>
 
         <!-- Launch MPC node -->
-        <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
+        <node pkg="tbai_ros_mpc" type="quadruped_mpc_node" name="quadruped_mpc_node" output="screen"/>
 
         <!-- Launch Gait command node -->
         <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"

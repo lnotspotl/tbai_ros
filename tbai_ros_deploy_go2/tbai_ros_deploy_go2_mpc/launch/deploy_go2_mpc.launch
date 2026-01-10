@@ -61,7 +61,7 @@
     <node name="deploy_go2_mpc" pkg="tbai_ros_deploy_go2_mpc" type="deploy_go2_mpc" output="screen"/>
 
     <!-- Launch MPC node -->
-    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
+    <node pkg="tbai_ros_mpc" type="quadruped_mpc_node" name="quadruped_mpc_node" output="screen"/>
 
     <!-- Launch Gait command node -->
     <node pkg="tbai_ros_deploy_go2_mpc" type="go2_gait_node" name="go2_gait_node"
