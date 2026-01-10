@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
+    <!-- Mode selection: dummy=true for visualization-only, dummy=false for full Gazebo + WBC -->
+    <arg name="dummy" default="false"/>
+
     <!-- Required arguments -->
     <arg name="robot_name"          default="spot"/>
     <arg name="controllers_ns"      default="spot"/>
@@ -7,6 +10,7 @@
     <arg name="tbai_config_path"    default="$(find tbai_ros_mpc)/config/spot/blind/default_config_spot.yaml"/>
     <arg name="description_name"    default="robot_description"/>
     <arg name="description_file"    default="$(find tbai_ros_description)/urdf/spot_gazebo_blind.urdf.xacro"/>
+    <arg name="urdf_file"           default="$(find gazebo_robotic_assets)/resources/spot/urdf/spot.urdf"/>
 
     <arg name="sqp_settings_file" default="$(find tbai_ros_mpc)/config/spot/blind/sqp.info"/>
     <arg name="frame_declaration_file" default="$(find tbai_ros_mpc)/config/spot/blind/frame_declarations.info"/>
@@ -14,8 +18,8 @@
     <arg name="target_command_config_file" default="$(find tbai_ros_mpc)/config/spot/blind/targetCommand.info"/>
     <arg name="controller_config_file" default="$(find tbai_ros_mpc)/config/spot/blind/controllers.info"/>
     <arg name="gait_file" default="$(find tbai_ros_mpc)/config/spot/blind/gait.info"/>
-    
-    <!-- Gazebo parameters -->
+
+    <!-- Gazebo parameters (only used when dummy=false) -->
     <arg name="gui" default="false"/>
     <arg name="paused" default="false"/>
     <arg name="world" default="normal"/>
@@ -23,14 +27,16 @@
     <arg name="y" default="0.0"/>
     <arg name="z" default="0.5"/>
 
+    <!-- Debug and visualization -->
+    <arg name="debug" default="false"/>
+    <arg name="rviz" default="true"/>
+
     <!-- Upload config path to ROS param server -->
     <param name="tbai_config_path" type="string" value="$(arg tbai_config_path)"/>
     <param name="robot_name" type="string" value="$(arg robot_name)"/>
+
     <!-- Set environment variable for config path -->
     <env name="TBAI_GLOBAL_CONFIG_PATH" value="$(arg tbai_config_path)"/>
-
-    <!-- Launch virtual joystick -->
-    <node name="virtual_joystick" pkg="tbai_ros_utils" type="virtual_joystick.py" output="screen"/>
 
     <param name="sqp_settings_file" type="string" value="$(arg sqp_settings_file)"/>
     <param name="frame_declaration_file" type="string" value="$(arg frame_declaration_file)"/>
@@ -39,35 +45,68 @@
     <param name="controller_config_file" type="string" value="$(arg controller_config_file)"/>
     <param name="gait_file" type="string" value="$(arg gait_file)"/>
 
-    <!-- Launch gazebo -->
-    <include file="$(find tbai_ros_gazebo)/launch/world.launch">
-        <arg name="controllers_ns" value="$(arg controllers_ns)"/>
-        <arg name="controllers_args" value="$(arg controllers_args)"/>
-        <arg name="config_file" value="$(arg tbai_config_path)"/>
-        <arg name="description_name" value="$(arg description_name)"/>
-        <arg name="description_file" value="$(arg description_file)"/>
-        <arg name="gui" value="$(arg gui)"/>
-        <arg name="world" value="$(arg world)"/>
-        <arg name="x" value="$(arg x)"/>
-        <arg name="y" value="$(arg y)"/>
-        <arg name="z" value="$(arg z)"/>
-        <arg name="paused" value="$(arg paused)"/>
-    </include>
+    <!-- Dummy mode: visualization-only without Gazebo -->
+    <group if="$(arg dummy)">
+        <!-- Load robot description from URDF file -->
+        <param name="robot_description" textfile="$(arg urdf_file)"/>
 
-    <!-- Launch simple node -->
-    <node name="simple" pkg="tbai_ros_mpc" type="simple_blind" output="screen"/>
+        <!-- MPC node -->
+        <node if="$(arg debug)" pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node"
+              output="screen" launch-prefix="gnome-terminal -- gdb -ex run --args"/>
+        <node unless="$(arg debug)" pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node"
+              output="screen"/>
 
-    <!-- Launch MPC node -->
-    <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
+        <!-- Dummy MRT node -->
+        <node pkg="tbai_ros_mpc" type="quadruped_dummy_mrt_node" name="quadruped_dummy_mrt_node"
+              output="screen"/>
 
-    <!-- Launch Gait command node -->
-    <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
-          output="screen" launch-prefix="x-terminal-emulator -e">
-        <param name="robot_name" value="$(arg robot_name)"/>
-    </node>
+        <!-- Launch Gait command node -->
+        <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
+              output="screen" launch-prefix="x-terminal-emulator -e">
+            <param name="robot_name" value="$(arg robot_name)"/>
+        </node>
+
+        <!-- Launch virtual joystick -->
+        <node name="virtual_joystick" pkg="tbai_ros_utils" type="virtual_joystick.py" output="screen"/>
+    </group>
+
+    <!-- Full mode: Gazebo + WBC -->
+    <group unless="$(arg dummy)">
+        <!-- Launch virtual joystick -->
+        <node name="virtual_joystick" pkg="tbai_ros_utils" type="virtual_joystick.py" output="screen"/>
+
+        <!-- Launch gazebo -->
+        <include file="$(find tbai_ros_gazebo)/launch/world.launch">
+            <arg name="controllers_ns" value="$(arg controllers_ns)"/>
+            <arg name="controllers_args" value="$(arg controllers_args)"/>
+            <arg name="config_file" value="$(arg tbai_config_path)"/>
+            <arg name="description_name" value="$(arg description_name)"/>
+            <arg name="description_file" value="$(arg description_file)"/>
+            <arg name="gui" value="$(arg gui)"/>
+            <arg name="world" value="$(arg world)"/>
+            <arg name="x" value="$(arg x)"/>
+            <arg name="y" value="$(arg y)"/>
+            <arg name="z" value="$(arg z)"/>
+            <arg name="paused" value="$(arg paused)"/>
+        </include>
+
+        <!-- Launch simple node -->
+        <node name="simple" pkg="tbai_ros_mpc" type="simple_blind" output="screen"/>
+
+        <!-- Launch MPC node -->
+        <node pkg="tbai_ros_mpc" type="mpc_node" name="mpc_node" output="screen"/>
+
+        <!-- Launch Gait command node -->
+        <node pkg="tbai_ros_ocs2" type="gait_command_node" name="gait_command_node"
+              output="screen" launch-prefix="x-terminal-emulator -e">
+            <param name="robot_name" value="$(arg robot_name)"/>
+        </node>
+    </group>
 
     <!-- Start Rviz visualizer -->
-    <arg name="rvizconfig" default="$(find tbai_ros_mpc)/launch/rviz/robot.rviz" />
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen" />
+    <group if="$(arg rviz)">
+        <arg name="rvizconfig" default="$(find tbai_ros_mpc)/launch/rviz/robot.rviz" />
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen" />
+    </group>
 
 </launch>

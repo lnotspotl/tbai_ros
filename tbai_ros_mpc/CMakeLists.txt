@@ -76,6 +76,15 @@ target_link_libraries(simple_perceptive
     ${catkin_LIBRARIES} yaml-cpp ${PROJECT_NAME}
 )
 
+## Quadruped Dummy MRT node
+add_executable(quadruped_dummy_mrt_node
+    src/quadruped_mpc/QuadrupedDummyMRT.cpp
+)
+target_link_libraries(quadruped_dummy_mrt_node
+    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${PROJECT_NAME}
+)
+target_compile_options(quadruped_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
+
 ## Franka MPC visualization library
 add_library(tbai_ros_franka_mpc
     src/franka_mpc/FrankaDummyVisualization.cpp
