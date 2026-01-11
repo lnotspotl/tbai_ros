@@ -15,19 +15,17 @@
 #include <ocs2_mpc/CommandData.h>
 #include <ocs2_oc/oc_data/PrimalSolution.h>
 
-namespace tbai {
-namespace mpc {
-namespace franka {
+namespace tbai::mpc::arm {
 
 using ocs2::scalar_t;
 using ocs2::vector_t;
 
-class FrankaVisualizer {
+class ArmVisualizer {
    public:
-    FrankaVisualizer(ros::NodeHandle& nodeHandle,
+    ArmVisualizer(ros::NodeHandle& nodeHandle,
                      const std::vector<std::string>& jointNames,
                      scalar_t maxUpdateFrequency = 30.0);
-    ~FrankaVisualizer() = default;
+    ~ArmVisualizer() = default;
 
     void update(const vector_t& jointPositions,
                 const vector_t& currentEEPosition,
@@ -37,7 +35,7 @@ class FrankaVisualizer {
                 const std::vector<vector_t>& eeTrajectory,
                 const ocs2::SystemObservation& observation,
                 const ocs2::PrimalSolution& primalSolution);
-    
+
     void updateWbc(const vector_t& jointPositions,
         const vector_t& currentEEPosition,
         const vector_t& currentEEOrientation,
@@ -85,6 +83,4 @@ class FrankaVisualizer {
     scalar_t minPublishTimeDifference_;
 };
 
-}  // namespace franka
-}  // namespace mpc
-}  // namespace tbai
+}  // namespace tbai::mpc::arm

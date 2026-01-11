@@ -1,15 +1,13 @@
-#include "tbai_ros_mpc/franka_mpc/InteractiveMarkerTarget.h"
+#include "tbai_ros_mpc/arm_mpc/InteractiveMarkerTarget.h"
 
 #include <boost/bind.hpp>
 
-namespace tbai {
-namespace mpc {
-namespace franka {
+namespace tbai::mpc::arm {
 
 InteractiveMarkerTarget::InteractiveMarkerTarget(ros::NodeHandle &nodeHandle, const std::string &frameId,
                                                  const Eigen::Vector3d &initialPosition,
                                                  const Eigen::Quaterniond &initialOrientation)
-    : server_("franka_ee_target"), targetPosition_(initialPosition), targetOrientation_(initialOrientation) {
+    : server_("arm_ee_target"), targetPosition_(initialPosition), targetOrientation_(initialOrientation) {
     createInteractiveMarker(frameId, initialPosition, initialOrientation);
 }
 
@@ -133,6 +131,4 @@ void InteractiveMarkerTarget::getTargetPose(vector_t &position, vector_t &orient
     orientation << targetOrientation_.x(), targetOrientation_.y(), targetOrientation_.z(), targetOrientation_.w();
 }
 
-}  // namespace franka
-}  // namespace mpc
-}  // namespace tbai
+}  // namespace tbai::mpc::arm

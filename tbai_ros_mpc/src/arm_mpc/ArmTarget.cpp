@@ -128,13 +128,13 @@ class TargetTrajectoriesPublisher {
 };
 
 int main(int argc, char *argv[]) {
-    const std::string robotName = "franka";
+    const std::string robotName = "arm";
     ros::init(argc, argv, robotName + "_target");
     ros::NodeHandle nodeHandle;
 
     TargetTrajectoriesPublisher targetPublisher(nodeHandle, robotName);
 
-    ROS_INFO("Franka Target: Interactive marker ready. Move the marker in RViz to set targets.");
+    ROS_INFO("Arm Target: Interactive marker ready. Move the marker in RViz to set targets.");
 
     ros::spin();
 

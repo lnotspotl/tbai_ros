@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "tbai_ros_mpc/franka_mpc/FrankaMpcController.hpp"
+#include "tbai_ros_mpc/arm_mpc/ArmMpcController.hpp"
 #include "tbai_ros_static/StaticController.hpp"
 #include <ros/ros.h>
 #include <tbai_core/Logging.hpp>
@@ -16,7 +16,7 @@
 #include <tbai_ros_core/Subscribers.hpp>
 
 int main(int argc, char *argv[]) {
-    ros::init(argc, argv, "franka_wbc");
+    ros::init(argc, argv, "arm_wbc");
     ros::NodeHandle nh;
 
     // Set zero time
@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
     // Add static controller (starts first, holds home position)
     controller.addController(std::make_unique<tbai::static_::RosStaticController>(stateSubscriber));
 
-    // Add Franka MPC+WBC controller (switch to this via change_controller_topic)
+    // Add Arm MPC+WBC controller (switch to this via change_controller_topic)
     auto getCurrentTime = []() { return tbai::RosTime::rightNow(); };
-    controller.addController(std::make_unique<tbai::mpc::franka::FrankaMpcController>(stateSubscriber, getCurrentTime));
+    controller.addController(std::make_unique<tbai::mpc::arm::ArmMpcController>(stateSubscriber, getCurrentTime));
 
     // Start controller loop
     controller.start();

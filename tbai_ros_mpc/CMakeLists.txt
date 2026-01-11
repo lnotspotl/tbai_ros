@@ -136,58 +136,58 @@ target_link_libraries(simple_arm_blind
 )
 target_compile_options(simple_arm_blind PRIVATE ${OCS2_CXX_FLAGS})
 
-## Franka MPC visualization library
-add_library(tbai_ros_franka_mpc
-    src/franka_mpc/FrankaDummyVisualization.cpp
-    src/franka_mpc/FrankaMpcController.cpp
-    src/franka_mpc/FrankaVisualizer.cpp
-    src/franka_mpc/InteractiveMarkerTarget.cpp
+## Arm MPC visualization library (generic arm manipulator)
+add_library(tbai_ros_arm_mpc
+    src/arm_mpc/ArmDummyVisualization.cpp
+    src/arm_mpc/ArmMpcController.cpp
+    src/arm_mpc/ArmVisualizer.cpp
+    src/arm_mpc/InteractiveMarkerTarget.cpp
 )
-target_link_libraries(tbai_ros_franka_mpc
+target_link_libraries(tbai_ros_arm_mpc
     PUBLIC
     ${catkin_LIBRARIES}
     ${pinocchio_LIBRARIES}
     spdlog::spdlog
 )
-target_compile_options(tbai_ros_franka_mpc PUBLIC ${OCS2_CXX_FLAGS})
+target_compile_options(tbai_ros_arm_mpc PUBLIC ${OCS2_CXX_FLAGS})
 
-## Franka MPC node
-add_executable(franka_mpc_node
-    src/franka_mpc/FrankaMpcNode.cpp
+## Arm MPC node
+add_executable(arm_mpc_node
+    src/arm_mpc/ArmMpcNode.cpp
 )
-target_link_libraries(franka_mpc_node
+target_link_libraries(arm_mpc_node
     ${catkin_LIBRARIES}
-    tbai_ros_franka_mpc
+    tbai_ros_arm_mpc
 )
-target_compile_options(franka_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(arm_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
 
-## Franka Dummy MRT node
-add_executable(franka_dummy_mrt_node
-    src/franka_mpc/FrankaDummyMRT.cpp
+## Arm Dummy MRT node
+add_executable(arm_dummy_mrt_node
+    src/arm_mpc/ArmDummyMRT.cpp
 )
-target_link_libraries(franka_dummy_mrt_node
+target_link_libraries(arm_dummy_mrt_node
     ${catkin_LIBRARIES}
-    tbai_ros_franka_mpc
+    tbai_ros_arm_mpc
 )
-target_compile_options(franka_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(arm_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
 
-## Franka target interactive marker node
-add_executable(franka_target
-    src/franka_mpc/FrankaTarget.cpp
+## Arm target interactive marker node
+add_executable(arm_target
+    src/arm_mpc/ArmTarget.cpp
 )
-target_link_libraries(franka_target
+target_link_libraries(arm_target
     ${catkin_LIBRARIES}
 )
-target_compile_options(franka_target PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(arm_target PRIVATE ${OCS2_CXX_FLAGS})
 
-## Franka WBC simple node
-add_executable(simple_franka_wbc
-    src/franka_mpc/simple_franka_wbc.cpp
+## Arm WBC simple node
+add_executable(simple_arm_wbc
+    src/arm_mpc/simple_arm_wbc.cpp
 )
-target_link_libraries(simple_franka_wbc
+target_link_libraries(simple_arm_wbc
     ${catkin_LIBRARIES}
-    tbai_ros_franka_mpc
+    tbai_ros_arm_mpc
     spdlog::spdlog
     yaml-cpp
 )
-target_compile_options(simple_franka_wbc PRIVATE ${OCS2_CXX_FLAGS})
+target_compile_options(simple_arm_wbc PRIVATE ${OCS2_CXX_FLAGS})

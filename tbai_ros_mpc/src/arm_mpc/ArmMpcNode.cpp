@@ -1,15 +1,15 @@
 #include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ros/init.h>
 #include <ros/package.h>
-#include <tbai_mpc/franka_mpc/FrankaInterface.h>
+#include <tbai_mpc/arm_mpc/ArmInterface.h>
 #include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/RosReferenceManager.hpp>
 
 using namespace ocs2;
-using namespace franka;
+using namespace tbai::mpc::arm;
 
 int main(int argc, char **argv) {
-    const std::string robotName = "franka";
+    const std::string robotName = "arm";
 
     ros::init(argc, argv, robotName + "_mpc");
     ros::NodeHandle nodeHandle;
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     std::cerr << "Loading library folder: " << libFolder << std::endl;
     std::cerr << "Loading urdf file: " << urdfFile << std::endl;
 
-    FrankaInterface interface(taskFile, libFolder, urdfFile);
+    ArmInterface interface(taskFile, libFolder, urdfFile);
 
     auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(robotName, interface.getReferenceManagerPtr());
     rosReferenceManagerPtr->subscribe(nodeHandle);

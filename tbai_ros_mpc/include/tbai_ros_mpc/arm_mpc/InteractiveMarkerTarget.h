@@ -11,9 +11,7 @@
 
 #include <ocs2_core/Types.h>
 
-namespace tbai {
-namespace mpc {
-namespace franka {
+namespace tbai::mpc::arm {
 
 using ocs2::scalar_t;
 using ocs2::vector_t;
@@ -76,6 +74,4 @@ class InteractiveMarkerTarget {
     Eigen::Quaterniond targetOrientation_;
 };
 
-}  // namespace franka
-}  // namespace mpc
-}  // namespace tbai
+}  // namespace tbai::mpc::arm

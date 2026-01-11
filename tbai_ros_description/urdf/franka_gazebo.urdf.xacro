@@ -51,7 +51,7 @@
 <gazebo>
   <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
     <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-    <robotNamespace>/franka</robotNamespace>
+    <robotNamespace>/arm</robotNamespace>
   </plugin>
 </gazebo>
 

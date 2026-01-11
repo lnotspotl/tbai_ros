@@ -1,11 +1,11 @@
-robot_name: 'franka'
+robot_name: 'arm'
 
 joint_names: &jn ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
 base_name: "panda_link0"
 
-state_topic: "franka/state"
-command_topic: "franka/command"
-change_controller_topic: "franka/change_controller"
+state_topic: "arm/state"
+command_topic: "arm/command"
+change_controller_topic: "arm/change_controller"
 
 fixed_base: true
 
@@ -23,10 +23,10 @@ mpc_controller:
   wbc_type: "hqp"  # "hqp" or "sqp"
   rate: 400        # Hz
   reference_trajectory:
-    reference_topic: "/franka_mpc_target"
-    observation_topic: "/franka_mpc_observation"
+    reference_topic: "/arm_mpc_target"
+    observation_topic: "/arm_mpc_observation"
 
-franka:
+arm:
   joint_controller:
       type: tbai_ros_gazebo/JointController
       joints: *jn

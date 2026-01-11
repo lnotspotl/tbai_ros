@@ -1,15 +1,15 @@
 #include <ocs2_mpc/SystemObservation.h>
 #include <ros/init.h>
 #include <ros/package.h>
-#include <tbai_mpc/franka_mpc/FrankaInterface.h>
-#include <tbai_ros_mpc/franka_mpc/FrankaDummyVisualization.h>
+#include <tbai_mpc/arm_mpc/ArmInterface.h>
+#include <tbai_ros_mpc/arm_mpc/ArmDummyVisualization.h>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 
 using namespace ocs2;
-using namespace franka;
+using namespace tbai::mpc::arm;
 
 int main(int argc, char **argv) {
-    const std::string robotName = "franka";
+    const std::string robotName = "arm";
 
     ros::init(argc, argv, robotName + "_mrt");
     ros::NodeHandle nodeHandle;
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     std::cerr << "Loading library folder: " << libFolder << std::endl;
     std::cerr << "Loading urdf file: " << urdfFile << std::endl;
 
-    franka::FrankaInterface interface(taskFile, libFolder, urdfFile);
+    tbai::mpc::arm::ArmInterface interface(taskFile, libFolder, urdfFile);
 
     // MRT
     tbai::ocs2_ros::MRT_ROS_Interface mrt(robotName);
@@ -30,19 +30,19 @@ int main(int argc, char **argv) {
     mrt.launchNodes(nodeHandle);
 
     // Visualization
-    auto dummyVisualization = std::make_shared<franka::FrankaDummyVisualization>(nodeHandle, interface);
+    auto dummyVisualization = std::make_shared<tbai::mpc::arm::ArmDummyVisualization>(nodeHandle, interface);
 
     // Initial observation
     SystemObservation observation;
     observation.state = interface.getInitialState();
-    observation.input.setZero(interface.getFrankaModelInfo().inputDim);
+    observation.input.setZero(interface.getArmModelInfo().inputDim);
     observation.time = 0.0;
 
     // Initial target
     vector_t initTarget(7);
     initTarget.head(3) << 0.5, 0, 0.5;
     initTarget.tail(4) << Eigen::Quaternion<scalar_t>(1, 0, 0, 0).coeffs();
-    const vector_t zeroInput = vector_t::Zero(interface.getFrankaModelInfo().inputDim);
+    const vector_t zeroInput = vector_t::Zero(interface.getArmModelInfo().inputDim);
     const TargetTrajectories initTargetTrajectories({observation.time}, {initTarget}, {zeroInput});
 
     // Reset MPC node

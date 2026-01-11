@@ -18,25 +18,26 @@
 #include <tbai_core/Logging.hpp>
 #include <tbai_core/control/Controllers.hpp>
 #include <tbai_core/control/Subscribers.hpp>
-#include <tbai_mpc/franka_mpc/FrankaInterface.h>
-#include <tbai_mpc/franka_wbc/WbcBase.hpp>
-#include <tbai_ros_mpc/franka_mpc/FrankaVisualizer.h>
-#include <tbai_ros_mpc/franka_mpc/InteractiveMarkerTarget.h>
+#include <tbai_mpc/arm_mpc/ArmInterface.h>
+#include <tbai_mpc/arm_wbc/WbcBase.hpp>
+#include <tbai_ros_mpc/arm_mpc/ArmVisualizer.h>
+#include <tbai_ros_mpc/arm_mpc/InteractiveMarkerTarget.h>
 
-namespace tbai {
-namespace mpc {
-namespace franka {
+namespace tbai::mpc::arm {
 
-class FrankaMpcController : public tbai::Controller {
+using ocs2::scalar_t;
+using ocs2::vector_t;
+
+class ArmMpcController : public tbai::Controller {
    public:
-    FrankaMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
+    ArmMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                         std::function<scalar_t()> getCurrentTimeFunction);
 
-    ~FrankaMpcController() override;
+    ~ArmMpcController() override;
 
     std::vector<MotorCommand> getMotorCommands(scalar_t currentTime, scalar_t dt) override;
 
-    std::string getName() const override { return "FrankaMpcController"; }
+    std::string getName() const override { return "ArmMpcController"; }
 
     void changeController(const std::string &controllerType, scalar_t currentTime) override;
 
@@ -72,7 +73,7 @@ class FrankaMpcController : public tbai::Controller {
     std::shared_ptr<tbai::StateSubscriber> stateSubscriberPtr_;
     std::shared_ptr<spdlog::logger> logger_;
 
-    std::unique_ptr<ocs2::franka::FrankaInterface> manipulatorInterfacePtr_;
+    std::unique_ptr<tbai::mpc::arm::ArmInterface> manipulatorInterfacePtr_;
     std::unique_ptr<WbcBase> wbcPtr_;
     std::unique_ptr<ocs2::GaussNewtonDDP_MPC> mpcPtr_;
     std::unique_ptr<ocs2::MPC_MRT_Interface> mrtPtr_;
@@ -101,7 +102,7 @@ class FrankaMpcController : public tbai::Controller {
     vector_t targetEEOrientation_;
 
     // Visualization
-    std::unique_ptr<FrankaVisualizer> visualizerPtr_;
+    std::unique_ptr<ArmVisualizer> visualizerPtr_;
     scalar_t timeSinceLastVisualizationUpdate_ = 1e5;
 
     // Pinocchio interface for FK computation (needs mutable data)
@@ -130,6 +131,4 @@ class FrankaMpcController : public tbai::Controller {
     std::unique_ptr<InteractiveMarkerTarget> interactiveMarkerTargetPtr_;
 };
 
-}  // namespace franka
-}  // namespace mpc
-}  // namespace tbai
+}  // namespace tbai::mpc::arm

@@ -2,7 +2,7 @@
 #include <pinocchio/fwd.hpp>
 // clang-format on
 
-#include "tbai_ros_mpc/franka_mpc/FrankaMpcController.hpp"
+#include "tbai_ros_mpc/arm_mpc/ArmMpcController.hpp"
 
 #include <ocs2_ddp/GaussNewtonDDP_MPC.h>
 #include <ocs2_pinocchio_interface/urdf.h>
@@ -13,19 +13,17 @@
 #include <tbai_core/Throws.hpp>
 #include <tbai_core/Utils.hpp>
 #include <tbai_core/config/Config.hpp>
-#include <tbai_mpc/franka_wbc/Factory.hpp>
+#include <tbai_mpc/arm_wbc/Factory.hpp>
 
-namespace tbai {
-namespace mpc {
-namespace franka {
+namespace tbai::mpc::arm {
 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-FrankaMpcController::FrankaMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
+ArmMpcController::ArmMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
                                          std::function<scalar_t()> getCurrentTimeFunction)
     : stateSubscriberPtr_(stateSubscriberPtr), getCurrentTimeFunction_(getCurrentTimeFunction) {
-    logger_ = tbai::getLogger("franka_mpc_controller");
+    logger_ = tbai::getLogger("arm_mpc_controller");
     initTime_ = tbai::readInitTime();
     initialize();
 }
@@ -33,14 +31,14 @@ FrankaMpcController::FrankaMpcController(const std::shared_ptr<tbai::StateSubscr
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-FrankaMpcController::~FrankaMpcController() {
+ArmMpcController::~ArmMpcController() {
     stopReferenceThread();
 }
 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::initialize() {
+void ArmMpcController::initialize() {
     // Load configuration paths from ROS parameters (set by launch file)
     ros::NodeHandle nh;
     std::string taskFile, libFolder, urdfFile;
@@ -48,19 +46,19 @@ void FrankaMpcController::initialize() {
     nh.getParam("/libFolder", libFolder);
     nh.getParam("/urdfFile", urdfFile);
 
-    std::cerr << "[FrankaMpcController] Loading task file: " << taskFile << std::endl;
-    std::cerr << "[FrankaMpcController] Loading library folder: " << libFolder << std::endl;
-    std::cerr << "[FrankaMpcController] Loading URDF file: " << urdfFile << std::endl;
+    std::cerr << "[ArmMpcController] Loading task file: " << taskFile << std::endl;
+    std::cerr << "[ArmMpcController] Loading library folder: " << libFolder << std::endl;
+    std::cerr << "[ArmMpcController] Loading URDF file: " << urdfFile << std::endl;
 
     // Create manipulator interface
-    manipulatorInterfacePtr_ = std::make_unique<ocs2::franka::FrankaInterface>(taskFile, libFolder, urdfFile);
+    manipulatorInterfacePtr_ = std::make_unique<tbai::mpc::arm::ArmInterface>(taskFile, libFolder, urdfFile);
 
     // Get URDF string for WBC
     std::ifstream urdfStream(urdfFile);
     std::string urdfString((std::istreambuf_iterator<char>(urdfStream)), std::istreambuf_iterator<char>());
 
     // Create WBC
-    wbcPtr_ = getWbcUnique(taskFile, urdfString, manipulatorInterfacePtr_->getFrankaModelInfo());
+    wbcPtr_ = getWbcUnique(taskFile, urdfString, manipulatorInterfacePtr_->getArmModelInfo());
 
     // Create MPC
     mpcPtr_ = std::make_unique<ocs2::GaussNewtonDDP_MPC>(
@@ -87,11 +85,11 @@ void FrankaMpcController::initialize() {
     // Create Pinocchio interface copy for EE pose computation (needs mutable data for FK)
     pinocchioInterfacePtr_ =
         std::make_unique<ocs2::PinocchioInterface>(manipulatorInterfacePtr_->getPinocchioInterface());
-    eeFrameId_ = pinocchioInterfacePtr_->getModel().getFrameId(manipulatorInterfacePtr_->getFrankaModelInfo().eeFrame);
+    eeFrameId_ = pinocchioInterfacePtr_->getModel().getFrameId(manipulatorInterfacePtr_->getArmModelInfo().eeFrame);
 
     // Create visualizer with joint names
-    const auto &jointNames = manipulatorInterfacePtr_->getFrankaModelInfo().dofNames;
-    visualizerPtr_ = std::make_unique<FrankaVisualizer>(nh, jointNames);
+    const auto &jointNames = manipulatorInterfacePtr_->getArmModelInfo().dofNames;
+    visualizerPtr_ = std::make_unique<ArmVisualizer>(nh, jointNames);
 
     // Create interactive marker target for RViz control
     Eigen::Vector3d initialPosition(targetEEPosition_(0), targetEEPosition_(1), targetEEPosition_(2));
@@ -106,7 +104,7 @@ void FrankaMpcController::initialize() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t currentTime, scalar_t dt) {
+std::vector<MotorCommand> ArmMpcController::getMotorCommands(scalar_t currentTime, scalar_t dt) {
     // Same pattern as quadruped MpcController
     if (!wbcOnly_) {
         mrtPtr_->spinMRT();
@@ -161,7 +159,7 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
         vector_t targetState(7);
         targetState.head(3) = targetEEPosition_;
         targetState.tail(4) = targetEEOrientation_;
-        const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getFrankaModelInfo().inputDim);
+        const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getArmModelInfo().inputDim);
         const scalar_t horizon = 2.0;
         ocs2::TargetTrajectories targetTrajectories({observation.time, observation.time + horizon},
                                                     {targetState, targetState}, {zeroInput, zeroInput});
@@ -174,7 +172,7 @@ std::vector<MotorCommand> FrankaMpcController::getMotorCommands(scalar_t current
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::preStep(scalar_t currentTime, scalar_t dt) {
+void ArmMpcController::preStep(scalar_t currentTime, scalar_t dt) {
     ros::spinOnce();
     state_ = stateSubscriberPtr_->getLatestState();
 }
@@ -182,12 +180,12 @@ void FrankaMpcController::preStep(scalar_t currentTime, scalar_t dt) {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
+void ArmMpcController::postStep(scalar_t currentTime, scalar_t dt) {
     timeSinceLastVisualizationUpdate_ += dt;
     if (timeSinceLastVisualizationUpdate_ >= 1.0 / 15.0) {
         // Get joint positions from state
         const auto &rbdState = state_.x;
-        const size_t nJoints = manipulatorInterfacePtr_->getFrankaModelInfo().armDim;
+        const size_t nJoints = manipulatorInterfacePtr_->getArmModelInfo().armDim;
         const vector_t jointPositions = rbdState.head(nJoints);
 
         // Compute current EE pose from joint positions
@@ -215,7 +213,7 @@ void FrankaMpcController::postStep(scalar_t currentTime, scalar_t dt) {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::computeCurrentEEPose(const vector_t &jointPositions) {
+void ArmMpcController::computeCurrentEEPose(const vector_t &jointPositions) {
     const auto &model = pinocchioInterfacePtr_->getModel();
     auto &data = pinocchioInterfacePtr_->getData();
 
@@ -240,7 +238,7 @@ void FrankaMpcController::computeCurrentEEPose(const vector_t &jointPositions) {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-vector_t FrankaMpcController::computeEEPosition(const vector_t &jointPositions) {
+vector_t ArmMpcController::computeEEPosition(const vector_t &jointPositions) {
     const auto &model = pinocchioInterfacePtr_->getModel();
     auto &data = pinocchioInterfacePtr_->getData();
 
@@ -253,7 +251,7 @@ vector_t FrankaMpcController::computeEEPosition(const vector_t &jointPositions) 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-std::vector<vector_t> FrankaMpcController::computeEETrajectory(const ocs2::PrimalSolution &primalSolution) {
+std::vector<vector_t> ArmMpcController::computeEETrajectory(const ocs2::PrimalSolution &primalSolution) {
     std::vector<vector_t> eeTrajectory;
     eeTrajectory.reserve(primalSolution.stateTrajectory_.size());
 
@@ -267,7 +265,7 @@ std::vector<vector_t> FrankaMpcController::computeEETrajectory(const ocs2::Prima
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::referenceThreadLoop() {
+void ArmMpcController::referenceThreadLoop() {
     // Same pattern as quadruped MpcController::referenceThreadLoop()
     TBAI_LOG_WARN(logger_, "Reference trajectory generator reset");
 
@@ -288,7 +286,7 @@ void FrankaMpcController::referenceThreadLoop() {
         auto observation = generateSystemObservation();
 
         // Zero input (joint velocities)
-        const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getFrankaModelInfo().inputDim);
+        const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getArmModelInfo().inputDim);
 
         // Create trajectory with current time and a future horizon point
         // This tells MPC to reach target and hold it
@@ -305,7 +303,7 @@ void FrankaMpcController::referenceThreadLoop() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-ocs2::TargetTrajectories FrankaMpcController::generateReferenceTrajectory(scalar_t currentTime,
+ocs2::TargetTrajectories ArmMpcController::generateReferenceTrajectory(scalar_t currentTime,
                                                                           const ocs2::SystemObservation &observation) {
     // Simple hold-position reference trajectory
     // Similar to what a ReferenceTrajectoryGenerator would produce, but simpler for fixed-base arm
@@ -329,20 +327,20 @@ ocs2::TargetTrajectories FrankaMpcController::generateReferenceTrajectory(scalar
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::startReferenceThread() {
+void ArmMpcController::startReferenceThread() {
     // Same as quadruped
     stopReferenceThread();
 
     TBAI_LOG_WARN(logger_, "Starting reference thread");
     stopReferenceThread_ = false;
-    referenceThread_ = std::thread(&FrankaMpcController::referenceThreadLoop, this);
+    referenceThread_ = std::thread(&ArmMpcController::referenceThreadLoop, this);
     TBAI_LOG_WARN(logger_, "Reference thread started");
 }
 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::stopReferenceThread() {
+void ArmMpcController::stopReferenceThread() {
     stopReferenceThread_ = true;
     if (referenceThread_.joinable()) {
         referenceThread_.join();
@@ -352,7 +350,7 @@ void FrankaMpcController::stopReferenceThread() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::changeController(const std::string &controllerType, scalar_t currentTime) {
+void ArmMpcController::changeController(const std::string &controllerType, scalar_t currentTime) {
     // Same pattern as quadruped MpcController::changeController()
     preStep(currentTime, 0.0);
 
@@ -368,14 +366,14 @@ void FrankaMpcController::changeController(const std::string &controllerType, sc
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-bool FrankaMpcController::isSupported(const std::string &controllerType) {
+bool ArmMpcController::isSupported(const std::string &controllerType) {
     return controllerType == "WBC" || controllerType == "MPC";
 }
 
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::resetMpc() {
+void ArmMpcController::resetMpc() {
     // Same pattern as quadruped MpcController::resetMpc()
     stateSubscriberPtr_->waitTillInitialized();
     auto initialObservation = generateSystemObservation();
@@ -384,7 +382,7 @@ void FrankaMpcController::resetMpc() {
     vector_t initTarget(7);
     initTarget.head(3) = targetEEPosition_;
     initTarget.tail(4) = targetEEOrientation_;
-    const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getFrankaModelInfo().inputDim);
+    const vector_t zeroInput = vector_t::Zero(manipulatorInterfacePtr_->getArmModelInfo().inputDim);
     const ocs2::TargetTrajectories initTargetTrajectories({0.0}, {initTarget}, {zeroInput});
     mrtPtr_->resetMpcNode(initTargetTrajectories);
 
@@ -403,7 +401,7 @@ void FrankaMpcController::resetMpc() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void FrankaMpcController::setObservation() {
+void ArmMpcController::setObservation() {
     mrtPtr_->setCurrentObservation(generateSystemObservation());
     timeSinceLastMpcUpdate_ = 0.0;
 }
@@ -411,11 +409,11 @@ void FrankaMpcController::setObservation() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-ocs2::SystemObservation FrankaMpcController::generateSystemObservation() const {
+ocs2::SystemObservation ArmMpcController::generateSystemObservation() const {
     auto state = stateSubscriberPtr_->getLatestState();
     const tbai::vector_t &rbdState = state.x;
 
-    const size_t nJoints = manipulatorInterfacePtr_->getFrankaModelInfo().armDim;
+    const size_t nJoints = manipulatorInterfacePtr_->getArmModelInfo().armDim;
 
     ocs2::SystemObservation observation;
     observation.time = state.timestamp - initTime_;
@@ -430,6 +428,4 @@ ocs2::SystemObservation FrankaMpcController::generateSystemObservation() const {
     return observation;
 }
 
-}  // namespace franka
-}  // namespace mpc
-}  // namespace tbai
+}  // namespace tbai::mpc::arm

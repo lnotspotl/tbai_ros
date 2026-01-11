@@ -37,27 +37,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_oc/oc_data/PrimalSolution.h>
 #include <ocs2_mpc/CommandData.h>
 
-#include <tbai_mpc/franka_mpc/FrankaModelInfo.h>
-#include <tbai_mpc/franka_mpc/FrankaInterface.h>
+#include <tbai_mpc/arm_mpc/ArmModelInfo.h>
+#include <tbai_mpc/arm_mpc/ArmInterface.h>
 
-namespace ocs2 {
-namespace franka {
+namespace tbai::mpc::arm {
 
-class FrankaDummyVisualization {
+class ArmDummyVisualization {
  public:
-  FrankaDummyVisualization(ros::NodeHandle& nodeHandle, const FrankaInterface& interface);
-  ~FrankaDummyVisualization() = default;
+  ArmDummyVisualization(ros::NodeHandle& nodeHandle, const ArmInterface& interface);
+  ~ArmDummyVisualization() = default;
 
-  void update(const SystemObservation& observation, const PrimalSolution& policy, const CommandData& command);
+  void update(const ocs2::SystemObservation& observation, const ocs2::PrimalSolution& policy, const ocs2::CommandData& command);
 
  private:
   void launchVisualizerNode(ros::NodeHandle& nodeHandle);
-  void publishObservation(const ros::Time& timeStamp, const SystemObservation& observation);
-  void publishTargetTrajectories(const ros::Time& timeStamp, const TargetTrajectories& targetTrajectories);
-  void publishOptimizedTrajectory(const ros::Time& timeStamp, const PrimalSolution& policy);
+  void publishObservation(const ros::Time& timeStamp, const ocs2::SystemObservation& observation);
+  void publishTargetTrajectories(const ros::Time& timeStamp, const ocs2::TargetTrajectories& targetTrajectories);
+  void publishOptimizedTrajectory(const ros::Time& timeStamp, const ocs2::PrimalSolution& policy);
 
-  PinocchioInterface pinocchioInterface_;
-  const FrankaModelInfo modelInfo_;
+  ocs2::PinocchioInterface pinocchioInterface_;
+  const ArmModelInfo modelInfo_;
   std::vector<std::string> removeJointNames_;
 
   std::unique_ptr<robot_state_publisher::RobotStatePublisher> robotStatePublisherPtr_;
@@ -67,5 +66,4 @@ class FrankaDummyVisualization {
   ros::Publisher stateOptimizedPosePublisher_;
 };
 
-}  // namespace franka
-}  // namespace ocs2
+}  // namespace tbai::mpc::arm
