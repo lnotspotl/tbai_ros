@@ -7,6 +7,8 @@ state_topic: "spot_arm/state"
 command_topic: "spot_arm/command"
 change_controller_topic: "spot_arm/change_controller"
 
+contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"]
+
 static_controller:
   stand_controller:
     joint_angles: [0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, -3.1, 2.1, 0.0, 0.0, 0.0] # LF, LH, RF, RH, arm

@@ -85,6 +85,57 @@ target_link_libraries(quadruped_dummy_mrt_node
 )
 target_compile_options(quadruped_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
 
+## Quadruped ARM MPC library (for spot_arm with 6-DOF arm)
+add_library(tbai_ros_quadruped_arm_mpc
+    src/quadruped_arm_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.cpp
+    src/quadruped_arm_mpc/utils/LoadConfig.cpp
+    src/quadruped_arm_mpc/RosMpcController.cpp
+    src/quadruped_arm_mpc/visualization/QuadrupedTfPublisher.cpp
+    src/quadruped_arm_mpc/visualization/QuadrupedVisualizer.cpp
+    src/quadruped_arm_mpc/logic/GaitReceiver.cpp
+    src/quadruped_arm_mpc/quadruped_interface/LocalTerrainReceiver.cpp
+    src/quadruped_arm_mpc/quadruped_interface/TerrainReceiver.cpp
+    src/quadruped_arm_mpc/quadruped_interface/SwingPlanningVisualizer.cpp
+    src/quadruped_arm_mpc/quadruped_interface/TerrainPlaneVisualizer.cpp
+    src/quadruped_arm_mpc/terrain/TerrainPlane.cpp
+    src/quadruped_arm_mpc/segmented_planes/SegmentedPlanesTerrainModel.cpp
+    src/quadruped_arm_mpc/segmented_planes/SegmentedPlanesTerrainModelRos.cpp
+    src/quadruped_arm_mpc/common/GaitMsgConversions.cpp
+)
+target_link_libraries(tbai_ros_quadruped_arm_mpc
+    PUBLIC
+    ${catkin_LIBRARIES} spdlog::spdlog
+    ${pinocchio_LIBRARIES}
+)
+target_compile_options(tbai_ros_quadruped_arm_mpc PUBLIC ${OCS2_CXX_FLAGS})
+
+## Quadruped ARM MPC node
+add_executable(quadruped_arm_mpc_node
+    src/quadruped_arm_mpc/QuadrupedMpcNode.cpp
+)
+target_link_libraries(quadruped_arm_mpc_node
+    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog tbai_ros_quadruped_arm_mpc
+)
+target_compile_options(quadruped_arm_mpc_node PRIVATE ${OCS2_CXX_FLAGS})
+
+## Quadruped ARM Dummy MRT node
+add_executable(quadruped_arm_dummy_mrt_node
+    src/quadruped_arm_mpc/QuadrupedDummyMRT.cpp
+)
+target_link_libraries(quadruped_arm_dummy_mrt_node
+    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog tbai_ros_quadruped_arm_mpc
+)
+target_compile_options(quadruped_arm_dummy_mrt_node PRIVATE ${OCS2_CXX_FLAGS})
+
+## Quadruped ARM simple_blind node (MPC + WBC)
+add_executable(simple_arm_blind
+    src/quadruped_arm_mpc/simple_blind.cpp
+)
+target_link_libraries(simple_arm_blind
+    ${catkin_LIBRARIES} yaml-cpp tbai_ros_quadruped_arm_mpc
+)
+target_compile_options(simple_arm_blind PRIVATE ${OCS2_CXX_FLAGS})
+
 ## Franka MPC visualization library
 add_library(tbai_ros_franka_mpc
     src/franka_mpc/FrankaDummyVisualization.cpp

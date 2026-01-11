@@ -1,0 +1,28 @@
+targetDisplacementVelocity    0.5;
+targetRotationVelocity        0.9;
+
+comHeight                     0.51;
+
+defaultJointState
+{
+   ; Leg joints (12)
+   (0,0)   0.00   ; LF_HAA
+   (1,0)   0.80   ; LF_HFE
+   (2,0)  -1.60   ; LF_KFE
+   (3,0)   0.00   ; RF_HAA
+   (4,0)   0.80   ; RF_HFE
+   (5,0)  -1.60   ; RF_KFE
+   (6,0)   0.00   ; LH_HAA
+   (7,0)   0.80   ; LH_HFE
+   (8,0)  -1.60   ; LH_KFE
+   (9,0)   0.00   ; RH_HAA
+   (10,0)  0.80   ; RH_HFE
+   (11,0) -1.60   ; RH_KFE
+   ; Arm joints (6) - stowed position
+   (12,0)  0.0    ; arm_sh0
+   (13,0) -3.1    ; arm_sh1
+   (14,0)  3.1    ; arm_el0
+   (15,0)  0.0    ; arm_el1
+   (16,0)  0.0    ; arm_wr0
+   (17,0)  0.0    ; arm_wr1
+}
