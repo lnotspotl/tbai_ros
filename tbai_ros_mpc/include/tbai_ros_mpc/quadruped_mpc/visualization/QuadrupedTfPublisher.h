@@ -10,7 +10,7 @@
 
 #include <tbai_mpc/quadruped_mpc/core/SwitchedModel.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class QuadrupedTfPublisher {
  public:
@@ -41,4 +41,4 @@ class QuadrupedTfPublisher {
   ros::Time lastTimeStamp_ = ros::Time::now();
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

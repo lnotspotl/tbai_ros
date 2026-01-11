@@ -10,16 +10,16 @@
 
 #include "tbai_ros_ocs2/segmented_planes/SegmentedPlanesSignedDistanceField.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
-class SegmentedPlanesTerrainModel : public switched_model::TerrainModel {
+class SegmentedPlanesTerrainModel : public tbai::mpc::quadruped::TerrainModel {
  public:
   SegmentedPlanesTerrainModel(convex_plane_decomposition::PlanarTerrain planarTerrain);
 
   TerrainPlane getLocalTerrainAtPositionInWorldAlongGravity(const vector3_t& positionInWorld,
                                                             std::function<scalar_t(const vector3_t&)> penaltyFunction) const override;
 
-  using switched_model::TerrainModel::getConvexTerrainAtPositionInWorld;
+  using tbai::mpc::quadruped::TerrainModel::getConvexTerrainAtPositionInWorld;
   ConvexTerrain getConvexTerrainAtPositionInWorld(const vector3_t& positionInWorld,
                                                   std::function<scalar_t(const vector3_t&)> penaltyFunction) const override;
 
@@ -39,4 +39,4 @@ class SegmentedPlanesTerrainModel : public switched_model::TerrainModel {
   const grid_map::Matrix* const elevationData_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

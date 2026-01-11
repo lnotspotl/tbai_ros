@@ -30,7 +30,7 @@
 namespace tbai {
 namespace mpc {
 
-using namespace switched_model;
+using namespace tbai::mpc::quadruped;
 
 /**
  * Visualizes contact points using ROS markers.
@@ -53,7 +53,7 @@ class ContactVisualizer {
  * ROS wrapper for MpcController.
  * Adds ROS-specific visualization and MRT_ROS_Interface support.
  */
-class RosMpcController : public MpcController {
+class RosMpcController : public tbai::mpc::quadruped::MpcController {
    public:
     /**
      * Constructor
@@ -94,7 +94,7 @@ class RosMpcController : public MpcController {
     void spinOnceReferenceThread();
 
     // ROS-specific visualization
-    std::unique_ptr<switched_model::QuadrupedVisualizer> visualizerPtr_;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedVisualizer> visualizerPtr_;
     std::unique_ptr<ContactVisualizer> contactVisualizerPtr_;
     scalar_t timeSinceLastVisualizationUpdate_ = 1e5;
 

@@ -14,7 +14,7 @@
 #include <tbai_mpc/quadruped_mpc/core/Rotations.h>
 #include <urdf/model.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 void QuadrupedTfPublisher::launchNode(ros::NodeHandle &nodeHandle, const std::string &descriptionName,
                                       std::vector<std::string> jointNames, std::string baseName,
@@ -80,4 +80,4 @@ void QuadrupedTfPublisher::updateBasePose(ros::Time timeStamp, const base_coordi
     baseToWorldTransform_.transform.translation = ocs2::getVectorMsg(getPositionInOrigin(basePose));
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

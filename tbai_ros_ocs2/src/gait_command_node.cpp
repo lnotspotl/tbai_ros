@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     std::string robotName;
     TBAI_THROW_UNLESS(nodeHandle.getParam("/robot_name", robotName), "Failed to get parameter /robot_name");
 
-    switched_model::GaitCommandNode gaitCommandNode(nodeHandle, gaitFile, robotName, true);
+    tbai::mpc::quadruped::GaitCommandNode gaitCommandNode(nodeHandle, gaitFile, robotName, true);
     while (ros::ok() && ros::master::check()) {
         gaitCommandNode.getKeyboardCommand();
     }

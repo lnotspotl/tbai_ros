@@ -32,7 +32,7 @@ class GridmapTerrainInterface : public TerrainInterface {
 
     TargetTrajectories generateTargetTrajectories(
         scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
-        const BaseReferenceCommand &command, const switched_model::QuadrupedInterface &quadrupedInterface) override;
+        const BaseReferenceCommand &command, const tbai::mpc::quadruped::QuadrupedInterface &quadrupedInterface) override;
 
     tbai::gridmap::GridmapInterface &getGridmap() { return *gridmap_; }
 
@@ -71,7 +71,7 @@ class RosJoeController : public JoeController {
    private:
     ros::NodeHandle nh_;
     ros::Publisher refPub_;
-    std::unique_ptr<switched_model::QuadrupedVisualizer> visualizer_;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedVisualizer> visualizer_;
 };
 
 }  // namespace joe

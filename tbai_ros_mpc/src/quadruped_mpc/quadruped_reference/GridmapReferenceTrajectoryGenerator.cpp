@@ -13,7 +13,7 @@ namespace tbai {
 namespace mpc {
 namespace reference {
 
-using namespace switched_model;
+using namespace tbai::mpc::quadruped;
 
 namespace {
 void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory &baseRef) {
@@ -118,7 +118,7 @@ static BaseReferenceTrajectory generateExtrapolatedBaseReference(
 GridmapReferenceTrajectoryGenerator::GridmapReferenceTrajectoryGenerator(
     ros::NodeHandle &nh, const std::string &configFile,
     std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
-    std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt,
+    std::shared_ptr<tbai::mpc::quadruped::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt,
     size_t trajKnots, const std::string &terrainTopic, bool blind)
     : ReferenceTrajectoryGenerator(configFile, std::move(velocityGeneratorPtr), std::move(kinematicsPtr), trajdt,
                                    trajKnots),
@@ -168,7 +168,7 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
         // base orientation
         state.head<3>() = baseReferenceTrajectory.eulerXyz[i];
 
-        auto Rt = switched_model::rotationMatrixOriginToBase(baseReferenceTrajectory.eulerXyz[i]);
+        auto Rt = tbai::mpc::quadruped::rotationMatrixOriginToBase(baseReferenceTrajectory.eulerXyz[i]);
 
         // base position
         state.segment<3>(3) = baseReferenceTrajectory.positionInWorld[i];
@@ -197,7 +197,7 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const switched_model::TerrainPlane &terrainPlane) {
+void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const tbai::mpc::quadruped::TerrainPlane &terrainPlane) {
     tbai_ros_ocs2::local_terrain msg;
 
     // Position (3 elements)

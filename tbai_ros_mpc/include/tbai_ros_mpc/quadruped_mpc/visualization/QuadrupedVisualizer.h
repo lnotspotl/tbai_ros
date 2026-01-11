@@ -15,7 +15,7 @@
 #include "tbai_ros_ocs2/visualization/VisualizationColors.h"
 #include "tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedTfPublisher.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class QuadrupedVisualizer : public ocs2::DummyObserver {
  public:
@@ -96,4 +96,4 @@ class QuadrupedVisualizer : public ocs2::DummyObserver {
   scalar_t minPublishTimeDifference_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

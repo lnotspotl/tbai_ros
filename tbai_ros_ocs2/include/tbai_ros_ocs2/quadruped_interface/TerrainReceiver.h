@@ -14,7 +14,7 @@
 
 #include <tbai_ros_ocs2/segmented_planes/SegmentedPlanesTerrainModelRos.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class TerrainReceiverSynchronizedModule : public ocs2::SolverSynchronizedModule {
  public:
@@ -28,7 +28,7 @@ class TerrainReceiverSynchronizedModule : public ocs2::SolverSynchronizedModule 
 
  private:
   ocs2::Synchronized<TerrainModel>* terrainModelPtr_;
-  std::unique_ptr<switched_model::SegmentedPlanesTerrainModelRos> segmentedPlanesRos_;
+  std::unique_ptr<tbai::mpc::quadruped::SegmentedPlanesTerrainModelRos> segmentedPlanesRos_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

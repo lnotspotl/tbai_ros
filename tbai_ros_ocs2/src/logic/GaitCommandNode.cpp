@@ -4,7 +4,7 @@
 #include <ocs2_core/misc/LoadData.h>
 #include <tbai_ros_ocs2/mode_schedule.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 namespace {
 /** Convert mode sequence template to tbai_ros_ocs2 ROS message */
@@ -72,4 +72,4 @@ void GaitCommandNode::publishModeSequenceTemplate(const ModeSequenceTemplate &mo
     modeSequenceTemplatePublisher_.publish(createModeSequenceTemplateMsg(modeSchedule));
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

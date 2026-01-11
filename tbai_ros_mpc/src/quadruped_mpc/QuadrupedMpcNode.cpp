@@ -17,7 +17,7 @@
 #include <tbai_ros_ocs2/quadruped_interface/TerrainReceiver.h>
 #include <tbai_ros_ocs2/terrain/TerrainPlane.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 void quadrupedMpcNode(const std::string &robotName, ros::NodeHandle &nodeHandle,
                       const QuadrupedInterface &quadrupedInterface, std::unique_ptr<ocs2::MPC_BASE> mpcPtr) {
@@ -62,9 +62,9 @@ void quadrupedMpcNode(const std::string &robotName, ros::NodeHandle &nodeHandle,
     mpcNode.launchNodes(nodeHandle);
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped
 
-using namespace switched_model;
+using namespace tbai::mpc::quadruped;
 
 int main(int argc, char *argv[]) {
     // Initialize ros node
@@ -87,19 +87,19 @@ int main(int argc, char *argv[]) {
                       "Failed to get parameter /frame_declaration_file");
 
     std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
-    std::unique_ptr<switched_model::QuadrupedInterface> quadrupedInterface;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedInterface> quadrupedInterface;
     if (robotName == "anymal_d" || robotName == "anymal_c" || robotName == "anymal_b") {
         quadrupedInterface =
-            anymal::getAnymalInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                       anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getAnymalInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                       tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "go2") {
         quadrupedInterface =
-            anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                    anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getGo2Interface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                    tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "spot" || robotName == "spot_arm") {
         quadrupedInterface =
-            anymal::getSpotInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                     anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getSpotInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                     tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }
@@ -107,21 +107,21 @@ int main(int argc, char *argv[]) {
     // Prepare robot interface
     const auto mpcSettings = ocs2::mpc::loadSettings(taskSettingsFile);
 
-    if (quadrupedInterface->modelSettings().algorithm_ == switched_model::Algorithm::SQP) {
+    if (quadrupedInterface->modelSettings().algorithm_ == tbai::mpc::quadruped::Algorithm::SQP) {
         TBAI_GLOBAL_LOG_INFO("Using SQP MPC");
         std::string sqpSettingsFile;
         TBAI_THROW_UNLESS(nodeHandle.getParam("/sqp_settings_file", sqpSettingsFile),
                           "Failed to get parameter /sqp_settings_file");
         const auto sqpSettings = ocs2::sqp::loadSettings(sqpSettingsFile);
-        auto mpcPtr = switched_model::getSqpMpc(*quadrupedInterface, mpcSettings, sqpSettings);
-        switched_model::quadrupedMpcNode(robotName, nodeHandle, *quadrupedInterface, std::move(mpcPtr));
+        auto mpcPtr = tbai::mpc::quadruped::getSqpMpc(*quadrupedInterface, mpcSettings, sqpSettings);
+        tbai::mpc::quadruped::quadrupedMpcNode(robotName, nodeHandle, *quadrupedInterface, std::move(mpcPtr));
     }
 
-    if (quadrupedInterface->modelSettings().algorithm_ == switched_model::Algorithm::DDP) {
+    if (quadrupedInterface->modelSettings().algorithm_ == tbai::mpc::quadruped::Algorithm::DDP) {
         TBAI_GLOBAL_LOG_INFO("Using DDP MPC");
         const auto ddpSettings = ocs2::ddp::loadSettings(taskSettingsFile);
-        auto mpcPtr = switched_model::getDdpMpc(*quadrupedInterface, mpcSettings, ddpSettings);
-        switched_model::quadrupedMpcNode(robotName, nodeHandle, *quadrupedInterface, std::move(mpcPtr));
+        auto mpcPtr = tbai::mpc::quadruped::getDdpMpc(*quadrupedInterface, mpcSettings, ddpSettings);
+        tbai::mpc::quadruped::quadrupedMpcNode(robotName, nodeHandle, *quadrupedInterface, std::move(mpcPtr));
     }
 
     return EXIT_SUCCESS;

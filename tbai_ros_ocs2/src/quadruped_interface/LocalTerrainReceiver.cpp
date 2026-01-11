@@ -1,6 +1,6 @@
 #include "tbai_ros_ocs2/quadruped_interface/LocalTerrainReceiver.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 LocalTerrainReceiverSynchronizedModule::LocalTerrainReceiverSynchronizedModule(
     ocs2::Synchronized<TerrainModel> &terrainModel, ros::NodeHandle &nodeHandle)
@@ -18,4 +18,4 @@ void LocalTerrainReceiverSynchronizedModule::preSolverRun(scalar_t initTime, sca
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

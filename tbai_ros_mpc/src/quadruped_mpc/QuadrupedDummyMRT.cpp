@@ -14,7 +14,7 @@
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 
 using namespace ocs2;
-using namespace switched_model;
+using namespace tbai::mpc::quadruped;
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "quadruped_mrt");
@@ -40,19 +40,19 @@ int main(int argc, char **argv) {
                       "Failed to get parameter /frame_declaration_file");
 
     // Create quadruped interface based on robot type
-    std::unique_ptr<switched_model::QuadrupedInterface> quadrupedInterface;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedInterface> quadrupedInterface;
     if (robotName == "anymal_d" || robotName == "anymal_c" || robotName == "anymal_b") {
         quadrupedInterface =
-            anymal::getAnymalInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                       anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getAnymalInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                       tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "go2") {
         quadrupedInterface =
-            anymal::getGo2Interface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                    anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getGo2Interface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                    tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "spot" || robotName == "spot_arm") {
         quadrupedInterface =
-            anymal::getSpotInterface(urdfString, switched_model::loadQuadrupedSettings(taskSettingsFile),
-                                     anymal::frameDeclarationFromFile(frameDeclarationFile));
+            tbai::mpc::quadruped::getSpotInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+                                     tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }
@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
 
     // Visualization
     auto baseName = tbai::fromGlobalConfig<std::string>("base_name");
-    auto visualizer = std::make_shared<switched_model::QuadrupedVisualizer>(
+    auto visualizer = std::make_shared<tbai::mpc::quadruped::QuadrupedVisualizer>(
         quadrupedInterface->getKinematicModel(), jointNames, baseName, nodeHandle);
 
     // Initial observation
     SystemObservation observation;
     observation.state = quadrupedInterface->getInitialState();
     observation.input.setZero(INPUT_DIM);
-    observation.mode = switched_model::ModeNumber::STANCE;
+    observation.mode = tbai::mpc::quadruped::ModeNumber::STANCE;
     observation.time = 0.0;
 
     // Initial target (use initial state as target)

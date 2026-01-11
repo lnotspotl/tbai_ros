@@ -8,7 +8,7 @@
 
 #include <tbai_mpc/quadruped_mpc/logic/ModeSequenceTemplate.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 /** This class implements gait command publishing using ROS with tbai_ros_ocs2 messages. */
 class GaitCommandNode {
@@ -31,4 +31,4 @@ class GaitCommandNode {
   ros::Publisher modeSequenceTemplatePublisher_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

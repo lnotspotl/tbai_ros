@@ -7,7 +7,7 @@
 #include <ocs2_core/misc/LoadData.h>
 #include <tbai_mpc/quadruped_mpc/core/Rotations.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 TerrainPlane loadTerrainPlane(const std::string &filename, bool verbose) {
     boost::property_tree::ptree pt;
@@ -37,4 +37,4 @@ TerrainPlane loadTerrainPlane(const std::string &filename, bool verbose) {
     return plane;
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

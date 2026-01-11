@@ -17,7 +17,7 @@
 #include <tbai_mpc/quadruped_mpc/core/SwitchedModel.h>
 #include <tbai_mpc/quadruped_mpc/logic/GaitSchedule.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class GaitReceiver : public ocs2::SolverSynchronizedModule {
  public:
@@ -47,4 +47,4 @@ class GaitReceiver : public ocs2::SolverSynchronizedModule {
       setGaitAction_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

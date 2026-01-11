@@ -4,12 +4,12 @@
 
 #include "tbai_ros_ocs2/quadruped_interface/TerrainReceiver.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 TerrainReceiverSynchronizedModule::TerrainReceiverSynchronizedModule(ocs2::Synchronized<TerrainModel> &terrainModel,
                                                                      ros::NodeHandle &nodeHandle)
     : terrainModelPtr_(&terrainModel),
-      segmentedPlanesRos_(new switched_model::SegmentedPlanesTerrainModelRos(nodeHandle)) {}
+      segmentedPlanesRos_(new tbai::mpc::quadruped::SegmentedPlanesTerrainModelRos(nodeHandle)) {}
 
 void TerrainReceiverSynchronizedModule::preSolverRun(scalar_t initTime, scalar_t finalTime,
                                                      const vector_t &currentState,
@@ -20,4 +20,4 @@ void TerrainReceiverSynchronizedModule::preSolverRun(scalar_t initTime, scalar_t
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

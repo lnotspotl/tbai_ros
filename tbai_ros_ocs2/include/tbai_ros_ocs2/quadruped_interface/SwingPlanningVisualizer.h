@@ -12,14 +12,14 @@
 
 #include <tbai_mpc/quadruped_mpc/foot_planner/SwingTrajectoryPlanner.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class SwingPlanningVisualizer : public ocs2::SolverSynchronizedModule {
  public:
   /** Visualization settings (publicly available) */
   std::string frameId_ = "odom";  // Frame name all messages are published in
   double arrowScale = 0.05;        // Size of the arrow representing the velocity vector
-  switched_model::feet_array_t<ocs2::Color> feetColorMap_ = {ocs2::Color::blue, ocs2::Color::orange, ocs2::Color::yellow,
+  tbai::mpc::quadruped::feet_array_t<ocs2::Color> feetColorMap_ = {ocs2::Color::blue, ocs2::Color::orange, ocs2::Color::yellow,
                                                              ocs2::Color::purple};  // Colors for markers per feet
 
   SwingPlanningVisualizer(const SwingTrajectoryPlanner& swingTrajectoryPlanner, ros::NodeHandle& nodeHandle);
@@ -35,4 +35,4 @@ class SwingPlanningVisualizer : public ocs2::SolverSynchronizedModule {
   feet_array_t<ros::Publisher> swingTrajectoryPublishers_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

@@ -67,7 +67,7 @@ class RosDtcController : public DtcController {
    private:
     ros::NodeHandle nh_;
     ros::Publisher refPub_;
-    std::unique_ptr<switched_model::QuadrupedVisualizer> visualizer_;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedVisualizer> visualizer_;
 };
 
 }  // namespace dtc

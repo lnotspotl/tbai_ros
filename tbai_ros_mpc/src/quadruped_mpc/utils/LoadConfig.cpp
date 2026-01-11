@@ -2,7 +2,7 @@
 
 #include <ocs2_core/misc/LoadData.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 ocs2::vector_t getDefaultJointPosition(const std::string &configFile, const std::string &prefix) {
     ocs2::vector_t defaultJointState;
@@ -11,4 +11,4 @@ ocs2::vector_t getDefaultJointPosition(const std::string &configFile, const std:
     return defaultJointState;
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

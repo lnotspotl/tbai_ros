@@ -8,7 +8,7 @@
 #include <ros/publisher.h>
 #include <ros/ros.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class LocalTerrainReceiverSynchronizedModule : public ocs2::SolverSynchronizedModule {
    public:
@@ -46,4 +46,4 @@ class LocalTerrainReceiverSynchronizedModule : public ocs2::SolverSynchronizedMo
     ros::Subscriber localTerrainSubscriber_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

@@ -119,14 +119,14 @@ RosMpcController::RosMpcController(const std::string &robotName,
                trajKnots);
 
     // Create ROS-specific components
-    visualizerPtr_ = std::make_unique<switched_model::QuadrupedVisualizer>(quadrupedInterfacePtr_->getKinematicModel(),
+    visualizerPtr_ = std::make_unique<tbai::mpc::quadruped::QuadrupedVisualizer>(quadrupedInterfacePtr_->getKinematicModel(),
                                                                            quadrupedInterfacePtr_->getJointNames(),
                                                                            quadrupedInterfacePtr_->getBaseName(), nh);
     contactVisualizerPtr_ = std::make_unique<ContactVisualizer>();
 
     // Replace the base reference trajectory generator with gridmap-aware version
     referenceThreadNodeHandle_.setCallbackQueue(&referenceThreadCallbackQueue_);
-    auto kinematicsPtr = std::shared_ptr<switched_model::KinematicsModelBase<scalar_t>>(
+    auto kinematicsPtr = std::shared_ptr<tbai::mpc::quadruped::KinematicsModelBase<scalar_t>>(
         quadrupedInterfacePtr_->getKinematicModel().clone());
     auto terrainTopic = fromGlobalConfig<std::string>("mpc_controller/reference_trajectory/terrain_topic");
     referenceTrajectoryGeneratorPtr_ = std::make_unique<reference::GridmapReferenceTrajectoryGenerator>(
@@ -175,7 +175,7 @@ std::unique_ptr<ocs2::MPC_BASE> RosMpcController::createMpcInterface() {
     // Load settings
     const auto mpcSettings = ocs2::mpc::loadSettings(taskSettingsFile);
     const auto sqpSettings = ocs2::sqp::loadSettings(sqpSettingsFile);
-    auto mpcPtr = switched_model::getSqpMpc(*quadrupedInterfacePtr_, mpcSettings, sqpSettings);
+    auto mpcPtr = tbai::mpc::quadruped::getSqpMpc(*quadrupedInterfacePtr_, mpcSettings, sqpSettings);
 
     // Convenience
     QuadrupedInterface &quadrupedInterface = *quadrupedInterfacePtr_;

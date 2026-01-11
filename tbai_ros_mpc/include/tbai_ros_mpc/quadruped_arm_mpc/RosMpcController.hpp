@@ -53,7 +53,7 @@ class ContactVisualizer {
  * ROS wrapper for MpcController.
  * Adds ROS-specific visualization and MRT_ROS_Interface support.
  */
-class RosMpcController : public MpcController {
+class RosMpcController : public tbai::mpc::quadruped_arm::MpcController {
    public:
     /**
      * Constructor

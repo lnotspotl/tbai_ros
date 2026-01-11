@@ -54,7 +54,7 @@ RosDtcController::RosDtcController(const std::string &robotName,
     initialize(urdf, taskSettingsFile, frameDeclarationFile, modelPath);
 
     // Initialize visualizer after quadruped interface is ready
-    visualizer_.reset(new switched_model::QuadrupedVisualizer(quadrupedInterface_->getKinematicModel(),
+    visualizer_.reset(new tbai::mpc::quadruped::QuadrupedVisualizer(quadrupedInterface_->getKinematicModel(),
                                                               quadrupedInterface_->getJointNames(),
                                                               quadrupedInterface_->getBaseName(), nh_));
 }

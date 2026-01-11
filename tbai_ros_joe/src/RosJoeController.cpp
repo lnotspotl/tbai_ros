@@ -21,7 +21,7 @@
 namespace tbai {
 namespace joe {
 
-using namespace switched_model;
+using namespace tbai::mpc::quadruped;
 
 namespace {
 void addVelocitiesFromFiniteDifference(BaseReferenceTrajectory &baseRef) {
@@ -122,8 +122,8 @@ BaseReferenceTrajectory generateExtrapolatedBaseReferenceFromGridmap(
 
 TargetTrajectories GridmapTerrainInterface::generateTargetTrajectories(
     scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
-    const BaseReferenceCommand &command, const switched_model::QuadrupedInterface &quadrupedInterface) {
-    switched_model::BaseReferenceTrajectory baseReferenceTrajectory =
+    const BaseReferenceCommand &command, const tbai::mpc::quadruped::QuadrupedInterface &quadrupedInterface) {
+    tbai::mpc::quadruped::BaseReferenceTrajectory baseReferenceTrajectory =
         generateExtrapolatedBaseReferenceFromGridmap(horizon, state, command, gridmap_->getMap(), 0.3, 0.3);
 
     constexpr size_t STATE_DIM = 6 + 6 + 12;
@@ -140,7 +140,7 @@ TargetTrajectories GridmapTerrainInterface::generateTargetTrajectories(
         // base orientation
         state.head<3>() = baseReferenceTrajectory.eulerXyz[i];
 
-        auto Rt = switched_model::rotationMatrixOriginToBase(baseReferenceTrajectory.eulerXyz[i]);
+        auto Rt = tbai::mpc::quadruped::rotationMatrixOriginToBase(baseReferenceTrajectory.eulerXyz[i]);
 
         // base position
         state.segment<3>(3) = baseReferenceTrajectory.positionInWorld[i];
@@ -199,7 +199,7 @@ RosJoeController::RosJoeController(const std::string &robotName,
     initialize(urdf, taskSettingsFile, frameDeclarationFile, modelPath);
 
     // Initialize visualizer after quadruped interface is ready
-    visualizer_.reset(new switched_model::QuadrupedVisualizer(quadrupedInterface_->getKinematicModel(),
+    visualizer_.reset(new tbai::mpc::quadruped::QuadrupedVisualizer(quadrupedInterface_->getKinematicModel(),
                                                               quadrupedInterface_->getJointNames(),
                                                               quadrupedInterface_->getBaseName(), nh_));
 }

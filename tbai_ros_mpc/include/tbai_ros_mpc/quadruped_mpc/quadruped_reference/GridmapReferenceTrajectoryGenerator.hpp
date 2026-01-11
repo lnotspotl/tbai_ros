@@ -34,7 +34,7 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
     GridmapReferenceTrajectoryGenerator(
         ros::NodeHandle &nh, const std::string &configFile,
         std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
-        std::shared_ptr<switched_model::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt = 0.1,
+        std::shared_ptr<tbai::mpc::quadruped::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt = 0.1,
         size_t trajKnots = 20, const std::string &terrainTopic = "/elevation_mapping/elevation_map",
         bool blind = false);
 
@@ -55,7 +55,7 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
 
    private:
     void terrainCallback(const grid_map_msgs::GridMap &msg);
-    void publishLocalTerrain(const switched_model::TerrainPlane &terrainPlane);
+    void publishLocalTerrain(const tbai::mpc::quadruped::TerrainPlane &terrainPlane);
 
     ros::Subscriber terrainSubscriber_;
     ros::Publisher localTerrainPublisher_;

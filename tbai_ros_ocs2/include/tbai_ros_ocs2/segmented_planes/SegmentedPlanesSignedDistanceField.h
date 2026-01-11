@@ -8,10 +8,10 @@
 
 #include <grid_map_sdf/SignedDistanceField.hpp>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 /**
- * Simple wrapper class to implement the switched_model::SignedDistanceField interface.
+ * Simple wrapper class to implement the tbai::mpc::quadruped::SignedDistanceField interface.
  * See the forwarded function for documentation.
  */
 class SegmentedPlanesSignedDistanceField : public SignedDistanceField {
@@ -25,12 +25,12 @@ class SegmentedPlanesSignedDistanceField : public SignedDistanceField {
   ~SegmentedPlanesSignedDistanceField() override = default;
   SegmentedPlanesSignedDistanceField* clone() const override { return new SegmentedPlanesSignedDistanceField(*this); };
 
-  switched_model::scalar_t value(const switched_model::vector3_t& position) const override { return sdf_.value(position); }
+  tbai::mpc::quadruped::scalar_t value(const tbai::mpc::quadruped::vector3_t& position) const override { return sdf_.value(position); }
 
-  switched_model::vector3_t derivative(const switched_model::vector3_t& position) const override { return sdf_.derivative(position); }
+  tbai::mpc::quadruped::vector3_t derivative(const tbai::mpc::quadruped::vector3_t& position) const override { return sdf_.derivative(position); }
 
-  std::pair<switched_model::scalar_t, switched_model::vector3_t> valueAndDerivative(
-      const switched_model::vector3_t& position) const override {
+  std::pair<tbai::mpc::quadruped::scalar_t, tbai::mpc::quadruped::vector3_t> valueAndDerivative(
+      const tbai::mpc::quadruped::vector3_t& position) const override {
     return sdf_.valueAndDerivative(position);
   }
 
@@ -44,4 +44,4 @@ class SegmentedPlanesSignedDistanceField : public SignedDistanceField {
   grid_map::SignedDistanceField sdf_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

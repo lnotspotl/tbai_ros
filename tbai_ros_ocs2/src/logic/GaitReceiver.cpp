@@ -9,7 +9,7 @@
 #include <tbai_ros_ocs2/common/GaitMsgConversions.h>
 #include <tbai_ros_ocs2/common/RosMsgConversions.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 /** Convert ROS message to mode sequence template */
 inline ModeSequenceTemplate readModeSequenceTemplateMsg(const tbai_ros_ocs2::mode_schedule &modeScheduleMsg) {
@@ -95,4 +95,4 @@ void GaitReceiver::mpcGaitSequenceCallback(const tbai_ros_ocs2::scheduled_gait_s
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

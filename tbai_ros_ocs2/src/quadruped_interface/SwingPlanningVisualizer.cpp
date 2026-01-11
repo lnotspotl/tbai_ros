@@ -8,7 +8,7 @@
 #include <tbai_ros_ocs2/visualization/VisualizationHelpers.h>
 #include <visualization_msgs/MarkerArray.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 SwingPlanningVisualizer::SwingPlanningVisualizer(const SwingTrajectoryPlanner &swingTrajectoryPlanner,
                                                  ros::NodeHandle &nodeHandle)
@@ -91,4 +91,4 @@ void SwingPlanningVisualizer::preSolverRun(scalar_t initTime, scalar_t finalTime
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

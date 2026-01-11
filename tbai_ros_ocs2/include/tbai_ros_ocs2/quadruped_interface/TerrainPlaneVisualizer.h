@@ -15,7 +15,7 @@
 #include <tbai_mpc/quadruped_mpc/foot_planner/SwingTrajectoryPlanner.h>
 #include <tbai_mpc/quadruped_mpc/terrain/TerrainModel.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class TerrainPlaneVisualizer {
  public:
@@ -48,4 +48,4 @@ class TerrainPlaneVisualizerSynchronizedModule : public ocs2::SolverSynchronized
   TerrainPlaneVisualizer planeVisualizer_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

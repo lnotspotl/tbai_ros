@@ -19,7 +19,7 @@
 #include <tbai_mpc/quadruped_mpc/core/MotionPhaseDefinition.h>
 #include <tbai_mpc/quadruped_mpc/core/Rotations.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 void QuadrupedVisualizer::launchVisualizerNode(ros::NodeHandle &nodeHandle, std::vector<std::string> jointNames,
                                                std::string baseName) {
@@ -384,4 +384,4 @@ void QuadrupedVisualizer::publishCollisionSpheres(ros::Time timeStamp, const bas
     currentCollisionSpheresPublisher_.publish(markerArray);
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped
