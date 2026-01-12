@@ -48,6 +48,7 @@ target_link_libraries(${PROJECT_NAME}
   spdlog::spdlog
   tbai::core
   tbai::reference
+  tbai::deploy_go2w
 )
 
 # Deployment executable

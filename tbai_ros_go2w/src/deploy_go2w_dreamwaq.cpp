@@ -10,8 +10,8 @@
 #include <tbai_deploy_go2w/Go2WRobotInterface.hpp>
 #include <tbai_ros_core/Rate.hpp>
 #include <tbai_ros_go2w/Go2WDreamWaQController.hpp>
-#include <tbai_ros_go2w/Go2WStaticController.hpp>
 #include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
+#include <tbai_ros_static/StaticController.hpp>
 
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "tbai_ros_deploy_go2w_dreamwaq");
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
     // Create central controller
     tbai::CentralController<ros::Rate, tbai::RosTime> controller(commandPublisher, changeControllerSubscriber);
 
-    // Add Go2W-specific static controller for standing
-    controller.addController(std::make_unique<tbai::go2w::Go2WStaticController>(stateSubscriber));
+    // Add static controller for standing
+    controller.addController(std::make_unique<tbai::static_::RosStaticController>(stateSubscriber));
 
     // Get reference velocity generator
     auto referenceGeneratorType = tbai::fromGlobalConfig<std::string>("reference_generator/type");
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
     // Add Go2W DreamWaQ controller
     controller.addController(
-        std::make_unique<tbai::go2w::Go2WDreamWaQController>(stateSubscriber, referenceVelocityPtr, modelDir));
+        std::make_unique<tbai::go2w::RosGo2WDreamWaQController>(stateSubscriber, referenceVelocityPtr, modelDir));
 
     TBAI_LOG_INFO(logger, "Controllers initialized. Starting main loop...");
 
