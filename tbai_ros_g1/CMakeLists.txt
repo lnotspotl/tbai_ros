@@ -12,26 +12,13 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_static
   tbai_ros_reference
-  tbai
   kdl_parser
   robot_state_publisher
 )
 
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Eigen3 REQUIRED)
-
-# Find tbai_deploy_g1 library (built by tbai package)
-find_library(TBAI_DEPLOY_G1_LIBRARY
-  NAMES tbai_deploy_g1
-  PATHS ${catkin_LIBRARY_DIRS}
-        ${CMAKE_INSTALL_PREFIX}/lib
-        /usr/local/lib
-)
-
-if(NOT TBAI_DEPLOY_G1_LIBRARY)
-  message(WARNING "tbai_deploy_g1 library not found, will attempt to link anyway")
-  set(TBAI_DEPLOY_G1_LIBRARY "tbai_deploy_g1")
-endif()
 
 # Fetch ONNX Runtime automatically
 include(FetchContent)
@@ -71,7 +58,7 @@ message(STATUS "ONNX Runtime configured: ${onnxruntime_SOURCE_DIR}")
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp roslib std_msgs sensor_msgs tbai_ros_core tbai_ros_msgs tbai_ros_static tbai_ros_reference tbai
+  CATKIN_DEPENDS roscpp roslib std_msgs sensor_msgs tbai_ros_core tbai_ros_msgs tbai_ros_static tbai_ros_reference
   DEPENDS Eigen3
 )
 
@@ -94,6 +81,8 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   onnxruntime
   spdlog::spdlog
+  tbai::core
+  tbai::reference
 )
 
 # Deployment executable
@@ -101,8 +90,8 @@ add_executable(deploy_g1_rl src/deploy_g1_rl.cpp)
 target_link_libraries(deploy_g1_rl
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
-  ${TBAI_DEPLOY_G1_LIBRARY}
-  yaml-cpp
+  tbai::deploy_g1
+  tbai::static
 )
 
 # Install Python scripts

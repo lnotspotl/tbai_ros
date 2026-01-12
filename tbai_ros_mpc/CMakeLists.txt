@@ -22,16 +22,15 @@ find_package(catkin REQUIRED COMPONENTS
     grid_map_filters_rsl
     tbai_ros_static
     tbai_ros_reference
-    qpoases_catkin
-    tbai
 )
 
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES tbai_ros_mpc
-  CATKIN_DEPENDS tbai_ros_reference tbai_ros_ocs2 tbai
+  CATKIN_DEPENDS tbai_ros_reference tbai_ros_ocs2
 )
 
 include_directories(
@@ -49,8 +48,15 @@ add_library(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    ${catkin_LIBRARIES} spdlog::spdlog
+    ${catkin_LIBRARIES}
+    spdlog::spdlog
     ${pinocchio_LIBRARIES}
+    tbai::core
+    tbai::quadruped_mpc
+    tbai::ocs2_core
+    tbai::ocs2_mpc
+    tbai::ocs2_ddp
+    tbai::ocs2_pinocchio_interface
 )
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
@@ -104,8 +110,16 @@ add_library(tbai_ros_quadruped_arm_mpc
 )
 target_link_libraries(tbai_ros_quadruped_arm_mpc
     PUBLIC
-    ${catkin_LIBRARIES} spdlog::spdlog
+    ${catkin_LIBRARIES}
+    spdlog::spdlog
     ${pinocchio_LIBRARIES}
+    tbai::core
+    tbai::quadruped_arm_mpc
+    tbai::ocs2_core
+    tbai::ocs2_mpc
+    tbai::ocs2_oc
+    tbai::ocs2_ddp
+    tbai::ocs2_pinocchio_interface
 )
 target_compile_options(tbai_ros_quadruped_arm_mpc PUBLIC ${OCS2_CXX_FLAGS})
 
@@ -148,6 +162,12 @@ target_link_libraries(tbai_ros_arm_mpc
     ${catkin_LIBRARIES}
     ${pinocchio_LIBRARIES}
     spdlog::spdlog
+    tbai::core
+    tbai::arm_mpc
+    tbai::ocs2_core
+    tbai::ocs2_mpc
+    tbai::ocs2_ddp
+    tbai::ocs2_pinocchio_interface
 )
 target_compile_options(tbai_ros_arm_mpc PUBLIC ${OCS2_CXX_FLAGS})
 
@@ -177,6 +197,7 @@ add_executable(arm_target
 )
 target_link_libraries(arm_target
     ${catkin_LIBRARIES}
+    tbai::ocs2_core
 )
 target_compile_options(arm_target PRIVATE ${OCS2_CXX_FLAGS})
 

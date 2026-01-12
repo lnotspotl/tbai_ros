@@ -9,15 +9,16 @@ find_package(catkin REQUIRED COMPONENTS
     tbai_ros_core
     grid_map_ros
     grid_map_core
-    tbai
 )
+
+find_package(tbai REQUIRED)
 find_package(OpenCV REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES tbai_ros_gridmap 
- CATKIN_DEPENDS  grid_map_ros grid_map_core
- DEPENDS OpenCV
+  LIBRARIES tbai_ros_gridmap
+  CATKIN_DEPENDS grid_map_ros grid_map_core
+  DEPENDS OpenCV
 )
 
 include_directories(
@@ -28,7 +29,10 @@ include_directories(
 add_library(tbai_ros_gridmap
     src/GridmapInterface.cpp
 )
-target_link_libraries(tbai_ros_gridmap ${catkin_LIBRARIES})
+target_link_libraries(tbai_ros_gridmap
+    ${catkin_LIBRARIES}
+    tbai::core
+)
 
 install(TARGETS tbai_ros_gridmap
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

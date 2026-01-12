@@ -10,9 +10,6 @@
 [submodule "dependencies/kindr_ros"]
 	path = dependencies/kindr_ros
 	url = https://github.com/ANYbotics/kindr_ros.git
-[submodule "dependencies/qpoases_catkin"]
-	path = dependencies/qpoases_catkin
-	url = https://github.com/wxmerkt/qpoases_catkin.git
 [submodule "dependencies/message_logger"]
 	path = dependencies/message_logger
 	url = https://github.com/ANYbotics/message_logger.git

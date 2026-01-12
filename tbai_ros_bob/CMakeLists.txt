@@ -16,10 +16,11 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_gridmap
   tbai_ros_reference
   geometry_msgs
-  tbai
   visualization_msgs
 )
 
+find_package(Torch REQUIRED)
+find_package(tbai REQUIRED)
 find_package(pinocchio REQUIRED)
 find_package(spdlog REQUIRED)
 
@@ -43,8 +44,11 @@ add_library(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    ${catkin_LIBRARIES} spdlog::spdlog
+    ${catkin_LIBRARIES}
+    spdlog::spdlog
     ${pinocchio_LIBRARIES}
+    tbai::core
+    tbai::bob
 )
 
 add_executable(simple_blind

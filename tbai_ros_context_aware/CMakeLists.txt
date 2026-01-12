@@ -14,9 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
     tbai_ros_static
     tbai_ros_bob
     tbai_ros_ocs2
-    tbai
 )
 
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 
 catkin_package(
@@ -34,6 +34,10 @@ add_executable(simple
 )
 target_link_libraries(simple
     PUBLIC
-    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog ${TORCH_LIBRARIES}
+    ${catkin_LIBRARIES}
+    yaml-cpp
+    spdlog::spdlog
+    ${TORCH_LIBRARIES}
+    tbai::core
 )
 target_compile_options(simple PUBLIC ${OCS2_CXX_FLAGS})

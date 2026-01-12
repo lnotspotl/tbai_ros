@@ -12,15 +12,15 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_core
   geometry_msgs
-  tbai
 )
 
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES  ${PROJECT_NAME}
-  CATKIN_DEPENDS 
+  CATKIN_DEPENDS
   DEPENDS Eigen
 )
 
@@ -34,7 +34,10 @@ add_library(${PROJECT_NAME}
   src/StaticController.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES} spdlog::spdlog
+    ${catkin_LIBRARIES}
+    spdlog::spdlog
+    tbai::core
+    tbai::static
 )
 
 add_executable(simple

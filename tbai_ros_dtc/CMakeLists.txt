@@ -12,18 +12,19 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_core
   tbai_ros_static
-  tbai
   tbai_ros_ocs2
   tbai_ros_mpc
   tbai_ros_gridmap
   tbai_ros_reference
 )
 
+find_package(tbai REQUIRED)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES  ${PROJECT_NAME}
-  CATKIN_DEPENDS 
-  DEPENDS 
+  CATKIN_DEPENDS
+  DEPENDS
 )
 
 find_package(pinocchio REQUIRED)
@@ -41,9 +42,13 @@ add_library(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    ${catkin_LIBRARIES} spdlog::spdlog yaml-cpp
+    ${catkin_LIBRARIES}
+    spdlog::spdlog
+    yaml-cpp
     ${pinocchio_LIBRARIES}
     ${TORCH_LIBRARIES}
+    tbai::core
+    tbai::dtc
 )
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 

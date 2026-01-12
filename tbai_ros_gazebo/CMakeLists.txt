@@ -14,9 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_core
   std_msgs
-  tbai
 )
 
+find_package(tbai REQUIRED)
 find_package(gazebo REQUIRED)
 
 catkin_package(
@@ -35,24 +35,20 @@ find_package(spdlog REQUIRED)
 
 ## Joint controller plugin
 add_library(JointController src/JointController.cpp)
-target_link_libraries(JointController ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog) 
-target_compile_options(JointController PRIVATE ${OCS2_CXX_FLAGS})
+target_link_libraries(JointController ${catkin_LIBRARIES} tbai::core)
 
 ## RBD state plugin
 # Robot state publisher plugin
 add_library(StatePublisher src/StatePublisher.cpp)
-target_link_libraries(StatePublisher ${gazebo_LIBRARIES} ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog)
-target_compile_options(StatePublisher PRIVATE ${OCS2_CXX_FLAGS})
+target_link_libraries(StatePublisher ${gazebo_LIBRARIES} ${catkin_LIBRARIES} tbai::core)
 
 ## Robot state publisher plugin
 add_library(RobotStatePublisher src/RobotStatePublisher.cpp)
-target_link_libraries(RobotStatePublisher ${gazebo_LIBRARIES} ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog)
-target_compile_options(RobotStatePublisher PRIVATE ${OCS2_CXX_FLAGS})
+target_link_libraries(RobotStatePublisher ${gazebo_LIBRARIES} ${catkin_LIBRARIES} tbai::core)
 
 # Robot contact sensor
 add_library(ContactSensor SHARED src/ContactSensor.cpp)
-target_link_libraries(ContactSensor ${catkin_LIBRARIES} ${gazebo_LIBRARIES} yaml-cpp spdlog::spdlog)
-target_compile_options(ContactSensor PRIVATE ${OCS2_CXX_FLAGS})
+target_link_libraries(ContactSensor ${catkin_LIBRARIES} ${gazebo_LIBRARIES} tbai::core)
 
 install(
   TARGETS

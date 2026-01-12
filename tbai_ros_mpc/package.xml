@@ -19,8 +19,6 @@
   <depend>std_msgs</depend>
   <depend>tbai_ros_static</depend>
   <depend>tbai_ros_reference</depend>
-  <depend>qpoases_catkin</depend>
-  <depend>tbai</depend>
   <depend>convex_plane_decomposition</depend>
 
   <export>
