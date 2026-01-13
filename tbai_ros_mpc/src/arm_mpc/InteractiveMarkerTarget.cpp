@@ -43,6 +43,7 @@ void InteractiveMarkerTarget::createInteractiveMarker(const std::string &frameId
 
     visualization_msgs::InteractiveMarkerControl sphereControl;
     sphereControl.always_visible = true;
+    sphereControl.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_3D;
     sphereControl.markers.push_back(sphereMarker);
     intMarker.controls.push_back(sphereControl);
 
