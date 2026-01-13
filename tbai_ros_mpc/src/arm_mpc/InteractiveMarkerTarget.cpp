@@ -7,7 +7,7 @@ namespace tbai::mpc::arm {
 InteractiveMarkerTarget::InteractiveMarkerTarget(ros::NodeHandle &nodeHandle, const std::string &frameId,
                                                  const Eigen::Vector3d &initialPosition,
                                                  const Eigen::Quaterniond &initialOrientation)
-    : server_("arm_ee_target"), targetPosition_(initialPosition), targetOrientation_(initialOrientation) {
+    : server_("target_marker"), targetPosition_(initialPosition), targetOrientation_(initialOrientation) {
     createInteractiveMarker(frameId, initialPosition, initialOrientation);
 }
 
