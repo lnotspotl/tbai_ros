@@ -31,7 +31,7 @@ using ocs2::vector_t;
 class ArmMpcController : public tbai::Controller {
    public:
     ArmMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
-                        std::function<scalar_t()> getCurrentTimeFunction);
+                     std::function<scalar_t()> getCurrentTimeFunction);
 
     ~ArmMpcController() override;
 

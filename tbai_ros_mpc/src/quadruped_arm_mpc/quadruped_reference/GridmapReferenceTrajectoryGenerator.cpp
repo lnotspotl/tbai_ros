@@ -197,7 +197,8 @@ ocs2::TargetTrajectories GridmapReferenceTrajectoryGenerator::generateReferenceT
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
-void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(const tbai::mpc::quadruped_arm::TerrainPlane &terrainPlane) {
+void GridmapReferenceTrajectoryGenerator::publishLocalTerrain(
+    const tbai::mpc::quadruped_arm::TerrainPlane &terrainPlane) {
     tbai_ros_ocs2::local_terrain msg;
 
     // Position (3 elements)

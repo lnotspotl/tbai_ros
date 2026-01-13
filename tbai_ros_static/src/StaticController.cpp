@@ -198,7 +198,7 @@ void RosStaticController::visualizeContactPoints(const vector_t &currentState, c
     vector_t q = vector_t::Zero(model_.nq);
     q.head<3>() = currentState.segment<3>(3);                               // Position
     q.segment<4>(3) = tbai::ocs2rpy2quat(currentState.head<3>()).coeffs();  // Orientation
-    const int numJoints = model_.nq - 7;  // nq = 7 (floating base) + num_joints
+    const int numJoints = model_.nq - 7;                                    // nq = 7 (floating base) + num_joints
     q.tail(numJoints) = currentState.segment(3 + 3 + 3 + 3, numJoints);
     pinocchio::forwardKinematics(model_, data_, q);
     pinocchio::updateFramePlacements(model_, data_);

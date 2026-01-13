@@ -200,8 +200,8 @@ RosJoeController::RosJoeController(const std::string &robotName,
 
     // Initialize visualizer after quadruped interface is ready
     visualizer_.reset(new tbai::mpc::quadruped::QuadrupedVisualizer(quadrupedInterface_->getKinematicModel(),
-                                                              quadrupedInterface_->getJointNames(),
-                                                              quadrupedInterface_->getBaseName(), nh_));
+                                                                    quadrupedInterface_->getJointNames(),
+                                                                    quadrupedInterface_->getBaseName(), nh_));
 }
 
 std::unique_ptr<ocs2::MRT_BASE> RosJoeController::createMrtInterface() {

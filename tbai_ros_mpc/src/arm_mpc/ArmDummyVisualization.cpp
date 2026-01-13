@@ -6,9 +6,9 @@
 #include <pinocchio/fwd.hpp>
 #include <ros/package.h>
 #include <tbai_mpc/arm_mpc/AccessHelperFunctions.h>
-#include <tbai_mpc/arm_mpc/FactoryFunctions.h>
 #include <tbai_mpc/arm_mpc/ArmInterface.h>
 #include <tbai_mpc/arm_mpc/ArmModelInfo.h>
+#include <tbai_mpc/arm_mpc/FactoryFunctions.h>
 #include <tbai_ros_mpc/arm_mpc/ArmDummyVisualization.h>
 #include <tbai_ros_ocs2/common/RosMsgHelpers.h>
 #include <tf/tf.h>
@@ -60,7 +60,7 @@ void ArmDummyVisualization::launchVisualizerNode(ros::NodeHandle &nodeHandle) {
 }
 
 void ArmDummyVisualization::update(const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &policy,
-                                      const ocs2::CommandData &command) {
+                                   const ocs2::CommandData &command) {
     const ros::Time timeStamp = ros::Time::now();
 
     publishObservation(timeStamp, observation);
@@ -92,7 +92,7 @@ void ArmDummyVisualization::publishObservation(const ros::Time &timeStamp, const
 }
 
 void ArmDummyVisualization::publishTargetTrajectories(const ros::Time &timeStamp,
-                                                         const ocs2::TargetTrajectories &targetTrajectories) {
+                                                      const ocs2::TargetTrajectories &targetTrajectories) {
     const Eigen::Vector3d eeDesiredPosition = targetTrajectories.stateTrajectory.back().head(3);
     Eigen::Quaterniond eeDesiredOrientation;
     eeDesiredOrientation.coeffs() = targetTrajectories.stateTrajectory.back().tail(4);
@@ -146,7 +146,8 @@ void ArmDummyVisualization::publishOptimizedTrajectory(const ros::Time &timeStam
         poseArray.poses.push_back(std::move(pose));
     });
 
-    markerArray.markers.emplace_back(ocs2::ros_msg_helpers::getLineMsg(std::move(baseTrajectory), red, TRAJECTORYLINEWIDTH));
+    markerArray.markers.emplace_back(
+        ocs2::ros_msg_helpers::getLineMsg(std::move(baseTrajectory), red, TRAJECTORYLINEWIDTH));
     markerArray.markers.back().ns = "Base Trajectory";
 
     assignHeader(markerArray.markers.begin(), markerArray.markers.end(),

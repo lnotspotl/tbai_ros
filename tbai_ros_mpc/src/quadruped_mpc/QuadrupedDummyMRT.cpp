@@ -42,17 +42,17 @@ int main(int argc, char **argv) {
     // Create quadruped interface based on robot type
     std::unique_ptr<tbai::mpc::quadruped::QuadrupedInterface> quadrupedInterface;
     if (robotName == "anymal_d" || robotName == "anymal_c" || robotName == "anymal_b") {
-        quadrupedInterface =
-            tbai::mpc::quadruped::getAnymalInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
-                                       tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped::getAnymalInterface(
+            urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "go2") {
-        quadrupedInterface =
-            tbai::mpc::quadruped::getGo2Interface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
-                                    tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped::getGo2Interface(
+            urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "spot" || robotName == "spot_arm") {
-        quadrupedInterface =
-            tbai::mpc::quadruped::getSpotInterface(urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
-                                     tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped::getSpotInterface(
+            urdfString, tbai::mpc::quadruped::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }

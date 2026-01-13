@@ -2,6 +2,8 @@
 #include <pinocchio/fwd.hpp>
 // clang-format on
 
+#include <mutex>
+
 #include <geometry_msgs/Twist.h>
 #include <ocs2_mpc/MPC_Settings.h>
 #include <ocs2_mpc/SystemObservation.h>
@@ -15,8 +17,6 @@
 #include <tbai_ros_mpc/quadruped_arm_mpc/visualization/QuadrupedVisualizer.h>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 
-#include <mutex>
-
 using namespace ocs2;
 using namespace tbai::mpc::quadruped_arm;
 
@@ -25,17 +25,14 @@ std::mutex twistMutex;
 geometry_msgs::Twist latestTwist;
 bool twistReceived = false;
 
-void twistCallback(const geometry_msgs::Twist::ConstPtr& msg) {
+void twistCallback(const geometry_msgs::Twist::ConstPtr &msg) {
     std::lock_guard<std::mutex> lock(twistMutex);
     latestTwist = *msg;
     twistReceived = true;
 }
 
-TargetTrajectories generateTargetTrajectories(const SystemObservation& observation,
-                                               const geometry_msgs::Twist& twist,
-                                               const vector_t& initialState,
-                                               scalar_t horizon,
-                                               scalar_t dt) {
+TargetTrajectories generateTargetTrajectories(const SystemObservation &observation, const geometry_msgs::Twist &twist,
+                                              const vector_t &initialState, scalar_t horizon, scalar_t dt) {
     // Number of trajectory points
     const size_t N = static_cast<size_t>(horizon / dt) + 1;
 
@@ -73,8 +70,8 @@ TargetTrajectories generateTargetTrajectories(const SystemObservation& observati
         const scalar_t vy_world = vx_base * sinYaw + vy_base * cosYaw;
 
         // Update orientation
-        state(0) = 0.0;  // roll
-        state(1) = 0.0;  // pitch
+        state(0) = 0.0;           // roll
+        state(1) = 0.0;           // pitch
         state(2) = predictedYaw;  // yaw
 
         // Update position prediction
@@ -83,12 +80,12 @@ TargetTrajectories generateTargetTrajectories(const SystemObservation& observati
         // z stays from initial state (standing height)
 
         // Set base velocities (in base frame)
-        state(6) = 0.0;     // angular vel x
-        state(7) = 0.0;     // angular vel y
-        state(8) = wz;      // angular vel z
+        state(6) = 0.0;       // angular vel x
+        state(7) = 0.0;       // angular vel y
+        state(8) = wz;        // angular vel z
         state(9) = vx_base;   // linear vel x
         state(10) = vy_base;  // linear vel y
-        state(11) = 0.0;    // linear vel z
+        state(11) = 0.0;      // linear vel z
 
         // Arm joints are already set from initialState (neutral position)
         // Explicitly ensure they stay at neutral
@@ -130,17 +127,17 @@ int main(int argc, char **argv) {
     // Create quadruped interface based on robot type
     std::unique_ptr<tbai::mpc::quadruped_arm::QuadrupedInterface> quadrupedInterface;
     if (robotName == "anymal_d" || robotName == "anymal_c" || robotName == "anymal_b") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getAnymalInterface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                       tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getAnymalInterface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "go2") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getGo2Interface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                    tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getGo2Interface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "spot" || robotName == "spot_arm") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getSpotInterface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                     tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getSpotInterface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }
@@ -213,7 +210,8 @@ int main(int argc, char **argv) {
         }
 
         // Generate target trajectories from twist command (use initialState for neutral arm position)
-        auto targetTrajectories = generateTargetTrajectories(observation, currentTwist, initialState, horizon, targetDt);
+        auto targetTrajectories =
+            generateTargetTrajectories(observation, currentTwist, initialState, horizon, targetDt);
 
         // Update MPC target
         mrt.setTargetTrajectories(targetTrajectories);

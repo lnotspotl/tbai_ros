@@ -21,7 +21,7 @@ namespace tbai::mpc::arm {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 ArmMpcController::ArmMpcController(const std::shared_ptr<tbai::StateSubscriber> &stateSubscriberPtr,
-                                         std::function<scalar_t()> getCurrentTimeFunction)
+                                   std::function<scalar_t()> getCurrentTimeFunction)
     : stateSubscriberPtr_(stateSubscriberPtr), getCurrentTimeFunction_(getCurrentTimeFunction) {
     logger_ = tbai::getLogger("arm_mpc_controller");
     initTime_ = tbai::readInitTime();
@@ -304,7 +304,7 @@ void ArmMpcController::referenceThreadLoop() {
 /*********************************************************************************************************************/
 /*********************************************************************************************************************/
 ocs2::TargetTrajectories ArmMpcController::generateReferenceTrajectory(scalar_t currentTime,
-                                                                          const ocs2::SystemObservation &observation) {
+                                                                       const ocs2::SystemObservation &observation) {
     // Simple hold-position reference trajectory
     // Similar to what a ReferenceTrajectoryGenerator would produce, but simpler for fixed-base arm
     const size_t trajKnots = 20;

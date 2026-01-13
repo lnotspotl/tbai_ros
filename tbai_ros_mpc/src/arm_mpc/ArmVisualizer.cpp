@@ -12,7 +12,7 @@
 namespace tbai::mpc::arm {
 
 ArmVisualizer::ArmVisualizer(ros::NodeHandle &nodeHandle, const std::vector<std::string> &jointNames,
-                                   scalar_t maxUpdateFrequency)
+                             scalar_t maxUpdateFrequency)
     : jointNames_(jointNames),
       lastTime_(std::numeric_limits<scalar_t>::lowest()),
       minPublishTimeDifference_(1.0 / maxUpdateFrequency) {
@@ -41,8 +41,8 @@ void ArmVisualizer::launchNode(ros::NodeHandle &nodeHandle) {
 }
 
 void ArmVisualizer::updateWbc(const vector_t &jointPositions, const vector_t &currentEEPosition,
-                                 const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
-                                 const vector_t &targetEEOrientation, const ocs2::SystemObservation &observation) {
+                              const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
+                              const vector_t &targetEEOrientation, const ocs2::SystemObservation &observation) {
     if (observation.time - lastTime_ < minPublishTimeDifference_) {
         return;
     }
@@ -58,9 +58,9 @@ void ArmVisualizer::updateWbc(const vector_t &jointPositions, const vector_t &cu
 }
 
 void ArmVisualizer::update(const vector_t &jointPositions, const vector_t &currentEEPosition,
-                              const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
-                              const vector_t &targetEEOrientation, const std::vector<vector_t> &eeTrajectory,
-                              const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &primalSolution) {
+                           const vector_t &currentEEOrientation, const vector_t &targetEEPosition,
+                           const vector_t &targetEEOrientation, const std::vector<vector_t> &eeTrajectory,
+                           const ocs2::SystemObservation &observation, const ocs2::PrimalSolution &primalSolution) {
     if (observation.time - lastTime_ < minPublishTimeDifference_) {
         return;
     }
@@ -103,8 +103,7 @@ void ArmVisualizer::publishRobotState(ros::Time timeStamp, const vector_t &joint
     robotStatePublisherPtr_->publishTransforms(jointPositionMap, timeStamp);
 }
 
-void ArmVisualizer::publishCurrentEEMarker(ros::Time timeStamp, const vector_t &position,
-                                              const vector_t &orientation) {
+void ArmVisualizer::publishCurrentEEMarker(ros::Time timeStamp, const vector_t &position, const vector_t &orientation) {
     Eigen::Vector3d pos(position(0), position(1), position(2));
 
     visualization_msgs::Marker marker = ocs2::getSphereMsg(pos, ocs2::Color::blue, eeMarkerDiameter_);
@@ -115,8 +114,7 @@ void ArmVisualizer::publishCurrentEEMarker(ros::Time timeStamp, const vector_t &
     currentEEPublisher_.publish(marker);
 }
 
-void ArmVisualizer::publishTargetEEMarker(ros::Time timeStamp, const vector_t &position,
-                                             const vector_t &orientation) {
+void ArmVisualizer::publishTargetEEMarker(ros::Time timeStamp, const vector_t &position, const vector_t &orientation) {
     Eigen::Vector3d pos(position(0), position(1), position(2));
     Eigen::Quaterniond quat(orientation(3), orientation(0), orientation(1), orientation(2));  // w, x, y, z
 

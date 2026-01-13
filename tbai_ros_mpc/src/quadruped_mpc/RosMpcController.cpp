@@ -119,9 +119,9 @@ RosMpcController::RosMpcController(const std::string &robotName,
                trajKnots);
 
     // Create ROS-specific components
-    visualizerPtr_ = std::make_unique<tbai::mpc::quadruped::QuadrupedVisualizer>(quadrupedInterfacePtr_->getKinematicModel(),
-                                                                           quadrupedInterfacePtr_->getJointNames(),
-                                                                           quadrupedInterfacePtr_->getBaseName(), nh);
+    visualizerPtr_ = std::make_unique<tbai::mpc::quadruped::QuadrupedVisualizer>(
+        quadrupedInterfacePtr_->getKinematicModel(), quadrupedInterfacePtr_->getJointNames(),
+        quadrupedInterfacePtr_->getBaseName(), nh);
     contactVisualizerPtr_ = std::make_unique<ContactVisualizer>();
 
     // Replace the base reference trajectory generator with gridmap-aware version

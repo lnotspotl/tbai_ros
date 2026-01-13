@@ -32,7 +32,8 @@ class GridmapTerrainInterface : public TerrainInterface {
 
     TargetTrajectories generateTargetTrajectories(
         scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
-        const BaseReferenceCommand &command, const tbai::mpc::quadruped::QuadrupedInterface &quadrupedInterface) override;
+        const BaseReferenceCommand &command,
+        const tbai::mpc::quadruped::QuadrupedInterface &quadrupedInterface) override;
 
     tbai::gridmap::GridmapInterface &getGridmap() { return *gridmap_; }
 

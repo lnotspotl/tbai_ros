@@ -15,16 +15,16 @@
 #include <ros/ros.h>
 #include <tbai_mpc/quadruped_arm_mpc/MpcController.hpp>
 #include <tbai_mpc/quadruped_arm_mpc/QuadrupedMpc.h>
-#include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.hpp>
-#include <tbai_ros_mpc/quadruped_arm_mpc/visualization/QuadrupedVisualizer.h>
-#include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
-#include <tbai_ros_ocs2/RosReferenceManager.hpp>
 #include <tbai_ros_mpc/quadruped_arm_mpc/logic/GaitReceiver.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/LocalTerrainReceiver.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/SwingPlanningVisualizer.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/TerrainPlaneVisualizer.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/TerrainReceiver.h>
+#include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_reference/GridmapReferenceTrajectoryGenerator.hpp>
 #include <tbai_ros_mpc/quadruped_arm_mpc/terrain/TerrainPlane.h>
+#include <tbai_ros_mpc/quadruped_arm_mpc/visualization/QuadrupedVisualizer.h>
+#include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
+#include <tbai_ros_ocs2/RosReferenceManager.hpp>
 #include <visualization_msgs/MarkerArray.h>
 
 namespace tbai {

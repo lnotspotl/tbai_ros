@@ -8,14 +8,14 @@
 #include <tbai_core/config/Config.hpp>
 #include <tbai_mpc/quadruped_arm_mpc/QuadrupedMpc.h>
 #include <tbai_mpc/quadruped_arm_mpc/quadruped_interfaces/Interfaces.h>
-#include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
-#include <tbai_ros_ocs2/RosReferenceManager.hpp>
 #include <tbai_ros_mpc/quadruped_arm_mpc/logic/GaitReceiver.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/LocalTerrainReceiver.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/SwingPlanningVisualizer.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/TerrainPlaneVisualizer.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/quadruped_interface/TerrainReceiver.h>
 #include <tbai_ros_mpc/quadruped_arm_mpc/terrain/TerrainPlane.h>
+#include <tbai_ros_ocs2/MPC_ROS_Interface.hpp>
+#include <tbai_ros_ocs2/RosReferenceManager.hpp>
 
 namespace tbai::mpc::quadruped_arm {
 
@@ -89,17 +89,17 @@ int main(int argc, char *argv[]) {
     std::string robotName = tbai::fromGlobalConfig<std::string>("robot_name");
     std::unique_ptr<tbai::mpc::quadruped_arm::QuadrupedInterface> quadrupedInterface;
     if (robotName == "anymal_d" || robotName == "anymal_c" || robotName == "anymal_b") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getAnymalInterface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                       tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getAnymalInterface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "go2") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getGo2Interface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                    tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getGo2Interface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else if (robotName == "spot" || robotName == "spot_arm") {
-        quadrupedInterface =
-            tbai::mpc::quadruped_arm::getSpotInterface(urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
-                                     tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
+        quadrupedInterface = tbai::mpc::quadruped_arm::getSpotInterface(
+            urdfString, tbai::mpc::quadruped_arm::loadQuadrupedSettings(taskSettingsFile),
+            tbai::mpc::quadruped_arm::frameDeclarationFromFile(frameDeclarationFile));
     } else {
         TBAI_THROW("Robot name not supported: {}", robotName);
     }

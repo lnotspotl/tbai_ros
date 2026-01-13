@@ -34,9 +34,9 @@ class GridmapReferenceTrajectoryGenerator : public ReferenceTrajectoryGenerator 
     GridmapReferenceTrajectoryGenerator(
         ros::NodeHandle &nh, const std::string &configFile,
         std::shared_ptr<tbai::reference::ReferenceVelocityGenerator> velocityGeneratorPtr,
-        std::shared_ptr<tbai::mpc::quadruped::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr, ocs2::scalar_t trajdt = 0.1,
-        size_t trajKnots = 20, const std::string &terrainTopic = "/elevation_mapping/elevation_map",
-        bool blind = false);
+        std::shared_ptr<tbai::mpc::quadruped::KinematicsModelBase<ocs2::scalar_t>> kinematicsPtr,
+        ocs2::scalar_t trajdt = 0.1, size_t trajKnots = 20,
+        const std::string &terrainTopic = "/elevation_mapping/elevation_map", bool blind = false);
 
     /**
      * Generates reference trajectory, using gridmap if available
