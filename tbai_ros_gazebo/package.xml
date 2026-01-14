@@ -16,7 +16,7 @@
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
-  <depend>tbai</depend>
+  <depend>gazebo_robotic_assets</depend>
 
   <export>
       <controller_interface plugin="${prefix}/controller_plugins.xml"/>
