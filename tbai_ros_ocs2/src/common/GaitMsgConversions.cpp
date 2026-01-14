@@ -7,7 +7,7 @@
 
 #include "tbai_ros_ocs2/common/GaitMsgConversions.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 namespace ros_msg_conversions {
 
 tbai_ros_ocs2::gait toMessage(const Gait &gait) {
@@ -69,4 +69,4 @@ std::pair<scalar_t, GaitSchedule::GaitSequence> fromMessage(const tbai_ros_ocs2:
 }
 
 }  // namespace ros_msg_conversions
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

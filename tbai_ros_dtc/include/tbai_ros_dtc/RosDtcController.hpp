@@ -10,7 +10,7 @@
 #include <ros/ros.h>
 #include <tbai_dtc/DtcController.hpp>
 #include <tbai_ros_gridmap/GridmapInterface.hpp>
-#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
+#include <tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedVisualizer.h>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/mpc_target_trajectories.h>
 
@@ -67,7 +67,7 @@ class RosDtcController : public DtcController {
    private:
     ros::NodeHandle nh_;
     ros::Publisher refPub_;
-    std::unique_ptr<switched_model::QuadrupedVisualizer> visualizer_;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedVisualizer> visualizer_;
 };
 
 }  // namespace dtc

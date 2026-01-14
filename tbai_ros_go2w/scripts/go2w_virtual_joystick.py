@@ -99,7 +99,7 @@ class Go2WUIController:
         main_frame.pack()
 
         # Title
-        title_label = ttk.Label(main_frame, text="Go2W Wheeled Quadruped Control", font=("Arial", 14, "bold"))
+        title_label = ttk.Label(main_frame, text="Go2W", font=("Arial", 14, "bold"))
         title_label.pack(pady=(0, 10))
 
         joystick_frame = ttk.Frame(main_frame)

@@ -38,8 +38,10 @@ class StatePublisher : public ModelPlugin {
 
     double lastYaw_ = 0.0;
 
-    std::array<bool, 4> contactFlags_;
-    std::array<ros::Subscriber, 4> contactSubscribers_;
+    std::vector<bool> contactFlags_;
+    std::vector<ros::Subscriber> contactSubscribers_;
+
+    bool fixedBase_ = false;
 
     // last yaw angle
     std::vector<tbai::scalar_t> lastJointAngles_;

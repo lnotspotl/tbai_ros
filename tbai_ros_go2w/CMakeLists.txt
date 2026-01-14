@@ -13,33 +13,20 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_msgs
   tbai_ros_static
   tbai_ros_reference
-  tbai
   kdl_parser
   robot_state_publisher
 )
 
+find_package(Torch REQUIRED)
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(Torch REQUIRED)
 find_package(orocos_kdl REQUIRED)
-
-# Find tbai_deploy_go2w library (built by tbai package)
-find_library(TBAI_DEPLOY_GO2W_LIBRARY
-  NAMES tbai_deploy_go2w
-  PATHS ${catkin_LIBRARY_DIRS}
-        ${CMAKE_INSTALL_PREFIX}/lib
-        /usr/local/lib
-)
-
-if(NOT TBAI_DEPLOY_GO2W_LIBRARY)
-  message(WARNING "tbai_deploy_go2w library not found, will attempt to link anyway")
-  set(TBAI_DEPLOY_GO2W_LIBRARY "tbai_deploy_go2w")
-endif()
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp roslib std_msgs sensor_msgs tbai_ros_core tbai_ros_msgs tbai_ros_static tbai_ros_reference tbai kdl_parser robot_state_publisher
+  CATKIN_DEPENDS roscpp roslib std_msgs sensor_msgs tbai_ros_core tbai_ros_msgs tbai_ros_static tbai_ros_reference kdl_parser robot_state_publisher
   DEPENDS Eigen3 orocos_kdl
 )
 
@@ -59,6 +46,9 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${TORCH_LIBRARIES}
   spdlog::spdlog
+  tbai::core
+  tbai::reference
+  tbai::deploy_go2w
 )
 
 # Deployment executable
@@ -66,9 +56,9 @@ add_executable(deploy_go2w_dreamwaq src/deploy_go2w_dreamwaq.cpp)
 target_link_libraries(deploy_go2w_dreamwaq
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
-  ${TBAI_DEPLOY_GO2W_LIBRARY}
+  tbai::deploy_go2w
+  tbai::static
   ${orocos_kdl_LIBRARIES}
-  yaml-cpp
 )
 
 # Install Python scripts

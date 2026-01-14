@@ -12,10 +12,7 @@
   <depend>roscpp</depend>
   <depend>roslib</depend>
   <depend>tbai_ros_msgs</depend>
-  <depend>gazebo_robotic_assets</depend>
-  <depend>ocs2_robotic_tools</depend>
   <depend>std_msgs</depend>
-  <depend>tbai</depend>
 
   <export>
   </export>

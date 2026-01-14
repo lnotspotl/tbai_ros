@@ -10,7 +10,7 @@
 #include <convex_plane_decomposition/SegmentedPlaneProjection.h>
 #include <grid_map_filters_rsl/lookup.hpp>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 namespace {
 const std::string elevationLayerName = "elevation";
@@ -129,4 +129,4 @@ std::vector<vector2_t> SegmentedPlanesTerrainModel::getHeightProfileAlongLine(co
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

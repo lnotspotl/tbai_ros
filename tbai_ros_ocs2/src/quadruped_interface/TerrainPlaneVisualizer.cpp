@@ -7,7 +7,7 @@
 #include <tbai_mpc/quadruped_mpc/terrain/PlaneFitting.h>
 #include <tbai_ros_ocs2/visualization/VisualizationHelpers.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 TerrainPlaneVisualizer::TerrainPlaneVisualizer(ros::NodeHandle &nodeHandle) {
     terrainPublisher_ = nodeHandle.advertise<visualization_msgs::Marker>("/ocs2_quadruped/localTerrain", 1, true);
@@ -46,4 +46,4 @@ void TerrainPlaneVisualizerSynchronizedModule::postSolverRun(const ocs2::PrimalS
     }
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

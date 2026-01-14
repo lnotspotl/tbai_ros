@@ -194,6 +194,27 @@ go2w_handstand_mujoco:
     source $(catkin locate)/devel/setup.bash
     roslaunch tbai_ros_go2w go2w_mujoco_handstand.launch run_rviz:=false
 
+# Spot with arm, MPC
+[group("2. demos")]
+spot_arm_mpc:
+    #!/usr/bin/env bash
+    source $(catkin locate)/devel/setup.bash
+    roslaunch tbai_ros_mpc spot_arm_blind.launch dummy:=true
+
+# Franka arm, MPC, dummy
+[group("2. demos")]
+franka_arm_mpc_dummy:
+    #!/usr/bin/env bash
+    source $(catkin locate)/devel/setup.bash
+    roslaunch tbai_ros_mpc franka.launch dummy:=true
+
+# Franka arm, MPC, dummy
+[group("2. demos")]
+franka_arm_mpc_gazebo:
+    #!/usr/bin/env bash
+    source $(catkin locate)/devel/setup.bash
+    roslaunch tbai_ros_mpc franka.launch dummy:=false gui:=true
+
 # Go2W (wheeled) drive in MuJoCo
 [group("2. demos")]
 go2w_drive_gazebo:
@@ -354,7 +375,7 @@ clean:
 clone-tbai:
     #!/usr/bin/env bash
     if [[ ! -d dependencies/tbai ]]; then
-        git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=main dependencies/tbai
+        git clone https://github.com/tbai-lab/tbai.git --single-branch --branch=develop dependencies/tbai
     else
         echo "[TBAI] dependencies/tbai already exists, skipping clone"
         if [[ -d dependencies/tbai/.git ]]; then
@@ -429,7 +450,7 @@ remove-unitree-mujoco:
 [group("4. development")]
 install-tbai-cbf-mppi: clone-tbai
     #!/usr/bin/env bash
-    pip3 install git+https://github.com/lnotspotl/tbai_cbf_mppi.git
+    pip3 install git+https://github.com/tbai-lab/tbai_cbf_mppi.git
 
 # Build all ROS packages
 [group("4. development")]

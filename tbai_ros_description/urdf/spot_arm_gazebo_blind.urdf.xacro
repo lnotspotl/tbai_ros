@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="spot_arm">
+
+<!-- Includes -->
+<xacro:include filename="utils.xacro" />
+
+<!-- Spot arm bare urdf -->
+<xacro:include filename="$(find gazebo_robotic_assets)/resources/spot_arm/urdf/spot_arm.urdf" />
+
+<!-- Transmissions LF -->
+<xacro:transmission name="transmission_LF_HAA" joint="LF_HAA" actuator="motor_LF_HAA"/>
+<xacro:transmission name="transmission_LF_HFE" joint="LF_HFE" actuator="motor_LF_HFE"/>
+<xacro:transmission name="transmission_LF_KFE" joint="LF_KFE" actuator="motor_LF_KFE"/>
+
+<!-- Transmissions LH -->
+<xacro:transmission name="transmission_LH_HAA" joint="LH_HAA" actuator="motor_LH_HAA"/>
+<xacro:transmission name="transmission_LH_HFE" joint="LH_HFE" actuator="motor_LH_HFE"/>
+<xacro:transmission name="transmission_LH_KFE" joint="LH_KFE" actuator="motor_LH_KFE"/>
+
+<!-- Transmissions RF -->
+<xacro:transmission name="transmission_RF_HAA" joint="RF_HAA" actuator="motor_RF_HAA"/>
+<xacro:transmission name="transmission_RF_HFE" joint="RF_HFE" actuator="motor_RF_HFE"/>
+<xacro:transmission name="transmission_RF_KFE" joint="RF_KFE" actuator="motor_RF_KFE"/>
+
+<!-- Transmissions RH -->
+<xacro:transmission name="transmission_RH_HAA" joint="RH_HAA" actuator="motor_RH_HAA"/>
+<xacro:transmission name="transmission_RH_HFE" joint="RH_HFE" actuator="motor_RH_HFE"/>
+<xacro:transmission name="transmission_RH_KFE" joint="RH_KFE" actuator="motor_RH_KFE"/>
+
+<!-- Transmissions ARM -->
+<xacro:transmission name="transmission_arm_sh0" joint="arm_sh0" actuator="motor_arm_sh0"/>
+<xacro:transmission name="transmission_arm_sh1" joint="arm_sh1" actuator="motor_arm_sh1"/>
+<xacro:transmission name="transmission_arm_el0" joint="arm_el0" actuator="motor_arm_el0"/>
+<xacro:transmission name="transmission_arm_el1" joint="arm_el1" actuator="motor_arm_el1"/>
+<xacro:transmission name="transmission_arm_wr0" joint="arm_wr0" actuator="motor_arm_wr0"/>
+<xacro:transmission name="transmission_arm_wr1" joint="arm_wr1" actuator="motor_arm_wr1"/>
+
+<!-- Joint controller -->
+<gazebo>
+  <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <robotNamespace>/spot_arm</robotNamespace>
+  </plugin>
+</gazebo>
+
+<!-- Joint controller -->
+<gazebo>
+  <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <robotNamespace>/spot</robotNamespace>
+  </plugin>
+</gazebo>
+
+<!-- State publisher - enabled or disabled based on the config file -->
+<gazebo>
+  <plugin filename="libStatePublisher.so" name="StatePublisher"/>
+</gazebo>
+
+<gazebo>
+  <plugin filename="libRobotStatePublisher.so" name="RobotStatePublisher"/>
+</gazebo>
+
+<!-- Gazebo materials for arm links (alternating yellow/black like real Spot arm) -->
+<gazebo reference="arm_link_sh0">
+  <material>Gazebo/DarkGrey</material>
+</gazebo>
+
+<gazebo reference="arm_link_sh1">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<gazebo reference="arm_link_hr0">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<gazebo reference="arm_link_el0">
+  <material>Gazebo/DarkGrey</material>
+</gazebo>
+
+<gazebo reference="arm_link_el1">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<gazebo reference="arm_link_wr0">
+  <material>Gazebo/DarkGrey</material>
+</gazebo>
+
+<gazebo reference="arm_link_wr1">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<gazebo reference="arm_link_fngr">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<!-- Gazebo materials for feet -->
+<gazebo reference="LF_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RF_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="LH_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+
+<gazebo reference="RH_FOOT">
+  <mu1>1.85</mu1>
+  <mu2>1.85</mu2>
+  <kp value="1000000.0"/>
+  <kd value="100.0"/>
+</gazebo>
+</robot>

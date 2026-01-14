@@ -4,7 +4,7 @@ model_settings
   recompileLibraries            false
   robotName                     spot
 
-  analyticalInverseKinematics   false
+  analyticalInverseKinematics   true
 
   frictionCoefficient           0.5
   gripperForce                  0.0   ; [N] negative gripper force -> minimum force in normal direction
@@ -14,7 +14,7 @@ model_settings
   muFootPlacement               0.1   ; magnitude scaling
   deltaFootPlacement            0.01  ; [m] distance from constraint boundary where the barrier becomes quadratic.
 
-  muSdf                         0.1
+  muSdf                         2.5
   deltaSdf                      0.005
 
   muJointsPosition              0.1
@@ -94,9 +94,9 @@ swing_trajectory_settings
     touchDownVelocity            -0.4
     swingHeight                   0.08
     touchdownAfterHorizon         0.2
-    errorGain                     5.0
+    errorGain                     20.0
     swingTimeScale                0.15
-    sdfMidswingMargin             0.1
+    sdfMidswingMargin             0.04
     terrainMargin                 0.0
     previousFootholdFactor        0.333
     previousFootholdDeadzone      0.05

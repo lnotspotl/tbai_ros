@@ -180,6 +180,20 @@ class G1UIController:
         )
         self.gangnam_button.pack(side=tk.LEFT, padx=5)
 
+        # Third row for BeyondMimic controllers
+        row3_frame = ttk.Frame(button_grid)
+        row3_frame.pack(pady=(10, 0))
+
+        row3_label = ttk.Label(row3_frame, text="beyond mimic:", font=("Arial", 10))
+        row3_label.pack(side=tk.LEFT, padx=5)
+
+        # BeyondMimic Dance button
+        self.beyond_dance_button = ttk.Button(
+            row3_frame, text="B-DANCE", width=8,
+            command=lambda: self.publish_controller_change("G1BeyondDance")
+        )
+        self.beyond_dance_button.pack(side=tk.LEFT, padx=3)
+
         # Status indicator
         status_frame = ttk.Frame(main_frame)
         status_frame.pack(pady=(15, 0))
@@ -198,7 +212,7 @@ class G1UIController:
 
         self.linear_x_scale = 0.5
         self.linear_y_scale = 0.3
-        self.angular_scale = 0.4
+        self.angular_scale = 1.4
 
         self.root.update_idletasks()
         self.root.after(100, self.update_gui)

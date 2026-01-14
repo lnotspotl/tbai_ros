@@ -16,7 +16,7 @@
 
 #include "tbai_ros_ocs2/segmented_planes/SegmentedPlanesTerrainModel.h"
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 class SegmentedPlanesTerrainModelRos {
  public:
@@ -54,4 +54,4 @@ class SegmentedPlanesTerrainModelRos {
   ocs2::benchmark::RepeatedTimer callbackTimer_;
 };
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

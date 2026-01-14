@@ -14,7 +14,7 @@
 #include <tbai_ros_ocs2/gait_sequence.h>
 #include <tbai_ros_ocs2/scheduled_gait_sequence.h>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 namespace ros_msg_conversions {
 
 tbai_ros_ocs2::gait toMessage(const Gait& gait);
@@ -27,4 +27,4 @@ tbai_ros_ocs2::scheduled_gait_sequence toMessage(scalar_t startTime, const GaitS
 std::pair<scalar_t, GaitSchedule::GaitSequence> fromMessage(const tbai_ros_ocs2::scheduled_gait_sequence& msg);
 
 }  // namespace ros_msg_conversions
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

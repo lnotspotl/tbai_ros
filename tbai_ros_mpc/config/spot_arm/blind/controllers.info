@@ -1,0 +1,214 @@
+sqpWbc
+{
+  ; Task weights for quadruped
+  weightBaseTracking            1.0
+  weightSwingLeg                200.0
+  weightContactForce            0.001
+
+  ; Task weights for arm
+  weightArmEEPosition           1.0
+  weightArmEEOrientation        0.5
+  weightArmJointCentering       0.1
+
+  ; Friction cone parameters
+  frictionCoefficient     0.5
+
+  ; Swing leg kp and kd (in cartesian space - ee tracking)
+  swingKp                 350.0
+  swingKd                 10.0
+
+  ; Base position kp and kd
+  baseKp                  1.0
+  baseKd                  0.0
+
+  ; Base orientation kp and kd
+  eulerKp                 0.0
+  eulerKd                 0.1
+
+  ; Joint swing leg kp and kd
+  jointSwingKp            50.0
+  jointSwingKd            5.0
+
+  ; Joint stance leg kp and kd
+  jointStanceKp            50.0
+  jointStanceKd            5.2
+
+  ; Joint torque limit (leg)
+  torqueLimit              80.0
+
+  ; whether stance should be enforeced as a constraint
+  ; or as a cost (false is more robust (e.g. slips))
+  stanceAsConstraint false
+
+  ; =============================================
+  ; Arm WBC settings
+  ; =============================================
+
+  ; Arm end-effector position PD gains
+  armEEPositionKp         100.0
+  armEEPositionKd         20.0
+
+  ; Arm end-effector orientation PD gains
+  armEEOrientationKp      50.0
+  armEEOrientationKd      10.0
+
+  ; Arm joint centering (nullspace) PD gains
+  armJointCenteringKp     10.0
+  armJointCenteringKd     2.0
+
+  ; Arm joint PD gains for motor commands
+  armJointKp              200.0
+  armJointKd              10.0
+
+  ; Arm home position (stowed)
+  armJointHomePosition
+  {
+    (0,0)  0.0    ; arm_sh0
+    (1,0) -3.1    ; arm_sh1
+    (2,0)  2.1    ; arm_el0
+    (3,0)  0.0    ; arm_el1
+    (4,0)  0.0    ; arm_wr0
+    (5,0)  0.0    ; arm_wr1
+  }
+
+  ; Arm torque limits
+  armTorqueLimits
+  {
+    (0,0)  45.0   ; arm_sh0
+    (1,0)  45.0   ; arm_sh1
+    (2,0)  30.0   ; arm_el0
+    (3,0)  30.0   ; arm_el1
+    (4,0)  15.0   ; arm_wr0
+    (5,0)  15.0   ; arm_wr1
+  }
+}
+
+hqpWbc
+{
+  ; Friction cone parameters
+  frictionCoefficient     0.5
+
+  ; Swing leg kp and kd (in cartesian space - ee tracking)
+  swingKp                 550.0
+  swingKd                 50.0
+
+  ; Base position kp and kd
+  baseKp                  1.0
+  baseKd                  0.0
+
+  ; Base orientation kp and kd
+  eulerKp                 0.0
+  eulerKd                 0.1
+
+  ; Joint swing leg kp and kd
+  jointSwingKp            50.0
+  jointSwingKd            5.0
+
+  ; Joint stance leg kp and kd
+  jointStanceKp            50.0
+  jointStanceKd            5.2
+
+  ; Joint torque limit (leg)
+  torqueLimit              80.0
+
+  ; =============================================
+  ; Arm WBC settings
+  ; =============================================
+
+  ; Arm end-effector position PD gains
+  armEEPositionKp         100.0
+  armEEPositionKd         20.0
+
+  ; Arm end-effector orientation PD gains
+  armEEOrientationKp      50.0
+  armEEOrientationKd      10.0
+
+  ; Arm joint centering (nullspace) PD gains
+  armJointCenteringKp     10.0
+  armJointCenteringKd     2.0
+
+  ; Arm joint PD gains for motor commands
+  armJointKp              200.0
+  armJointKd              10.0
+
+  ; Arm home position (stowed)
+  armJointHomePosition
+  {
+    (0,0)  0.0    ; arm_sh0
+    (1,0) -3.1    ; arm_sh1
+    (2,0)  2.1    ; arm_el0
+    (3,0)  0.0    ; arm_el1
+    (4,0)  0.0    ; arm_wr0
+    (5,0)  0.0    ; arm_wr1
+  }
+
+  ; Arm torque limits
+  armTorqueLimits
+  {
+    (0,0)  45.0   ; arm_sh0
+    (1,0)  45.0   ; arm_sh1
+    (2,0)  30.0   ; arm_el0
+    (3,0)  30.0   ; arm_el1
+    (4,0)  15.0   ; arm_wr0
+    (5,0)  15.0   ; arm_wr1
+  }
+}
+
+StaticController
+{
+  ; Joint kp and kd and interpolation time
+  kp                 300
+  kd                 10
+  interpolationTime  1.0
+
+  ; Stand joint angles (18 joints: 12 leg + 6 arm)
+  standJointAngles
+  {
+    ; Leg joints
+    (0,0)  0.00  ; LF_HAA
+    (1,0)  0.75  ; LF_HFE
+    (2,0) -1.60  ; LF_KFE
+    (3,0)  0.00  ; RF_HAA
+    (4,0)  0.75  ; RF_HFE
+    (5,0) -1.60  ; RF_KFE
+    (6,0)  0.00  ; LH_HAA
+    (7,0)  0.75  ; LH_HFE
+    (8,0) -1.60  ; LH_KFE
+    (9,0)  0.00  ; RH_HAA
+    (10,0)  0.75  ; RH_HFE
+    (11,0) -1.60  ; RH_KFE
+    ; Arm joints (stowed position)
+    (12,0)  0.0   ; arm_sh0
+    (13,0) -3.1   ; arm_sh1
+    (14,0)  2.1   ; arm_el0
+    (15,0)  0.0   ; arm_el1
+    (16,0)  0.0   ; arm_wr0
+    (17,0)  0.0   ; arm_wr1
+  }
+
+  ; Sit joint angles
+  sitJointAngles
+  {
+    ; Leg joints
+    (0,0)  0.00  ; LF_HAA
+    (1,0)  1.6  ; LF_HFE
+    (2,0) -2.5  ; LF_KFE
+    (3,0)  0.00  ; RF_HAA
+    (4,0)  1.6  ; RF_HFE
+    (5,0) -2.5  ; RF_KFE
+    (6,0)  0.00  ; LH_HAA
+    (7,0)  1.6  ; LH_HFE
+    (8,0) -2.5  ; LH_KFE
+    (9,0)  0.00  ; RH_HAA
+    (10,0)  1.6  ; RH_HFE
+    (11,0) -2.5  ; RH_KFE
+    ; Arm joints (stowed position)
+    (12,0)  0.0   ; arm_sh0
+    (13,0) -3.1   ; arm_sh1
+    (14,0)  2.1   ; arm_el0
+    (15,0)  0.0   ; arm_el1
+    (16,0)  0.0   ; arm_wr0
+    (17,0)  0.0   ; arm_wr1
+  }
+
+}

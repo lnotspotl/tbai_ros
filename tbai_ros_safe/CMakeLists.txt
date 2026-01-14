@@ -9,8 +9,12 @@ find_package(catkin REQUIRED COMPONENTS
   tbai_ros_np3o
   tbai_ros_core
   tbai_ros_static
-  tbai
+  tbai_ros_reference
 )
+
+find_package(tbai REQUIRED)
+find_package(pinocchio REQUIRED)
+find_package(spdlog REQUIRED)
 
 catkin_package(
   CATKIN_DEPENDS rospy geometry_msgs visualization_msgs tbai_ros_msgs tbai_ros_np3o
@@ -26,13 +30,6 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-find_package(pinocchio REQUIRED)
-find_package(spdlog REQUIRED)
-
-catkin_package(
-  CATKIN_DEPENDS tbai_ros_np3o
-)
-
 ## Build
 include_directories(
     include
@@ -44,5 +41,8 @@ add_executable(simple
     src/simple.cpp
 )
 target_link_libraries(simple
-    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog
+    ${catkin_LIBRARIES}
+    yaml-cpp
+    spdlog::spdlog
+    tbai::core
 )

@@ -1,0 +1,322 @@
+model_settings
+{
+  algorithm                     SQP
+  recompileLibraries            false
+  robotName                     spot_arm
+
+  analyticalInverseKinematics   true
+
+  frictionCoefficient           0.5
+  gripperForce                  0.0   ; [N] negative gripper force -> minimum force in normal direction
+  muFrictionCone                0.1
+  deltaFrictionCone             5.0
+
+  muFootPlacement               0.1   ; magnitude scaling
+  deltaFootPlacement            0.01  ; [m] distance from constraint boundary where the barrier becomes quadratic.
+
+  muSdf                         2.5
+  deltaSdf                      0.005
+
+  muJointsPosition              0.1
+  deltaJointsPosition           0.01
+  muJointsVelocity              0.1
+  deltaJointsVelocity           0.1
+  muJointsTorque                1.0
+  deltaJointsTorque             1.0
+
+  ; Leg joint limits (12 joints)
+  joint_lower_limits
+  {
+     (0,0)  -0.78539816339744827899       ; LF_HAA
+     (1,0)  -0.89884456477707963539       ; LF_HFE
+     (2,0)  -2.7929       ; LF_KFE
+     (3,0)  -0.78539816339744827899       ; RF_HAA
+     (4,0)  -0.89884456477707963539       ; RF_HFE
+     (5,0)  -2.7929       ; RF_KFE
+     (6,0)  -0.78539816339744827899       ; LH_HAA
+     (7,0)  -0.89884456477707963539       ; LH_HFE
+     (8,0)  -2.7929       ; LH_KFE
+     (9,0)  -0.78539816339744827899       ; RH_HAA
+     (10,0) -0.89884456477707963539       ; RH_HFE
+     (11,0) -2.7929       ; RH_KFE
+     ; Arm joints (6 joints)
+     (12,0) -3.14159       ; arm_sh0
+     (13,0) -3.14159       ; arm_sh1
+     (14,0) -0.0           ; arm_el0
+     (15,0) -2.79253       ; arm_el1
+     (16,0) -1.8326        ; arm_wr0
+     (17,0) -2.87979       ; arm_wr1
+  }
+
+  joint_upper_limits
+  {
+     (0,0)   0.78539816339744827899       ; LF_HAA
+     (1,0)   2.2951079663725435509       ; LF_HFE
+     (2,0)   -0.254402       ; LF_KFE
+     (3,0)   0.78539816339744827899       ; RF_HAA
+     (4,0)   2.2951079663725435509       ; RF_HFE
+     (5,0)   -0.254402       ; RF_KFE
+     (6,0)   0.78539816339744827899       ; LH_HAA
+     (7,0)   2.2951079663725435509       ; LH_HFE
+     (8,0)   -0.254402       ; LH_KFE
+     (9,0)   0.78539816339744827899       ; RH_HAA
+     (10,0)  2.2951079663725435509       ; RH_HFE
+     (11,0)  -0.254402       ; RH_KFE
+     ; Arm joints (6 joints)
+     (12,0)  3.14159        ; arm_sh0
+     (13,0)  0.497419       ; arm_sh1
+     (14,0)  3.14159        ; arm_el0
+     (15,0)  2.79253        ; arm_el1
+     (16,0)  1.8326         ; arm_wr0
+     (17,0)  2.87979        ; arm_wr1
+  }
+
+  joint_velocity_limits
+  {
+     (0,0)    7.0       ; LF_HAA
+     (1,0)    7.0       ; LF_HFE
+     (2,0)    7.0       ; LF_KFE
+     (3,0)    7.0       ; RF_HAA
+     (4,0)    7.0       ; RF_HFE
+     (5,0)    7.0       ; RF_KFE
+     (6,0)    7.0       ; LH_HAA
+     (7,0)    7.0       ; LH_HFE
+     (8,0)    7.0       ; LH_KFE
+     (9,0)    7.0       ; RH_HAA
+     (10,0)   7.0       ; RH_HFE
+     (11,0)   7.0       ; RH_KFE
+     ; Arm joints (6 joints)
+     (12,0)   2.5       ; arm_sh0
+     (13,0)   2.5       ; arm_sh1
+     (14,0)   2.5       ; arm_el0
+     (15,0)   2.5       ; arm_el1
+     (16,0)   3.0       ; arm_wr0
+     (17,0)   3.0       ; arm_wr1
+  }
+
+  joint_torque_limits
+  {
+     (0,0)   70.0       ; LF_HAA
+     (1,0)   70.0       ; LF_HFE
+     (2,0)   70.0       ; LF_KFE
+     (3,0)   70.0       ; RF_HAA
+     (4,0)   70.0       ; RF_HFE
+     (5,0)   70.0       ; RF_KFE
+     (6,0)   70.0       ; LH_HAA
+     (7,0)   70.0       ; LH_HFE
+     (8,0)   70.0       ; LH_KFE
+     (9,0)   70.0       ; RH_HAA
+     (10,0)  70.0       ; RH_HFE
+     (11,0)  70.0       ; RH_KFE
+     ; Arm joints (6 joints)
+     (12,0)  45.0       ; arm_sh0
+     (13,0)  45.0       ; arm_sh1
+     (14,0)  30.0       ; arm_el0
+     (15,0)  30.0       ; arm_el1
+     (16,0)  15.0       ; arm_wr0
+     (17,0)  15.0       ; arm_wr1
+  }
+
+swing_trajectory_settings
+  {
+    liftOffVelocity               0.2
+    touchDownVelocity            -0.4
+    swingHeight                   0.08
+    touchdownAfterHorizon         0.2
+    errorGain                     20.0
+    swingTimeScale                0.15
+    sdfMidswingMargin             0.04
+    terrainMargin                 0.0
+    previousFootholdFactor        0.333
+    previousFootholdDeadzone      0.05
+    previousFootholdTimeDeadzone  0.25
+  }
+}
+
+terrainPlane
+{
+  position
+  {
+    x       0.0;
+    y       0.0;
+    z       0.0;
+  }
+  orientation
+  {
+    roll    0.0;
+    pitch   0.0;
+    yaw     0.0;
+  }
+}
+
+defaultModeSequenceTemplate
+{
+  modeSequence
+  {
+    [0]  STANCE
+  }
+  switchingTimes
+  {
+    [0]  0.0
+    [1]  1.0
+  }
+}
+
+; DDP settings
+ddp
+{
+  algorithm                       SLQ
+
+  nThreads                        4
+  threadPriority                  50
+
+  maxNumIterations                1
+  minRelCost                      1e-1
+  constraintTolerance             5e-3
+
+  displayInfo                     false
+  displayShortSummary             false
+  checkNumericalStability         false
+  debugPrintRollout               false
+  debugCaching                    false
+
+  AbsTolODE                       1e-5
+  RelTolODE                       1e-3
+  maxNumStepsPerSecond            10000
+  timeStep                        0.015
+  backwardPassIntegratorType      ODE45
+
+  constraintPenaltyInitialValue   20.0
+  constraintPenaltyIncreaseRate   2.0
+
+  preComputeRiccatiTerms          true
+
+  useFeedbackPolicy               true
+
+  strategy                        LINE_SEARCH
+  lineSearch
+  {
+      minStepLength                 1e-4
+      maxStepLength                 1.0
+      hessianCorrectionStrategy     DIAGONAL_SHIFT
+      hessianCorrectionMultiple     1e-5
+  }
+}
+
+; Rollout settings
+rollout
+{
+  AbsTolODE                       1e-5
+  RelTolODE                       1e-3
+  timeStep                        0.015
+  integratorType                  ODE45
+  maxNumStepsPerSecond            10000
+  checkNumericalStability         false
+}
+
+mpc
+{
+  timeHorizon                     1.0
+  solutionTimeWindow              -1  ; [s]
+  coldStart                       false
+
+  debugPrint                      false
+
+  mpcDesiredFrequency             30  ; [Hz]
+  mrtDesiredFrequency             400 ; [Hz]
+}
+
+; initial state (30D: 12D base + 12 leg joints + 6 arm joints)
+initialRobotState
+{
+   ; orientation
+   (0,0) 0.0     ; x
+   (1,0) 0.0     ; y
+   (2,0) 0.0     ; z
+
+   ; position
+   (3,0) 0.0     ; x
+   (4,0) 0.0     ; y
+   (5,0) 0.57    ; z
+
+   ; angular velocity
+   (6,0) 0.0    ; x
+   (7,0) 0.0    ; y
+   (8,0) 0.0    ; z
+
+   ; translational velocity
+   (9,0)  0.0    ; x
+   (10,0) 0.0    ; y
+   (11,0) 0.0    ; z
+
+   ; leg joint state (12 joints)
+   (12,0)  0.00  ; LF_HAA
+   (13,0)  0.75  ; LF_HFE
+   (14,0) -1.60  ; LF_KFE
+   (15,0)  0.00  ; RF_HAA
+   (16,0)  0.75  ; RF_HFE
+   (17,0) -1.60  ; RF_KFE
+   (18,0)  0.00  ; LH_HAA
+   (19,0)  0.75  ; LH_HFE
+   (20,0) -1.60  ; LH_KFE
+   (21,0)  0.00  ; RH_HAA
+   (22,0)  0.75  ; RH_HFE
+   (23,0) -1.60  ; RH_KFE
+
+   ; arm joint state (6 joints - stowed position)
+   (24,0)  2.0    ; arm_sh0
+   (25,0) -3.1    ; arm_sh1
+   (26,0)  3.1    ; arm_el0
+   (27,0)  0.0    ; arm_el1
+   (28,0)  0.0    ; arm_wr0
+   (29,0)  0.0    ; arm_wr1
+}
+
+tracking_cost_weights
+{
+    ; Base
+    roll                   100.0;
+    pitch                  300.0;
+    yaw                    300.0;
+    base_position_x       1000.0;
+    base_position_y       1000.0;
+    base_position_z       1500.0;
+    base_angular_vel_x      10.0;
+    base_angular_vel_y      30.0;
+    base_angular_vel_z      30.0;
+    base_linear_vel_x       15.0;
+    base_linear_vel_y       15.0;
+    base_linear_vel_z       30.0;
+
+    ; Per leg
+    joint_position_HAA       2.0;
+    joint_position_HFE       2.0;
+    joint_position_KFE       1.0;
+    foot_position_x         60.0;
+    foot_position_y         60.0;
+    foot_position_z         60.0;
+    joint_velocity_HAA      0.02;
+    joint_velocity_HFE      0.02;
+    joint_velocity_KFE      0.01;
+    foot_velocity_x         10.0;
+    foot_velocity_y         10.0;
+    foot_velocity_z         10.0;
+    contact_force_x        0.001;
+    contact_force_y        0.001;
+    contact_force_z        0.001;
+
+    ; Arm end-effector tracking
+    arm_ee_position_x       900.0;
+    arm_ee_position_y       900.0;
+    arm_ee_position_z       900.0;
+    arm_ee_velocity_x       1.0;
+    arm_ee_velocity_y       1.0;
+    arm_ee_velocity_z       1.0;
+    arm_ee_orientation_x    300.0;
+    arm_ee_orientation_y    300.0;
+    arm_ee_orientation_z    300.0;
+
+    ; Arm joint regularization
+    arm_joint_position       0.0;
+    arm_joint_velocity       4.0;
+}

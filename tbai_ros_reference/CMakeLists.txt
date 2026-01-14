@@ -9,14 +9,15 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     geometry_msgs
     tbai_ros_core
-    tbai
 )
 
+find_package(tbai REQUIRED)
 find_package(yaml-cpp REQUIRED)
+
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES tbai_ros_reference 
- CATKIN_DEPENDS  
+  LIBRARIES tbai_ros_reference
+  CATKIN_DEPENDS
 )
 
 include_directories(
@@ -27,7 +28,11 @@ include_directories(
 add_library(tbai_ros_reference
     src/ReferenceVelocityGenerator.cpp
 )
-target_link_libraries(tbai_ros_reference ${catkin_LIBRARIES})
+target_link_libraries(tbai_ros_reference
+    ${catkin_LIBRARIES}
+    tbai::core
+    tbai::reference
+)
 
 install(TARGETS tbai_ros_reference
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

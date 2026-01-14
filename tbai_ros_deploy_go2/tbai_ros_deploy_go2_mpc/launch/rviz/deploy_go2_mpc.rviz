@@ -573,10 +573,12 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /ocs2_quadruped/swing_planner/trajectory_LH
+      Marker Topic: /ocs2_quadruped/optimizedStateTrajectory
       Name: MarkerArray
       Namespaces:
-        "": true
+        Base Trajectory: true
+        EE Trajectories: true
+        Future footholds: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -623,7 +625,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 2.3663992881774902
+      Distance: 1.7659894227981567
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -631,17 +633,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.1625717580318451
-        Y: -0.728333592414856
-        Z: -8.344650268554688e-07
+        X: 0.3578079044818878
+        Y: 1.0294888019561768
+        Z: -8.791685104370117e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.1534309685230255
+      Pitch: 0.09343095868825912
       Target Frame: base
-      Yaw: 4.899562358856201
+      Yaw: 1.0563791990280151
     Saved: ~
 Window Geometry:
   Displays:

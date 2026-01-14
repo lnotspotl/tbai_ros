@@ -8,7 +8,7 @@
 #include <grid_map_filters_rsl/lookup.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
 
-namespace switched_model {
+namespace tbai::mpc::quadruped {
 
 SegmentedPlanesTerrainModelRos::SegmentedPlanesTerrainModelRos(ros::NodeHandle &nodehandle)
     : terrainUpdated_(false),
@@ -119,4 +119,4 @@ std::pair<Eigen::Vector3d, Eigen::Vector3d> SegmentedPlanesTerrainModelRos::getS
     return {minCoordinates, maxCoordinates};
 }
 
-}  // namespace switched_model
+}  // namespace tbai::mpc::quadruped

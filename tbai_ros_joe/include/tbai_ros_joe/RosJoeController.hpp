@@ -10,7 +10,7 @@
 #include <ros/ros.h>
 #include <tbai_joe/JoeController.hpp>
 #include <tbai_ros_gridmap/GridmapInterface.hpp>
-#include <tbai_ros_mpc/visualization/QuadrupedVisualizer.h>
+#include <tbai_ros_mpc/quadruped_mpc/visualization/QuadrupedVisualizer.h>
 #include <tbai_ros_ocs2/MRT_ROS_Interface.hpp>
 #include <tbai_ros_ocs2/mpc_target_trajectories.h>
 
@@ -30,9 +30,10 @@ class GridmapTerrainInterface : public TerrainInterface {
 
     void waitTillInitialized() override { gridmap_->waitTillInitialized(); }
 
-    TargetTrajectories generateTargetTrajectories(scalar_t currentTime, const BaseReferenceHorizon &horizon,
-                                                  const BaseReferenceState &state, const BaseReferenceCommand &command,
-                                                  const switched_model::QuadrupedInterface &quadrupedInterface) override;
+    TargetTrajectories generateTargetTrajectories(
+        scalar_t currentTime, const BaseReferenceHorizon &horizon, const BaseReferenceState &state,
+        const BaseReferenceCommand &command,
+        const tbai::mpc::quadruped::QuadrupedInterface &quadrupedInterface) override;
 
     tbai::gridmap::GridmapInterface &getGridmap() { return *gridmap_; }
 
@@ -71,7 +72,7 @@ class RosJoeController : public JoeController {
    private:
     ros::NodeHandle nh_;
     ros::Publisher refPub_;
-    std::unique_ptr<switched_model::QuadrupedVisualizer> visualizer_;
+    std::unique_ptr<tbai::mpc::quadruped::QuadrupedVisualizer> visualizer_;
 };
 
 }  // namespace joe

@@ -10,8 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   roscpp
   roslib
-  tbai
 )
+
+find_package(tbai REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -27,6 +28,12 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/Subscribers.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    ${catkin_LIBRARIES}
+    tbai::core
+    tbai::estim
 )
 
 install(

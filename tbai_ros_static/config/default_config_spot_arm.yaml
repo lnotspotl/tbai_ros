@@ -1,0 +1,39 @@
+robot_name: 'spot_arm'
+
+joint_names: &jn ["LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE", "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE", "arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"]
+base_name: "base"
+
+state_topic: "spot_arm/state"
+command_topic: "spot_arm/command"
+change_controller_topic: "spot_arm/change_controller"
+contact_topics: ["/lf_foot_contact", "/rf_foot_contact", "/lh_foot_contact","/rh_foot_contact"]
+
+static_controller:
+  stand_controller:
+    joint_angles: [0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, 0.75, -1.6, 0.0, -3.1, 3.1, 0.0, 0.0, 0.0] # LF, LH, RF, RH, arm
+  sit_controller:
+    joint_angles: [0.0, 1.6, -2.5, 0.0, 1.6, -2.5, 0.0, 1.6, -2.5, 0.0, 1.6, -2.5, 0.0, -3.1, 2.1, 0.0, 0.0, 0.0] # LF, LH, RF, RH, arm
+  kp: 300
+  kd: 10
+  interpolation_time: 1.0 # s
+  rate: 50 # Hz
+
+spot_arm:
+  joint_controller:
+      type: tbai_ros_gazebo/JointController
+      joints: *jn
+
+estimator_type: "ground_truth"
+
+gazebo:
+  contact_sensor:
+    enabled: false
+    update_rate: 200 # Hz
+
+  ground_truth_state_publisher:
+    enabled: true
+    update_rate: 400 # Hz
+
+  muse_state_publisher:
+    enabled: false
+    update_rate: 200 # Hz

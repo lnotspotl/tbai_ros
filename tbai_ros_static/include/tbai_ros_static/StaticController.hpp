@@ -53,6 +53,8 @@ class RosStaticController : public tbai::static_::StaticController {
     bool publishState_;
     ros::Publisher statePublisher_;
 
+    std::string baseFrameName_;
+
     /** Time since last visualization step */
     scalar_t timeSinceLastVisualizationUpdate_;
 

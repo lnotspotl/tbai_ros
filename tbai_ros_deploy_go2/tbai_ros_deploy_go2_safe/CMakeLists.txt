@@ -6,7 +6,6 @@ add_compile_options(-std=c++17)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(catkin REQUIRED COMPONENTS
-    tbai
     tbai_ros_core
     tbai_ros_np3o
     tbai_ros_bob
@@ -14,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
     tbai_ros_reference
 )
 
+find_package(tbai REQUIRED)
 find_package(spdlog REQUIRED)
 
 catkin_package(
@@ -28,9 +28,13 @@ add_executable(deploy_go2_safe
 )
 target_link_libraries(deploy_go2_safe
     PUBLIC
-    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog
+    ${catkin_LIBRARIES}
+    tbai::core
+    tbai::deploy_go2
+    tbai::reference
+    tbai::static
 )
-target_include_directories(deploy_go2_safe 
+target_include_directories(deploy_go2_safe
     PRIVATE
     "${catkin_INCLUDE_DIRS}" include
 )
@@ -40,9 +44,12 @@ add_executable(go2_joystick_node
 )
 target_link_libraries(go2_joystick_node
     PUBLIC
-    ${catkin_LIBRARIES} yaml-cpp spdlog::spdlog
+    ${catkin_LIBRARIES}
+    tbai::core
+    tbai::deploy_go2
+    tbai::reference
 )
-target_include_directories(go2_joystick_node 
+target_include_directories(go2_joystick_node
     PRIVATE
     "${catkin_INCLUDE_DIRS}" include
 )
