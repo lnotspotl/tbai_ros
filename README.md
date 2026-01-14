@@ -1,5 +1,13 @@
 # Towards Better Athletic Intelligence - ROS Noetic
 
+ROS wrapper around [tbai](https://github.com/tbai-lab/tbai), for now the most mature tbai wrapper implementation.
+
+<div align="center">
+
+<img src="https://github.com/user-attachments/assets/5351d23c-59fd-47d2-8e8a-3f459b403339" width="60%" alt="demo"/>
+
+</div>
+
 ## Implemented controllers
 
 ```
