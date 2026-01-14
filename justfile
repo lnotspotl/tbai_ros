@@ -375,7 +375,7 @@ clean:
 clone-tbai:
     #!/usr/bin/env bash
     if [[ ! -d dependencies/tbai ]]; then
-        git clone https://github.com/lnotspotl/tbai.git --single-branch --branch=develop dependencies/tbai
+        git clone https://github.com/tbai-lab/tbai.git --single-branch --branch=develop dependencies/tbai
     else
         echo "[TBAI] dependencies/tbai already exists, skipping clone"
         if [[ -d dependencies/tbai/.git ]]; then
@@ -450,7 +450,7 @@ remove-unitree-mujoco:
 [group("4. development")]
 install-tbai-cbf-mppi: clone-tbai
     #!/usr/bin/env bash
-    pip3 install git+https://github.com/lnotspotl/tbai_cbf_mppi.git
+    pip3 install git+https://github.com/tbai-lab/tbai_cbf_mppi.git
 
 # Build all ROS packages
 [group("4. development")]
