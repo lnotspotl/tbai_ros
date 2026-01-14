@@ -10,6 +10,7 @@
 #include <tbai_core/control/CentralController.hpp>
 #include <tbai_deploy_g1/G1RobotInterface.hpp>
 #include <tbai_ros_core/Rate.hpp>
+#include <tbai_ros_g1/G1BeyondMimicController.hpp>
 #include <tbai_ros_g1/G1MimicController.hpp>
 #include <tbai_ros_g1/G1RLController.hpp>
 #include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
@@ -90,6 +91,14 @@ int main(int argc, char *argv[]) {
     TBAI_LOG_INFO(logger, "Loading HF model: {}/{}", hfRepo2, hfModel2);
     controller.addController(std::make_unique<tbai::g1::RosG1MimicController>(
         stateSubscriber, modelPathGangnam, gangnamMotionFilePath, motionFps2, timeStart2, timeEnd2, "G1MimicGangnam"));
+
+    // Load G1 BeyondMimic Dance controller
+    auto hfRepoBeyondDance = tbai::fromGlobalConfig<std::string>("g1_beyond_dance/hf_repo");
+    auto hfModelBeyondDance = tbai::fromGlobalConfig<std::string>("g1_beyond_dance/hf_model");
+    auto modelPathBeyondDance = tbai::downloadFromHuggingFace(hfRepoBeyondDance, hfModelBeyondDance);
+    TBAI_LOG_INFO(logger, "Loading BeyondMimic model: {}", modelPathBeyondDance);
+    controller.addController(
+        std::make_unique<tbai::g1::RosG1BeyondMimicController>(stateSubscriber, modelPathBeyondDance, "G1BeyondDance"));
 
     TBAI_LOG_INFO(logger, "Controllers initialized. Starting main loop...");
 

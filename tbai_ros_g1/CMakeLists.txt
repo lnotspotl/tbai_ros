@@ -37,6 +37,7 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/G1RLController.cpp
   src/G1MimicController.cpp
+  src/G1BeyondMimicController.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
