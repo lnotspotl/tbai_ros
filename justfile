@@ -375,7 +375,7 @@ clean:
 clone-tbai:
     #!/usr/bin/env bash
     if [[ ! -d dependencies/tbai ]]; then
-        git clone https://github.com/tbai-lab/tbai.git --single-branch --branch=develop dependencies/tbai
+        git clone https://github.com/tbai-lab/tbai.git --single-branch --branch=main dependencies/tbai
     else
         echo "[TBAI] dependencies/tbai already exists, skipping clone"
         if [[ -d dependencies/tbai/.git ]]; then
