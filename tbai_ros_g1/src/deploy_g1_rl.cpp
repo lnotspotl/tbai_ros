@@ -13,6 +13,7 @@
 #include <tbai_ros_g1/G1BeyondMimicController.hpp>
 #include <tbai_ros_g1/G1MimicController.hpp>
 #include <tbai_ros_g1/G1RLController.hpp>
+#include <tbai_ros_g1/G1SpinkickController.hpp>
 #include <tbai_ros_reference/ReferenceVelocityGenerator.hpp>
 #include <tbai_ros_static/StaticController.hpp>
 
@@ -99,6 +100,14 @@ int main(int argc, char *argv[]) {
     TBAI_LOG_INFO(logger, "Loading BeyondMimic model: {}", modelPathBeyondDance);
     controller.addController(
         std::make_unique<tbai::g1::RosG1BeyondMimicController>(stateSubscriber, modelPathBeyondDance, "G1BeyondDance"));
+
+    // Load G1 Spinkick controller
+    auto hfRepoSpinkick = tbai::fromGlobalConfig<std::string>("g1_spinkick/hf_repo");
+    auto hfModelSpinkick = tbai::fromGlobalConfig<std::string>("g1_spinkick/hf_model");
+    auto modelPathSpinkick = tbai::downloadFromHuggingFace(hfRepoSpinkick, hfModelSpinkick);
+    TBAI_LOG_INFO(logger, "Loading Spinkick model: {}", modelPathSpinkick);
+    controller.addController(
+        std::make_unique<tbai::g1::RosG1SpinkickController>(stateSubscriber, modelPathSpinkick, "G1Spinkick"));
 
     TBAI_LOG_INFO(logger, "Controllers initialized. Starting main loop...");
 

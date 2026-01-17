@@ -194,6 +194,13 @@ class G1UIController:
         )
         self.beyond_dance_button.pack(side=tk.LEFT, padx=3)
 
+        # Spinkick button
+        self.spinkick_button = ttk.Button(
+            row3_frame, text="SPINKICK", width=8,
+            command=lambda: self.publish_controller_change("G1Spinkick")
+        )
+        self.spinkick_button.pack(side=tk.LEFT, padx=3)
+
         # Status indicator
         status_frame = ttk.Frame(main_frame)
         status_frame.pack(pady=(15, 0))
